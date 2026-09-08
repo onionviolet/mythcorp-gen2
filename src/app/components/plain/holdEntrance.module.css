@@ -1,0 +1,38 @@
+.lander {
+  --hold-reveal: 900ms;
+  --hold-pause: 240ms;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .identity, .specimen, .readout {
+    animation: resolve var(--hold-reveal) ease-out both;
+  }
+  .specimen { animation-delay: var(--hold-pause); }
+  .readout { animation-delay: calc(var(--hold-pause) * 2); }
+}
+
+@keyframes resolve {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.readout {
+  background: transparent;
+}
+
+.lander button:focus-visible, .lander summary:focus-visible, .lander a:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 5px;
+}
+
+@media (max-height: 640px) {
+  .lander { overflow-y: auto; }
+  .stage { min-height: 420px; }
+}
+
+
+.lander button:active, .lander summary:active, .lander a:active {
+  color: var(--fg);
+  outline: 1px dotted currentColor;
+  outline-offset: 3px;
+}

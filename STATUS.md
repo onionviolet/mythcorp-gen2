@@ -1,5 +1,86 @@
 # STATUS
 
+## Lander copy cleanup, 2026-09-08
+
+Removed the field interaction hint below Tune composition at the user's request.
+
+## Click and tap response, 2026-09-08
+
+Primary clicks now publish one bounded 620ms pulse through the shared pointer
+store. A faint expanding ring and nearby DOM text erosion use the same radius
+and progress. The ASCII field retains its existing press impulse. New taps
+replace the pulse, with a 110ms cooldown; no growing effect queue or idle frame
+loop is introduced. Touch release clears hover while letting the short pulse
+finish. Blur and pointer leave cancel it.
+
+Controls are excluded from both the new pulse and the existing field press
+impulse, and receive a small active outline instead. Reduced-motion disables
+the pulse and leaves control feedback static. Existing vendor model interaction
+is unchanged; this pass does not add model-wide scattering or press-and-hold.
+
+Validation: npm run check passed; pulse intensity and boundary assertions
+passed. Browser inspection confirmed a visible ring and text disturbance,
+then zero ring opacity after a scene control click, with no captured errors.
+Physical touch and reduced-motion emulation remain unverified.
+
+## Transparent Tune controls, 2026-09-08
+
+Removed both the expanded Tune background and the readout gradient so the
+spectre remains visible behind the controls. This supersedes the opaque
+backdrop choice recorded in the earlier lander pass.
+
+## Pending lander art direction, 2026-09-08
+
+The pending lander is the preferred visual direction. This pass focuses on
+that installation rather than extending the interior wireframe treatment.
+Four named compositions now drive initial selection and the scene control:
+Trace, Suspension, Drift and Surface. Each combines a deliberate model, message
+and overlay within the existing noise budget. The old budgeted randomizer
+remains available to its existing consumers; initial lander selection uses
+the authored set. Individual controls remain under Tune composition, and
+manual changes identify themselves as Custom.
+
+Type resolves first, then the specimen, then the readout. This entrance uses
+plain-specific CSS timing tokens with no entrance animation under reduced
+motion. It does not claim to pause every existing canvas effect. The model
+has more separation from the headline, the default readout is shorter, and
+expanded tuning gets an opaque backdrop. Short viewports can scroll instead
+of clipping the controls. Primary touch and pen release/cancel now clear the
+shared text pointer, preventing a stale eroded spot after contact ends.
+
+Validation includes the production check and the roll check, including new
+assertions that the authored compositions are unique and within budget.
+Browser checks exercised all four renderers, keyboard scene cycling, manual
+Custom state, and light/dark layouts. Touch release is code-reviewed, not
+physical-device verified. The entrance does not wait for model asset readiness;
+a slow first fetch can still delay the specimen. No deployment or opening of
+the held routes is included. Earlier interior edits remain local.
+
+## Interior design pass, 2026-09-08
+
+The simulation entry now uses an asymmetric editorial hero and a Three.js
+orientation study instead of three equal stat cards. Its native range control
+updates the actual model angle with keyboard and touch support. The canvas
+renders on demand, caps DPR at 1.5, and has an interactive SVG fallback for
+unavailable WebGL or a scene error. GSAP sequences the entry using theme timing
+and reverts it on theme changes or reduced-motion preference changes. The
+skyline is subdued in paper mode for readable dark text. No dependencies added.
+
+The workshop promotes the existing AI cybercrime draft, with secondary rooms
+reduced to a quieter directory. About now explains the project and links to
+its actual work; a personal timeline remains pending real source material.
+
+Validation: full lint, text policy, production build and TypeScript checks.
+Browser inspection covered the rendered instrument in cyberpunk, luxury and
+paper, keyboard angle updates, and mobile workshop and About at 390px. Plain
+held-route and open contact behavior were also observed. The browser logged
+Three.Clock deprecation warnings from the current renderer dependencies, with
+no captured errors. Reduced-motion and WebGL failure branches were inspected
+in code, not failure-injected. This is a local pass, not an award-readiness,
+performance or full accessibility certification. The plain holding screen
+continues to gate the interiors by design.
+
+
 ## Dependency upgrade, and `ink` cut for drawing nothing, 2026-09-05
 
 **The stay-on-15 upgrade is done.** The binding constraint was that

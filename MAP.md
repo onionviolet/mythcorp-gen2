@@ -196,3 +196,16 @@ npm run deploy   # cloudflare workers
 ```
 
 Tech: Next.js 15 (app router), React 19, R3F, drei, postprocessing, GSAP, Tailwind v4. Deployed to Cloudflare Workers via `@opennextjs/cloudflare`.
+
+### Simulation entry instrument
+
+- `src/app/experience/instrument/SignalInstrument.tsx`: accessible angle control, theme color resolution, WebGL probe and SVG fallback.
+- `src/app/experience/instrument/SignalScene.tsx`: lazy-loaded, demand-rendered Three.js geometry study.
+
+### Pending lander art direction
+
+- `src/app/components/plain/holdCompositions.ts`: four authored starting compositions and current-scene naming.
+- `src/app/components/plain/holdEntrance.module.css`: reduced-motion-aware entrance, focus treatment and short-viewport layout.
+
+- `src/app/components/plain/holdPress.ts`: shared pulse dimensions, wave intensity and control-target exclusion.
+- `src/app/components/plain/HoldClickResponse.tsx`: transient ring driven by the existing shared pointer subscription.

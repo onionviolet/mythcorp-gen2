@@ -1,137 +1,45 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import { SkylineBackdrop } from '../components/landing/SkylineBackdrop';
+import { useTheme } from '../contexts/ThemeContext';
+import { SignalInstrument } from './instrument/SignalInstrument';
 
-interface MainMenuProps {
-  onStart: () => void;
-}
+export function MainMenu({ onStart }: { onStart: () => void }) {
+  const root = useRef<HTMLElement>(null);
+  const { theme } = useTheme();
 
-const TEASES = [
-  { label: 'particles', count: '~12k', note: 'a star field with bloom' },
-  { label: 'spectre', count: '1', note: 'a glowing rotating model' },
-  { label: 'controls', count: '9', note: 'sliders + a randomize button' },
-];
+  useEffect(() => {
+    const media = gsap.matchMedia();
+    media.add('(prefers-reduced-motion: no-preference)', () => {
+      const duration = parseFloat(getComputedStyle(root.current!).getPropertyValue('--motion-base')) / 1000;
+      if (!duration) return;
+      gsap.from('[data-enter]', { y: 20, opacity: 0, duration: duration * 2, stagger: duration / 2, ease: theme === 'luxury' ? 'power3.out' : 'power1.out' });
+    }, root);
+    return () => media.revert();
+  }, [theme]);
 
-export function MainMenu({ onStart }: MainMenuProps) {
   return (
-    <div className="relative flex min-h-screen w-full flex-col
-                    overflow-hidden font-sans text-[color:var(--fg)]">
-      <SkylineBackdrop parallax />
-
-      {/* Soft accent glow centred behind the hero, theme-aware. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          background:
-            'radial-gradient(ellipse at center 60%, var(--accent-glow) 0%, transparent 45%)',
-          opacity: 0.22,
-        }}
-      />
-
-      <main className="relative z-10 flex flex-1 flex-col items-center
-                       justify-center px-4 pt-24 pb-12">
-        <div className="mx-auto flex w-full max-w-2xl flex-col items-center text-center">
-
-          <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-[color:var(--accent)]">
-            [ enter / wip ]
-          </p>
-
-          <h1 className="themed-heading mt-3 text-5xl font-extrabold leading-[0.95]
-                         text-[color:var(--fg)] sm:text-7xl">
-            <span className="text-[color:var(--accent-soft)]">3D</span>{' '}
-            EXPERIENCE
-          </h1>
-
-          <div
-            aria-hidden
-            className="mt-5 h-px w-40 bg-[color:var(--border-strong)]"
-            style={{ boxShadow: '0 0 14px var(--accent-glow)' }}
-          />
-
-          <p className="mt-5 max-w-md text-base text-[color:var(--fg-muted)] sm:text-lg">
-            A small interactive scene you can poke at. Bring headphones if
-            you&rsquo;ve got them. Bring a fast machine if you don&rsquo;t.
-          </p>
-
-          {/* Tease bar: tells the user what's inside without spoiling it. */}
-          <ul className="mt-10 grid w-full grid-cols-3 gap-3">
-            {TEASES.map((t) => (
-              <li
-                key={t.label}
-                className="themed-surface p-3 text-left"
-              >
-                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[color:var(--fg-subtle)]">
-                  {t.label}
-                </p>
-                <p className="mt-1 font-serif text-2xl font-semibold text-[color:var(--accent-soft)]"
-                   style={{ textShadow: '0 0 12px var(--accent-glow)' }}>
-                  {t.count}
-                </p>
-                <p className="mt-0.5 text-[11px] text-[color:var(--fg-muted)]">
-                  {t.note}
-                </p>
-              </li>
-            ))}
-          </ul>
-
-          {/* Primary CTA: bigger, framed, with hover that mimics opening a door. */}
-          <button
-            onClick={onStart}
-            className="themed-button group relative mt-10 w-full max-w-sm overflow-hidden
-                       py-4 text-base tracking-[0.2em]"
-          >
-            <span className="relative z-10">ENTER SIMULATION</span>
-            <span
-              aria-hidden
-              className="absolute inset-y-0 left-0 w-0 bg-[color:var(--accent-soft)]
-                         transition-all duration-500 group-hover:w-full"
-              style={{ borderRadius: 'inherit' }}
-            />
-          </button>
-
-          <p className="mt-3 text-xs text-[color:var(--fg-subtle)]">
-            randomized on entry. tweak it inside, or hit reset for the defaults.
-          </p>
-
-          <div className="mt-12 flex w-full items-center gap-4
-                          text-[color:var(--fg-subtle)]">
-            <span className="block h-px flex-1 bg-[color:var(--border)]" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.4em]">
-              ELSEWHERE
-            </span>
-            <span className="block h-px flex-1 bg-[color:var(--border)]" />
-          </div>
-
-          <div className="mt-5 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/wc/learn"
-              className="themed-pill px-4 py-1.5
-                         font-mono text-xs text-[color:var(--accent-soft)]
-                         hover:text-[color:var(--accent)]"
-            >
-              how the scene works
-            </Link>
-            <Link
-              href="/og/animals"
-              className="themed-pill px-4 py-1.5 font-mono text-xs
-                         text-[color:var(--accent-warm)]
-                         hover:text-[color:var(--accent)]"
-            >
-              palate cleanser
-            </Link>
-            <Link
-              href="/fmhy"
-              className="themed-pill px-4 py-1.5 font-mono text-xs
-                         text-[color:var(--fg-muted)]
-                         hover:text-[color:var(--accent)]"
-            >
-              fmhy backup
-            </Link>
-          </div>
+    <main ref={root} className="relative isolate min-h-screen overflow-hidden text-[color:var(--fg)]">
+      <div className="absolute inset-0" style={{ opacity: theme === 'paper' ? 0.12 : theme === 'plain' ? 0 : 1 }}><SkylineBackdrop parallax={false} /></div>
+      <div className="relative mx-auto max-w-7xl px-6 pb-16 pt-28 sm:px-10 lg:pt-40">
+        <p data-enter className="font-mono text-xs tracking-[0.25em] text-[color:var(--accent)]">MYTHCORP / SIMULATION LAB / WIP</p>
+        <div className="mt-8 grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+          <section data-enter>
+            <h1 className="themed-heading text-6xl font-semibold leading-[0.96] tracking-tight sm:text-8xl">A little<br />world.<br /><span className="text-[color:var(--accent-soft)]">Your rules.</span></h1>
+            <p className="mt-8 max-w-md text-lg leading-relaxed text-[color:var(--fg-muted)]">A spectre, a star field, and a control panel. Step inside, change the variables, and see what happens.</p>
+            <button onClick={onStart} className="themed-button mt-8 min-h-14 px-8 py-4 text-sm">Enter simulation <span aria-hidden="true">↗</span></button>
+            <p className="mt-4 max-w-sm text-xs leading-relaxed text-[color:var(--fg-muted)]">Randomized on entry. Adjust the scene inside, or reset to its defaults. The full simulation uses WebGL.</p>
+          </section>
+          <div data-enter><SignalInstrument /></div>
         </div>
-      </main>
-    </div>
+        <nav data-enter aria-label="Explore the lab" className="mt-16 grid gap-6 border-t border-[color:var(--border-strong)] pt-6 sm:grid-cols-2">
+          <Link className="group py-3" href="/wc/learn/3d-scene"><span className="text-lg group-hover:text-[color:var(--accent)]">Open the machinery ↗</span><span className="mt-2 block text-sm text-[color:var(--fg-muted)]">A walkthrough of the scene, from model to controls.</span></Link>
+          <Link className="group py-3" href="/wc/lab/canvas"><span className="text-lg group-hover:text-[color:var(--accent)]">Visit the canvas bench ↗</span><span className="mt-2 block text-sm text-[color:var(--fg-muted)]">Rendering experiments with their controls exposed.</span></Link>
+        </nav>
+      </div>
+    </main>
   );
 }

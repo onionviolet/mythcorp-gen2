@@ -35,11 +35,11 @@ export default function WillIndex() {
     <div className="min-h-screen bg-[color:var(--bg)] text-[color:var(--fg)]">
       <SiteHeader />
 
-      <main className="mx-auto max-w-3xl px-6 pt-24 pb-20">
+      <main className="mx-auto max-w-6xl px-6 pt-24 pb-20">
         <p className="font-mono text-xs uppercase tracking-[0.4em] text-[color:var(--accent)]">
           [ /wc / wip ]
         </p>
-        <h1 className="themed-heading mt-3 text-4xl font-semibold md:text-5xl">
+        <h1 className="themed-heading mt-3 text-5xl font-semibold md:text-7xl">
           A small back room
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-[color:var(--fg-muted)] md:text-lg">
@@ -48,12 +48,23 @@ export default function WillIndex() {
           theatre, /wc is the workshop behind it.
         </p>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2">
+        <Link href="/wc/papers/ai-cybercrime" className="themed-surface themed-surface-interactive mt-12 grid gap-8 p-7 sm:p-10 md:grid-cols-[1.6fr_1fr]">
+          <div>
+            <p className="font-mono text-xs tracking-[0.2em] text-[color:var(--accent)]">ON THE DESK / LIVING PAPER</p>
+            <h2 className="mt-5 text-3xl font-semibold leading-tight sm:text-5xl">AI + cybercrime<br />capability</h2>
+          </div>
+          <div className="self-end">
+            <p className="text-base leading-relaxed text-[color:var(--fg-muted)]">An evolving paper with interactive figures, evidence labels, and room for the argument to change.</p>
+            <p className="mt-6 text-sm text-[color:var(--accent)]">Read the working draft ↗</p>
+          </div>
+        </Link>
+
+        <div className="mt-10 grid gap-x-10 sm:grid-cols-2">
           {sections.map((s) => (
             <Link
               key={s.href}
               href={s.href}
-              className="themed-surface themed-surface-interactive group block p-5"
+              className="group block border-t border-[color:var(--border)] py-6"
             >
               {/* Each destination is itself WIP, so the card says so rather
                   than letting the page-level marker imply the index alone is

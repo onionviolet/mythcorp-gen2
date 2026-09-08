@@ -3,6 +3,8 @@
 // Walkthrough: /wc/learn/plain-mode
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { pressWave } from './holdPress';
+import type { PointerAt } from './holdPointer';
 import { RAMP } from './asciiRender';
 import { getPointer, getServerPointer, subscribePointer } from './holdPointer';
 
@@ -54,7 +56,7 @@ type Cell = { ch: string; heat: number };
  * tracking adds the same amount to every advance. It would be wrong the moment
  * this was pointed at proportional type.
  */
-function erode(text: string, rect: DOMRect | null, x: number, y: number, tick: number): Cell[] {
+function erode(text: string, rect: DOMRect | null, x: number, y: number, tick: number, pulse?: PointerAt['pulse']): Cell[] {
   const plain = () => [...text].map((ch) => ({ ch, heat: 0 }));
   if (!rect || rect.width === 0) return plain();
 
@@ -63,10 +65,10 @@ function erode(text: string, rect: DOMRect | null, x: number, y: number, tick: n
 
   // Cheap rejection. Most frames the cursor is nowhere near this line, and the
   // per-character loop below should not run at all for those.
-  if (
+  if (!pulse && (
     x < rect.left - reach || x > rect.right + reach
     || y < rect.top - reach || y > rect.bottom + reach
-  ) return plain();
+  )) return plain();
 
   const midY = rect.top + rect.height / 2;
   const out: Cell[] = [];
@@ -77,9 +79,9 @@ function erode(text: string, rect: DOMRect | null, x: number, y: number, tick: n
 
     const midX = rect.left + advance * (i + 0.5);
     const d = Math.hypot(midX - x, midY - y);
-    if (d > reach) { out.push({ ch, heat: 0 }); continue; }
-
-    const heat = 1 - d / reach;
+    const wave = pulse ? pressWave(Math.hypot(midX - pulse.x, midY - pulse.y), pulse.progress) : 0;
+    const heat = Math.max(0, 1 - d / reach, wave);
+    if (!heat) { out.push({ ch, heat: 0 }); continue; }
     // Hotter cells reach further down the ramp, towards the space at index 0,
     // so erosion deepens into a hole at the centre instead of stopping at a
     // uniform smudge.
@@ -137,9 +139,9 @@ export function DisturbedText({
   const calm = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const cells = !pointer.active || calm
+  const cells = (!pointer.active && !pointer.pulse) || calm
     ? [...text].map((ch) => ({ ch, heat: 0 }))
-    : erode(text, ref.current?.getBoundingClientRect() ?? null, pointer.x, pointer.y, tick.current);
+    : erode(text, ref.current?.getBoundingClientRect() ?? null, pointer.x, pointer.y, tick.current, pointer.pulse);
 
   /**
    * Plain text until after hydration, and this is not belt and braces, it is

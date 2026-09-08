@@ -39,9 +39,10 @@ const OPENED_AT = Date.now();
  * really is how long you have been on the page.
  */
 export function HoldStatus({
-  style, scheme, message, overlay, onCycle,
+  style, scheme, message, overlay, onCycle, scene, onScene,
 }: {
   style: string; scheme: string; message: string; overlay: string;
+  scene?: string; onScene?: () => void;
   /** Given a row, advance it to the next option. Rows without one stay read-only. */
   onCycle?: { render: () => void; words: () => void; over: () => void };
 }) {
@@ -64,10 +65,7 @@ export function HoldStatus({
       <Row label="status" value="building" />
       <Row label="elapsed" value={elapsed} />
       <Row label="field" value={metrics.cols ? `${metrics.cols} x ${metrics.rows} cells` : 'idle'} />
-      <Row label="render" value={style} onCycle={onCycle?.render} />
-      <Row label="scheme" value={scheme} />
-      <Row label="words" value={message} onCycle={onCycle?.words} />
-      <Row label="over" value={overlay} onCycle={onCycle?.over} />
+      <Row label="scene" value={scene ?? style} onCycle={onScene} />
       <Row
         label="ink"
         value={
@@ -79,14 +77,16 @@ export function HoldStatus({
         }
       />
     </dl>
-    {/* Three of these rows are the controls now. Without a line saying so the
-        only affordance is a hover underline, which nobody finds on a page they
-        expect to be inert. */}
     {onCycle && (
-      <p className="font-mono text-[10px] uppercase tracking-[0.18em]
-                    text-[color:var(--fg-subtle)] opacity-70">
-        <DisturbedText text="click a value to change it" strength={GENTLE} />
-      </p>
+      <details className="font-mono text-[11px] text-[color:var(--fg-muted)]">
+        <summary className="w-fit cursor-pointer py-3 tracking-[0.12em]">Tune composition</summary>
+        <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 pb-3 uppercase tracking-[0.12em]">
+          <Row label="render" value={style} onCycle={onCycle.render} />
+          <Row label="words" value={message} onCycle={onCycle.words} />
+          <Row label="over" value={overlay} onCycle={onCycle.over} />
+          <Row label="scheme" value={scheme} />
+        </dl>
+      </details>
     )}
     </div>
   );

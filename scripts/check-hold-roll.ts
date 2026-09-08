@@ -10,6 +10,7 @@
  * tell you either of those things. Counting the outcomes does.
  */
 import { rollHold, HOLD_NOISE } from '../src/app/components/plain/holdRoll';
+import { HOLD_COMPOSITIONS, compositionName } from '../src/app/components/plain/holdCompositions';
 
 const STYLES = ['ascii', 'particle', 'swarm', 'liquid'] as const;
 const MESSAGES = ['field', 'solid', 'decode', 'dust'] as const;
@@ -57,3 +58,17 @@ if (starved.length) {
   process.exit(1);
 }
 console.log('\nOK');
+
+const authoredKeys = new Set<string>();
+for (const composition of HOLD_COMPOSITIONS) {
+  const cost = MESSAGE_NOISE[composition.message] + STYLE_NOISE[composition.style] + OVERLAY_NOISE[composition.overlay];
+  const key = `${composition.style}/${composition.message}/${composition.overlay}`;
+  if (cost > BUDGET || authoredKeys.has(key) || compositionName(composition) !== composition.name) {
+    throw new Error(`Invalid authored composition: ${composition.name}`);
+  }
+  authoredKeys.add(key);
+}
+if (compositionName({ style: 'ascii', message: 'dust', overlay: 'none' }) !== 'Custom') {
+  throw new Error('Manual composition must remain identifiable as Custom');
+}
+console.log(`${authoredKeys.size} authored compositions: unique and within budget`);

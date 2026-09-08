@@ -5,6 +5,7 @@
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '../../contexts/ThemeContext';
+import { isHoldControl } from './holdPress';
 import { createAsciiFluid } from './asciiFluid';
 import { renderTextMask } from './textMask';
 import { isHeld } from './holdState';
@@ -78,7 +79,9 @@ export function PlainField() {
     // it is what lets the field tell a drag apart from a finger landing in a
     // new place, and what stops a second finger fighting the first.
     const onMove = (e: PointerEvent) => field.pointer(e.clientX, e.clientY, e.pointerId);
-    const onDown = (e: PointerEvent) => field.press(e.clientX, e.clientY, e.pointerId);
+    const onDown = (e: PointerEvent) => {
+      if (e.isPrimary && e.button === 0 && !isHoldControl(e.target)) field.press(e.clientX, e.clientY, e.pointerId);
+    };
     const onUp = (e: PointerEvent) => field.release(e.pointerId);
     window.addEventListener('pointermove', onMove, { passive: true });
     window.addEventListener('pointerdown', onDown, { passive: true });
