@@ -20,9 +20,6 @@ const SESSION_BOOTED_KEY = 'mythcorp-booted';
  * the children. Refreshing the page still re-runs boot only if you
  * close the tab in between.
  *
- * useGLTF.preload('/spectre.glb') (declared at the top of LandingPage)
- * fetches the GLB during the loading window, so when LandingPage mounts
- * the model is already cached and there's no flash of empty scene.
  */
 function AppLoader({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
@@ -98,7 +95,6 @@ function AppLoader({ children }: { children: React.ReactNode }) {
 
 /**
  * The cinematic entry: LoadingScreen (cyberpunk boot)
- *   to LandingPage (3D MYTHCORP logo, the "title card")
  *   to NewLandingPage (the warm reveal, DISCOVER YOUR POTENTIAL)
  *   to /experience (real route, full 3D scene)
  */
@@ -131,6 +127,5 @@ export default function HomePage() {
     </main>
   );
 }
-
 
 

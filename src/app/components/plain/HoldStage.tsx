@@ -3,8 +3,15 @@
 // Walkthrough: /wc/learn/plain-mode
 
 import dynamic from 'next/dynamic';
+import { useCallback, useRef, useState } from 'react';
 import type { Scheme } from './holdScheme';
 import { SCHEME_INK } from './holdScheme';
+import {
+  DEFAULT_HOLD_MODEL,
+  DEFAULT_HOLD_MODEL_ID,
+  resolveHoldModel,
+  type HoldModel,
+} from './holdModels';
 
 /**
  * Five ways to render one model, loaded one at a time. Four components, one of
@@ -55,7 +62,6 @@ export const HOLD_STYLES = ['ascii', 'particle', 'swarm', 'liquid'] as const;
 
 export type HoldStyle = (typeof HOLD_STYLES)[number];
 
-const MODEL = '/spectre.glb';
 const FILL = 'absolute inset-0 h-full w-full';
 
 /**
@@ -73,38 +79,64 @@ const FILL = 'absolute inset-0 h-full w-full';
  */
 const REACTIVE = `${FILL} pointer-events-auto`;
 
-/** Shared framing, so switching style does not also move the model. */
-const FRAME = {
-  src: MODEL,
-  scale: 2.6,
-  floatIntensity: 1.4,
-  rotationIntensity: 0.8,
-  floatSpeed: 1.6,
-  orbit: false,
-  zoom: false,
-  autoRotate: true,
-  autoRotateSpeed: 0.6,
-  environmentIntensity: 1.2,
-} as const;
-
 /**
- * The model never leaves. Background stays unset on every one of these, which
- * the components read as transparent, so the fluid field keeps showing through
- * and the words go on inking behind it.
+ * The resolved model stays transparent in every renderer, so the fluid field
+ * keeps showing through and the words go on inking behind it.
  *
  * Every colour below drags the component back to monochrome: the library ships
  * blue, neon and iridescence by default, which is the one thing plain mode
  * cannot have.
  */
-export function HoldStage({ style, scheme }: { style: HoldStyle; scheme: Scheme }) {
+export type HoldStageProps = {
+  style: HoldStyle;
+  scheme: Scheme;
+  modelId?: string | null;
+  onModelError?: (model: HoldModel) => void;
+};
+
+export function HoldStage({ style, scheme, modelId, onModelError }: HoldStageProps) {
+  const selectedModel = resolveHoldModel(modelId);
+
+  return (
+    <ResolvedHoldStage
+      key={selectedModel.id}
+      style={style}
+      scheme={scheme}
+      selectedModel={selectedModel}
+      onModelError={onModelError}
+    />
+  );
+}
+
+function ResolvedHoldStage({
+  style,
+  scheme,
+  selectedModel,
+  onModelError,
+}: {
+  style: HoldStyle;
+  scheme: Scheme;
+  selectedModel: HoldModel;
+  onModelError?: (model: HoldModel) => void;
+}) {
   const { ink, highlight } = SCHEME_INK[scheme];
+  const [model, setModel] = useState(selectedModel);
+  const reportedFailure = useRef(false);
+  const handleModelError = useCallback(() => {
+    if (reportedFailure.current) return;
+    reportedFailure.current = true;
+    onModelError?.(model);
+    if (model.id !== DEFAULT_HOLD_MODEL_ID) setModel(DEFAULT_HOLD_MODEL);
+  }, [model, onModelError]);
+  const frame = { src: model.src, ...model.frame };
 
   switch (style) {
     case 'particle':
       return (
         <ParticleObject
-          {...FRAME}
+          {...frame}
           className={REACTIVE}
+          onError={handleModelError}
           color={ink}
           count={26000}
           size={1.4}
@@ -118,8 +150,9 @@ export function HoldStage({ style, scheme }: { style: HoldStyle; scheme: Scheme 
     case 'swarm':
       return (
         <ParticleObject
-          {...FRAME}
+          {...frame}
           className={REACTIVE}
+          onError={handleModelError}
           color={ink}
           count={3200}
           size={5}
@@ -136,8 +169,9 @@ export function HoldStage({ style, scheme }: { style: HoldStyle; scheme: Scheme 
     case 'liquid':
       return (
         <LiquidObject
-          {...FRAME}
+          {...frame}
           className={REACTIVE}
+          onError={handleModelError}
           tint={ink}
           saturation={0}
           iridescence={0}
@@ -152,8 +186,9 @@ export function HoldStage({ style, scheme }: { style: HoldStyle; scheme: Scheme 
     default:
       return (
         <AsciiObject
-          {...FRAME}
+          {...frame}
           className={FILL}
+          onError={handleModelError}
           cellSize={11}
           colored={false}
           color={ink}

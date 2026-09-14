@@ -1,6 +1,17 @@
 .lander {
   --hold-reveal: 900ms;
   --hold-pause: 240ms;
+  overflow-y: auto;
+}
+
+.stage { min-height: 320px; }
+
+.specimen { top: 28%; bottom: 36%; }
+.readoutDock { justify-content: center; }
+
+@media (min-width: 1200px) {
+  .specimen { top: 28%; bottom: 8%; }
+  .readoutDock { justify-content: flex-start; padding-inline: 2.5vw; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -20,6 +31,22 @@
   background: transparent;
 }
 
+.operator > summary {
+  list-style: none;
+}
+
+.operator > summary::-webkit-details-marker {
+  display: none;
+}
+
+.operator[open] > summary,
+.operator > summary:hover,
+.operator > summary:focus-visible {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 .lander button:focus-visible, .lander summary:focus-visible, .lander a:focus-visible {
   outline: 1px solid currentColor;
   outline-offset: 5px;
@@ -28,6 +55,7 @@
 @media (max-height: 640px) {
   .lander { overflow-y: auto; }
   .stage { min-height: 420px; }
+  .readout [data-readout="compact"] [data-short] { display: none; }
 }
 
 

@@ -1,5 +1,7 @@
 'use client';
 
+import { DEFAULT_HOLD_COMPOSITION } from './holdCompositions';
+
 /**
  * Which way the message is drawn. The picker lives on the holding screen and
  * the field lives in the layout, two siblings that never meet, so the choice
@@ -12,7 +14,7 @@ export type MessageStyle = (typeof MESSAGE_STYLES)[number];
 
 export const MESSAGE_LINES = ['WORK IN', 'PROGRESS'] as const;
 
-const DEFAULT: MessageStyle = 'field';
+const DEFAULT: MessageStyle = DEFAULT_HOLD_COMPOSITION.message;
 
 let current: MessageStyle = DEFAULT;
 const listeners = new Set<() => void>();

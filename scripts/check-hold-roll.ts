@@ -10,7 +10,7 @@
  * tell you either of those things. Counting the outcomes does.
  */
 import { rollHold, HOLD_NOISE } from '../src/app/components/plain/holdRoll';
-import { HOLD_COMPOSITIONS, compositionName } from '../src/app/components/plain/holdCompositions';
+import { DEFAULT_HOLD_COMPOSITION, HOLD_COMPOSITIONS, compositionName } from '../src/app/components/plain/holdCompositions';
 
 const STYLES = ['ascii', 'particle', 'swarm', 'liquid'] as const;
 const MESSAGES = ['field', 'solid', 'decode', 'dust'] as const;
@@ -68,7 +68,13 @@ for (const composition of HOLD_COMPOSITIONS) {
   }
   authoredKeys.add(key);
 }
-if (compositionName({ style: 'ascii', message: 'dust', overlay: 'none' }) !== 'Custom') {
+if (compositionName({ style: 'liquid', message: 'decode', overlay: 'none' }) !== 'Custom') {
   throw new Error('Manual composition must remain identifiable as Custom');
+}
+if (DEFAULT_HOLD_COMPOSITION.name !== 'Halo') {
+  throw new Error('Cold visits must begin with Halo');
+}
+if (DEFAULT_HOLD_COMPOSITION.overlay !== 'none') {
+  throw new Error('Halo must begin without a secondary overlay');
 }
 console.log(`${authoredKeys.size} authored compositions: unique and within budget`);

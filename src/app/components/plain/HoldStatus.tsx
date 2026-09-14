@@ -2,13 +2,18 @@
 
 // Walkthrough: /wc/learn/plain-mode
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useId, useState, useSyncExternalStore } from 'react';
 import { DisturbedText, GENTLE } from './DisturbedText';
 import {
   getMetrics,
   getServerMetrics,
   subscribeMetrics,
 } from './fieldMetrics';
+import {
+  getFieldActivity,
+  getServerFieldActivity,
+  subscribeFieldActivity,
+} from './fieldActivity';
 
 /**
  * The meter is by far the widest row: 28 cells plus the brackets and the
@@ -35,61 +40,86 @@ const OPENED_AT = Date.now();
 
 /**
  * The readout. Every number here is measured rather than decorative: the grid
- * really is that size, the meter really is the field's mean dye, and the clock
- * really is how long you have been on the page.
+ * really is that size, the activity meter reflects recent visitor input, and
+ * the clock really is how long you have been on the page.
  */
 export function HoldStatus({
-  style, scheme, message, overlay, onCycle, scene, onScene,
+  style, scheme, message, overlay, onCycle, scene, onScene, model, onModel,
 }: {
   style: string; scheme: string; message: string; overlay: string;
   scene?: string; onScene?: () => void;
+  model?: string; onModel?: () => void;
   /** Given a row, advance it to the next option. Rows without one stay read-only. */
   onCycle?: { render: () => void; words: () => void; over: () => void };
 }) {
   const metrics = useSyncExternalStore(subscribeMetrics, getMetrics, getServerMetrics);
+  const activity = useSyncExternalStore(
+    subscribeFieldActivity, getFieldActivity, getServerFieldActivity,
+  );
   const elapsed = useElapsed();
+  const wide = useSyncExternalStore(subscribeWide, getWide, () => false);
+  const [expandedChoice, setExpandedChoice] = useState<boolean | null>(null);
+  const expanded = expandedChoice ?? wide;
+  const controlsId = useId();
 
-  // The meter reads low even when the screen looks busy, so give it a curve
-  // that spends its range where the values actually live.
-  const level = Math.min(1, Math.sqrt(metrics.ink * 6));
   const bar = (cells: number) => {
-    const filled = Math.round(level * cells);
+    const filled = Math.round(activity.level * cells);
     return '#'.repeat(filled) + '.'.repeat(cells - filled);
   };
 
   return (
-    <div className="flex flex-col gap-2">
-    <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 font-mono text-[11px]
+    <div className="flex flex-col gap-2" data-readout={expanded ? 'full' : 'compact'}>
+    <dl id={controlsId} className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 font-mono text-[11px]
                    uppercase tracking-[0.12em] text-[color:var(--fg-muted)]
                    sm:gap-x-6 sm:tracking-[0.18em]">
       <Row label="status" value="building" />
-      <Row label="elapsed" value={elapsed} />
-      <Row label="field" value={metrics.cols ? `${metrics.cols} x ${metrics.rows} cells` : 'idle'} />
+      <Row label="elapsed" value={elapsed} hideOnShort />
+      <Row label="grid" value={metrics.cols ? `${metrics.cols} x ${metrics.rows} cells` : 'idle'} hideOnShort />
       <Row label="scene" value={scene ?? style} onCycle={onScene} />
+      {expanded && <>
+        {model && <Row label="specimen" value={model} onCycle={onModel} />}
+        <Row label="render" value={style} onCycle={onCycle?.render} />
+        <Row label="scheme" value={scheme} />
+        <Row label="words" value={message} onCycle={onCycle?.words} />
+        <Row label="scan" value="active" />
+        <Row label="over" value={overlay} onCycle={onCycle?.over} />
+      </>}
       <Row
-        label="ink"
+        label="movement"
         value={
-          <span className="text-[color:var(--fg)]">
+          <span
+            className="text-[color:var(--fg)]"
+            data-field-activity={activity.state}
+            data-movement-level={activity.level}
+            aria-label={`Movement ${activity.state}`}
+          >
             <span className="sm:hidden" aria-hidden>[{bar(BAR_CELLS_NARROW)}]</span>
             <span className="hidden sm:inline" aria-hidden>[{bar(BAR_CELLS_WIDE)}]</span>
-            {' '}{String(Math.round(level * 100)).padStart(3, ' ')}%
+            {' '}{activity.state}
           </span>
         }
       />
     </dl>
-    {onCycle && (
-      <details className="font-mono text-[11px] text-[color:var(--fg-muted)]">
-        <summary className="w-fit cursor-pointer py-3 tracking-[0.12em]">Tune composition</summary>
-        <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 pb-3 uppercase tracking-[0.12em]">
-          <Row label="render" value={style} onCycle={onCycle.render} />
-          <Row label="words" value={message} onCycle={onCycle.words} />
-          <Row label="over" value={overlay} onCycle={onCycle.over} />
-          <Row label="scheme" value={scheme} />
-        </dl>
-      </details>
-    )}
+    <button
+      type="button"
+      aria-expanded={expanded}
+      aria-controls={controlsId}
+      onClick={() => setExpandedChoice(!expanded)}
+      className="min-h-11 w-fit py-2 font-mono text-[11px] text-[color:var(--fg-muted)]
+                 underline-offset-4 hover:text-[color:var(--fg)] hover:underline"
+    >
+      {expanded ? 'Compact readout' : 'Full readout'} <span aria-hidden>{expanded ? '−' : '+'}</span>
+    </button>
     </div>
   );
+}
+
+const WIDE_QUERY = '(min-width: 1200px) and (min-height: 680px)';
+function getWide() { return window.matchMedia(WIDE_QUERY).matches; }
+function subscribeWide(listener: () => void) {
+  const media = window.matchMedia(WIDE_QUERY);
+  media.addEventListener('change', listener);
+  return () => media.removeEventListener('change', listener);
 }
 
 /**
@@ -98,19 +128,19 @@ export function HoldStatus({
  * renders is a placeholder by definition rather than a mismatch to fix.
  */
 function Row({
-  label, value, onCycle,
+  label, value, onCycle, hideOnShort,
 }: {
-  label: string; value: React.ReactNode; onCycle?: () => void;
+  label: string; value: React.ReactNode; onCycle?: () => void; hideOnShort?: boolean;
 }) {
   return (
     <>
-      <dt className="text-[color:var(--fg-subtle)]">
+      <dt data-short={hideOnShort || undefined} className="text-[color:var(--fg-subtle)]">
         <DisturbedText text={label} strength={GENTLE} />
       </dt>
       {/* The meter is already glyphs and is not a string, so it is passed
           through untouched. Everything else in the readout is text and erodes
           like the rest of the screen. */}
-      <dd className="whitespace-pre" suppressHydrationWarning>
+      <dd data-short={hideOnShort || undefined} className="whitespace-pre" suppressHydrationWarning>
         {onCycle && typeof value === 'string' ? (
           <button
             type="button"

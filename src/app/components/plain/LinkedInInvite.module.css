@@ -1,0 +1,196 @@
+.invite {
+  --linkedin-pet-duration: 2.4s;
+  --linkedin-pet-travel: clamp(120px, 22vw, 280px);
+  --linkedin-glow-radius: 14px;
+  --linkedin-glow-spread: -9px;
+  --linkedin-glow-core-radius: 4px;
+  --linkedin-glow-core-spread: -4px;
+  --linkedin-glow-ring: 0px;
+  --linkedin-pulse-opacity: 0.28;
+  --linkedin-arrow-shift: 0px;
+  position: relative;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  background: var(--bg-elevated);
+  box-shadow: 0 0 0 1px var(--accent-glow),
+    0 0 0 var(--linkedin-glow-ring) var(--accent-glow-strong),
+    0 0 var(--linkedin-glow-core-radius) var(--linkedin-glow-core-spread) var(--accent),
+    0 0 var(--linkedin-glow-radius) var(--linkedin-glow-spread) var(--accent-glow-strong);
+  text-decoration: none;
+  transition: box-shadow 90ms linear, color var(--motion-base) var(--motion-ease),
+    border-color var(--motion-base) var(--motion-ease);
+}
+
+.invite::before {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 1px var(--accent-glow), 0 0 22px -7px var(--accent-glow-strong);
+  opacity: var(--linkedin-pulse-opacity);
+  animation: invite-pulse 5s var(--motion-ease) infinite;
+  transition: opacity 120ms linear;
+}
+
+.invite:hover,
+.invite:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-glow),
+    0 0 0 3px var(--accent-glow-strong),
+    0 0 22px -1px var(--accent),
+    0 0 52px -1px var(--accent-glow-strong);
+}
+
+.linkedInMark {
+  display: grid;
+  width: 1.45rem;
+  height: 1.45rem;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.label {
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 0.12rem;
+}
+
+.exitArrow {
+  color: var(--accent);
+  font-size: 16px;
+  transform: translateX(var(--linkedin-arrow-shift));
+  transition: transform 90ms linear;
+}
+
+.invite:hover::before,
+.invite:focus-visible::before {
+  opacity: 0;
+  animation-play-state: paused;
+}
+
+.pet {
+  pointer-events: none;
+  position: absolute;
+  left: -1.75rem;
+  top: 50%;
+  width: 1.2rem;
+  height: 1rem;
+  color: var(--accent);
+  opacity: 0.55;
+  transform: translate(-0.8rem, -50%);
+}
+
+.pet svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.waiting {
+  transform: translate(calc(var(--linkedin-pet-travel) * -1), -50%);
+}
+
+.settled {
+  transform: translate(0, -50%);
+  opacity: 0.72;
+}
+
+.approaching {
+  animation: approach var(--linkedin-pet-duration) var(--motion-ease) 1 forwards;
+  animation-delay: 0ms;
+}
+
+.following {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 30;
+  opacity: 0.72;
+}
+
+.magneticCursor {
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 31;
+  width: 0.85rem;
+  height: 1.05rem;
+  color: var(--accent);
+  opacity: 0;
+  transform: translate3d(-2rem, -2rem, 0);
+  transition: opacity var(--motion-base) var(--motion-ease);
+}
+
+.magneticCursor svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pulling {
+  opacity: 0.68;
+}
+
+@keyframes invite-pulse {
+  0%, 100% {
+    transform: scale(0.985);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+@keyframes approach {
+  0% {
+    opacity: 0.2;
+    transform: translate(calc(var(--linkedin-pet-travel) * -1), -50%);
+  }
+  65% {
+    opacity: 0.78;
+    transform: translate(0.12rem, -58%) rotate(-5deg);
+  }
+  100% {
+    opacity: 0.72;
+    transform: translate(0, -50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invite {
+    transition: none;
+  }
+
+  .invite::before {
+    animation: none;
+    opacity: 0.28;
+  }
+
+  .waiting,
+  .approaching,
+  .settled,
+  .following {
+    animation: none;
+  }
+
+  .waiting {
+    opacity: 0.72;
+    transform: translate(0, -50%);
+  }
+
+  .magneticCursor {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .invite {
+    --linkedin-pet-travel: clamp(88px, 27vw, 150px);
+  }
+}

@@ -15,6 +15,7 @@
  * the usable copy rather than this one.
  */
 import { DisturbedText, GENTLE } from './DisturbedText';
+import { LinkedInInvite } from './LinkedInInvite';
 
 const LINES = ['info@mythcorp.com', '(676) 767-7676', 'CHICAGO, IL'] as const;
 
@@ -40,8 +41,9 @@ export function HoldContact() {
 /** The reachable copy: small, in the corner, and actually clickable. */
 export function HoldContactLinks() {
   return (
-    <address className="flex flex-col gap-1 not-italic font-mono text-[11px]
+    <address className="ml-auto flex flex-col gap-1 not-italic font-mono text-[11px]
                         uppercase tracking-[0.18em] text-[color:var(--fg-subtle)]">
+      <LinkedInInvite />
       <a
         href="mailto:info@mythcorp.com"
         className="w-fit transition-colors hover:text-[color:var(--fg)]"

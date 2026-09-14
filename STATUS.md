@@ -1,5 +1,236 @@
 # STATUS
 
+## Stronger LinkedIn proximity light, 2026-09-13
+
+LinkedIn proximity now increases light density as well as reach. The close state
+adds a 22px accent core, grows the outer halo to 52px and thickens the second
+ring to 3px. All three still follow the same smooth 240px distance curve, so the
+button brightens progressively instead of flashing at a threshold.
+
+## Quieter LinkedIn cue and future sound audition, 2026-09-13
+
+The redundant `profile signal` caption and its misplaced floating arrow are
+gone. The screenshot made the problem clear: the arrow pointed into the
+button's corner instead of helping the visitor. The responsive glow, `in` mark,
+external arrow inside the target and accessible link name remain.
+
+The downloaded Jurassic dinosaur sound is a future audition, not a current
+autoplay behavior. File provenance resolves to JoelFazhari's royalty-free
+Pixabay library item under the Pixabay Content License. GitHub issue #41 records
+the source and requires a visitor gesture, conservative volume, an obvious mute,
+reduced-data awareness and a silent fallback before any public integration.
+
+## Responsive LinkedIn signal and authored solid type, 2026-09-13
+
+The LinkedIn exit now reads as a purpose-built control rather than another text
+link. It has a compact `in` mark, an external arrow and a small profile-signal
+cue that points toward the target. Pointer proximity now drives the cue, arrow
+travel, a second ring and a brighter halo on the same continuous curve. Hover,
+focus, touch and reduced-motion behavior preserve the semantic link contract.
+
+Solid `WORK IN PROGRESS` mode now has a slow 12.8-second type phase across
+weight, tracking, glow, outline and a clipped scan. The existing pointer
+disturbance remains active. Reduced motion keeps a crisp static treatment with
+no passive animation. No font or dependency was added.
+
+Canvas UI's responsive-effect principles informed the proximity treatment, but
+the public link remains reliable HTML instead of taking on an experimental GPU
+wrapper. Flashlight mode is recorded as GitHub issue #40 for a bounded `/og`
+audition with touch, keyboard, reduced-motion, contrast and performance gates.
+
+`npm run check` passed lint, text policy, the 32-route production build and
+TypeScript. `npm run check:roll` passed, followed by all 15 Chromium smoke tests,
+including continuous glow ordering, the exact profile contract, the passive
+solid cycle, reduced motion and mobile overflow. No commit, push or deployment.
+
+## Movement signal and magnetic LinkedIn response, 2026-09-13
+
+The readout now says MOVEMENT and derives its level from pointer speed. Slow
+motion raises the bar gently, faster travel ramps it toward SURGE, and an
+exponential release returns it to CALM. Clicks no longer inflate a value that
+claims to measure movement.
+
+LinkedIn brightness now follows a smooth 240px distance curve instead of one
+128px threshold. Its slow pulse remains, but fades as proximity becomes the
+stronger signal. Hover and keyboard focus still provide an unambiguous state.
+
+The cat now eases back to LinkedIn when the pointer crosses a control instead
+of teleporting. Since browser code cannot move the real system pointer, 900ms
+of pointer stillness starts a decorative cursor echo that takes 3.2 seconds to
+travel toward LinkedIn and feeds the same glow curve. The same idle trigger now
+eases the cat home beside the link. Fresh movement cancels the echo immediately.
+The real pointer and click target never move. Close proximity now adds a
+continuous second ring and expands the halo to 40px, making the increase in
+brightness plainly visible instead of only widening a faint blur.
+
+Focused browser checks cover the movement-speed ramp, continuous glow ordering,
+cat return, cursor-echo travel and cancellation, reduced motion, touch and
+mobile overflow. `npm run check` passed lint, text policy, the production build
+and TypeScript. `npm run check:roll` passed, followed by all 14 Chromium smoke
+tests. The visible local browser was refreshed and the cursor echo was observed
+mid-pull with LinkedIn brightening along its route. No commit, push or deployment.
+
+## Cursor companion and LinkedIn pulse, 2026-09-13
+
+The LinkedIn cat now follows fine mouse pointers after its existing five-second
+approach. It eases toward one of four comfortable offsets, stays inside an 8px
+viewport inset, avoids interactive controls, and parks beside the LinkedIn link
+on touch, blur, hidden tabs, resize or scroll. Reduced motion keeps the original
+static companion. The cat remains decorative and cannot intercept clicks.
+
+The LinkedIn link now carries a slow five-second theme-token pulse. Pointer
+proximity, hover and keyboard focus replace the idle pulse with the stronger
+existing response, so interaction state remains clear. Reduced motion removes
+the animation while retaining a static outline.
+
+Focused browser coverage now checks the exact profile contract, intro and
+follow phases, viewport bounds, link clearance, pulse state, proximity response
+and the reduced-motion fallback. `npm run check` and `npm run check:roll` passed,
+then the full 13-test Chromium smoke suite passed, including a 390px touch and
+overflow check. A final 1280px screenshot inspection showed the cat at its
+intended lower-right pointer offset with the LinkedIn control unobstructed. This
+remains local work with no commit, push or deployment.
+
+## Plain-only route lock and field activity, 2026-09-13
+
+The local application is now locked to the plain holding installation at `/`.
+The shared `SITE_LOCKED` flag pins pre-paint and client theme state to plain,
+even when local storage contains another theme. Main-host page requests outside
+`/` redirect back to the holding page. Next assets, public files and API
+requests remain available, and the separate image-host rewrite is unchanged.
+No route or production configuration was deleted or changed.
+
+The readout's ambiguous ink percentage is now a recent-input FIELD bar. Pointer
+movement raises it, a click or tap gives it a larger pulse, and it drains from
+SURGE through ACTIVE to CALM in about three seconds. The former field-dimension
+row is now labeled GRID.
+
+The Playwright smoke contract now covers fresh storage, a stored nonplain
+theme, reduced motion, representative direct-route redirects, required Next
+asset loading, runtime errors and the observable activity sequence. This is a
+local change, not a deployment or human acceptance result.
+
+## Parallel backlog pass, 2026-09-13
+
+Three audits are now off the local queue. `/wc/learn/landing-flow` documents
+the current two-stage `LoadingScreen` to `NewLandingPage` boot, including the
+session skip, `?boot` replay, fixed fade timing and skyline preload. Stale
+title-card and GSAP material is gone from the live lesson and its index copy.
+
+A new Playwright smoke suite covers `/`, `/experience` and the AI cybercrime
+paper, stored-theme bootstrap, the paper's reduced-motion layout, browser
+console errors and uncaught page errors. It runs with `npm run test:smoke` and
+uses one Chromium worker against a managed local dev server. The first parallel
+run exposed a shared `.next` cache race with another dev server; the isolated
+rerun passed all five tests.
+
+`npm run post:backlog` is now intentionally read-only. It parses the current
+triaged bullet format, reports the local queue and rejects mutation-shaped
+options. Four focused tests cover parsing, dry-run output, operation without
+`gh` and the absence of a GitHub mutation path. No issues were created or
+changed.
+
+The reported Chrome stale-canvas transition did not reproduce in two baseline
+attempts, so it is not recorded as fixed. The field now hides and releases its
+backing store synchronously before a nonplain theme applies, with the same
+release repeated during normal cleanup. A production Chrome pass disturbed the
+plain field, switched `/about` to cyberpunk, observed zero remaining canvases,
+no stale pixels and no console warnings or errors. The backlog retains a check
+on the original affected profile.
+
+Parallel agents owned the landing lesson, backlog command and Chrome lifecycle
+lanes; root reviewed and integrated them with the smoke suite and live project
+documents. No commit, push or deployment.
+
+## Scan, decode and concurrent interactions, 2026-09-13
+
+The intended halo is now the existing scan effect. It stays active as a base
+layer while the `over` control selects an optional second background. The
+mistaken ground ring, its state and its readout control are gone. The expanded
+readout reports `scan active` separately from the secondary overlay.
+
+The LinkedIn cat now crosses a responsive 120px to 280px desktop distance over
+2.4 seconds after five visible seconds, then settles beside the link. Phones use
+a shorter bounded route. Moving a mouse within 128px gives the link a stronger
+theme-token glow and accent response; hover and keyboard focus do the same.
+Reduced motion starts with the cat settled. No remote profile iframe is used.
+
+Decode titles now repeat a 42-frame glyph resolution with a brief scan-like
+sweep and settle treatment. Reduced motion shows the resolved phrase without
+the sweep or blur. The title remains accessible through the page heading.
+
+Click feedback now retains up to four independent 620ms rings, so quick clicks
+can produce concurrent waves. The existing control exclusion and reduced-motion
+suppression remain. Gravity-mode and cursor-following cat experiments are
+recorded in `BACKLOG.md` with bounds for reset, controls and reduced motion.
+
+Smaller agents implemented the separate lanes; root reviewed and integrated
+them. `npm run check` passed (lint, text policy, production build and TypeScript),
+as did `npm run check:roll`. Production browser checks observed the scan alone
+and with rain, the decode transition and resolved phrase, a cat mid-crossing,
+the pointer-near link response, three simultaneous click rings, and zero rings
+under reduced motion. The 390px layout had no horizontal overflow and its full
+readout remained usable. No browser errors were captured. No commit, push or
+deployment.
+
+## Halo, swappable specimens and LinkedIn pet, 2026-09-13
+
+Cold visits now start with Halo: ASCII spectre, dust lettering, no screen
+overlay, and a static ground halo. The spectre has larger, lower framing, and
+the dust title fits its actual canvas aspect so narrow phones do not clip it.
+
+The fuller instrument readout wins the desktop comparison and starts open on
+wide, tall screens. It sits left of the model. Full/compact switching remains
+available, and phones start compact with a scrollable full mode. Very short
+compact layouts omit the clock and field size to keep clear of the ground ring.
+
+`holdModels.ts` now controls local GLBs, framing and provenance metadata for
+all four renderers. The original calibration model demonstrates a live swap.
+Unknown ids resolve to spectre; failed alternate loads report the failure and
+return to spectre. The supplied Sketchfab model remains a future candidate.
+Exact onboarding steps live in `docs/HOLD_MODEL_ONBOARDING.md`.
+
+LinkedIn keeps its obvious label and 44px target, gains a restrained monochrome
+glow, and receives one brief visit from a tiny original cat after five visible
+seconds. It never clicks or opens the profile automatically. Reduced motion
+keeps it static; hiding the tab during the approach settles it. The user-approved
+glow exceptions and current layout policy are recorded in `DESIGN.md`.
+
+Two smaller agents built the model and LinkedIn lanes; root integrated and
+reviewed both. `npm run check` passed (lint, text policy, production build and
+TypeScript), as did `npm run check:roll`. Browser checks covered both models in
+all four renderers, a blocked alternate asset returning to spectre, the halo
+toggle, desktop and 390px/320px layouts, light/dark, keyboard readout switching,
+and reduced motion. The short phone's expanded readout clears the ring and
+scrolls without horizontal overflow. The cat reaches its settled state after
+the idle interval. No browser errors remained in the final production preview.
+No commit, push or deployment.
+
+## LinkedIn and quiet discoveries, 2026-09-13
+
+The WIP lander now has an always-visible, high-contrast "Find me on LinkedIn"
+link above the lower-right contacts. It uses the supplied `/in/0w0/` profile,
+opens a new tab, has a 44px target, and stays readable under pointer effects.
+
+A separate `0w0` disclosure in the lower-left reveals a small operator note,
+touch-accessible entry to the existing console, and `/robots.txt`. The robot
+notes point back to the console's existing `cat readme` and `ls` commands.
+There is no new ambient effect, timer, persistence, or discovery counter.
+
+The robots metadata generator moved to a static text route so comments survive
+serialization. Crawler directives and the configurable canonical host are
+preserved, including crawl access for `/a` embeds. Console discovery also gets
+focus containment, Escape and focus return, phone input sizing, and a scoped
+entrance that honors reduced motion. Existing local changes remain in place.
+
+Validation: `npm run check` passed (lint, text policy, production build and
+TypeScript). Route assertions verified the exact crawler directives, plain-text
+response, canonical host and a configured host with a trailing slash. Browser
+checks covered desktop, 390px and 320px layouts, light/dark, keyboard disclosure,
+console commands, focus return, all four console themes, and an emulated
+reduced-motion entrance. No browser errors were captured. Physical touch and
+screen-reader testing remain unverified. This is a local change, not a deployment.
+
 ## Lander copy cleanup, 2026-09-08
 
 Removed the field interaction hint below Tune composition at the user's request.
@@ -80,6 +311,58 @@ in code, not failure-injected. This is a local pass, not an award-readiness,
 performance or full accessibility certification. The plain holding screen
 continues to gate the interiors by design.
 
+## Verification and encoding cleanup, 2026-09-07
+
+`npm run check` now enforces four gates in order: ESLint over maintained source,
+the no-em-dash text policy, the production build, and TypeScript. The former
+`next lint` command was obsolete, while running ESLint over the repository root
+also scanned generated `.next` and `.open-next` output and produced 28,600 false
+findings. The new command names the owned source and configuration surfaces
+explicitly. Two obsolete lint-disable comments were removed.
+
+New `scripts/check-text.mjs` checks maintained source and live project documents
+while excluding vendored Canvas UI, code archives, generated output, and dated
+historical records. It currently checks 140 files.
+
+The same pass repaired mojibake in `/og/animals` and the terminal navigation
+readout. Emoji, bullets, and direction arrows now render as their intended
+characters instead of broken UTF-8 text. The full check is green across 32
+routes.
+
+## Current-state hygiene, 2026-09-07
+
+The repository root is operational again. Superseded execution briefs, the old
+cold-start handoff, the mixed backlog, and the PowerShell issue importer moved
+under `docs/archive/`. The fourth-theme builder remains a future candidate at
+`docs/plans/FLAGSHIP_FOURTH_THEME.md` rather than being presented as selected
+work.
+
+The approximate 250-line rule is retired. `CLAUDE.md` now asks contributors to
+split by responsibility when extraction improves ownership, testing, or
+navigation. Cohesive long files are allowed. Dated entries below retain the old
+rule as project history.
+
+`BACKLOG.md` is now a small, triaged local queue. GitHub Issues remain useful as
+intake, but they contain shipped items that need reconciliation before the issue
+list can be treated as current state. Root pointers and the README now lead to
+`STATUS.md`, `MAP.md`, `CLAUDE.md`, `DESIGN.md`, and the triaged backlog.
+
+The same pass corrected stale README claims about FMHY routes and CI, removed an
+obsolete `LandingPage` stage from the live route documentation, and preserved
+all retired plans with an archive index.
+
+`DESIGN.md` now also owns the long-term coolness strategy: one signature per
+important page, explicit spectacle budgets, an `/og` experiment-to-promotion
+path, a scoped reference field guide, and a protocol for absorbing interaction
+principles without copying another site's visual surface.
+
+A rendered desktop audit then corrected that strategy against the actual site.
+Plain is now documented as the fourth design language and current front-page
+identity. The audit records the holding screen as the spectacle ceiling, the
+cybercrime paper as the strongest interior reference, and concrete gaps on
+`/experience`, `/wc`, and `/about`. It also queues reproduction of a Chrome
+transition defect where the retired plain canvas remains visibly composited
+beneath a themed interior despite no canvas remaining in the DOM.
 
 ## Dependency upgrade, and `ink` cut for drawing nothing, 2026-09-05
 
@@ -892,4 +1175,3 @@ The full backlog is in `BACKLOG.md` (24+ items). High-leverage next steps:
 
 ## Codex brief completion, 2026-07-24
 Completed the storefront/workshop cleanup: about and contact remain slim WIP pages, animals lives at `/og/animals` as a parked sketch, the hero experiment has its own `/og/hero-lab` route, and the landing keeps one reduced-motion-safe reactive title. The workshop is noindexed and disallowed in robots while remaining reachable through its single Sketches door. Repointed the experience palate-cleanser link and removed the stale EnterBanner map row.
-

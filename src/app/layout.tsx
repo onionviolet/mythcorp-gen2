@@ -9,6 +9,7 @@ import { PlainField } from "./components/plain/PlainField";
 import { PlainHold } from "./components/plain/PlainHold";
 import { PLAIN_OPEN_PREFIXES, HOLD_ATTR } from "./components/plain/holdState";
 import { SCHEME_ATTR, SCHEME_KEY } from "./components/plain/holdScheme";
+import { SITE_LOCKED } from "../siteLock";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,14 +31,10 @@ export const metadata: Metadata = {
   description: "Founded in Chicago - Discover Your Potential with MYTHCORP",
 };
 
-// Inline so it runs before paint: it avoids a flash of the wrong theme, and
-// in plain mode a flash of the real page before the holding screen covers it.
-//
-// The storage key carries a version. Bumping it to v2 when plain became the
-// default is what holds returning visitors too: an older `mythcorp-theme`
-// value is simply not read, so everyone starts on plain and anyone who leaves
-// writes their choice under the new key.
-const themeBootstrap = `(function(){var o=${JSON.stringify(PLAIN_OPEN_PREFIXES)};var d=document.documentElement;var t='plain';try{var s=localStorage.getItem('mythcorp-theme-v2');if(s==='cyberpunk'||s==='luxury'||s==='paper'||s==='plain'){t=s;}}catch(e){}d.dataset.theme=t;if(t==='plain'){var p=location.pathname.replace(/\\/+$/,'')||'/';var open=false;for(var i=0;i<o.length;i++){if(p===o[i]||p.indexOf(o[i]+'/')===0){open=true;break;}}if(!open){d.setAttribute('${HOLD_ATTR}','on');}var c='system';try{var q=localStorage.getItem('${SCHEME_KEY}');if(q==='light'||q==='dark'||q==='system'){c=q;}}catch(e){}var dark=c==='dark'||(c==='system'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);d.setAttribute('${SCHEME_ATTR}',dark?'dark':'light');}})();`;
+// Inline so it runs before paint: it avoids a flash of the wrong theme or the
+// hidden page before the holding screen covers it. While SITE_LOCKED is true,
+// stored theme choices remain untouched but cannot override plain.
+const themeBootstrap = `(function(){var l=${SITE_LOCKED};var o=${JSON.stringify(PLAIN_OPEN_PREFIXES)};var d=document.documentElement;var t='plain';if(!l){try{var s=localStorage.getItem('mythcorp-theme-v2');if(s==='cyberpunk'||s==='luxury'||s==='paper'||s==='plain'){t=s;}}catch(e){}}d.dataset.theme=t;if(l||t==='plain'){var p=location.pathname.replace(/\\/+$/,'')||'/';var open=false;for(var i=0;i<o.length;i++){if(p===o[i]||p.indexOf(o[i]+'/')===0){open=true;break;}}if(l||!open){d.setAttribute('${HOLD_ATTR}','on');}var c='system';try{var q=localStorage.getItem('${SCHEME_KEY}');if(q==='light'||q==='dark'||q==='system'){c=q;}}catch(e){}var dark=c==='dark'||(c==='system'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);d.setAttribute('${SCHEME_ATTR}',dark?'dark':'light');}})();`;
 
 // Chrome origin trial tokens, served so the html-in-canvas API is live for
 // ordinary visitors rather than only for whoever has flipped

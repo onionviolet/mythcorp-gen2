@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { THEMES, useTheme, type ThemeName } from '../contexts/ThemeContext';
+import { TERMINAL_OPEN_EVENT } from './terminalEvents';
+import terminal from './terminalOverlay.module.css';
 
 /**
  * Press "/" anywhere to open a cosmetic terminal. It looks real but has no
@@ -32,6 +34,7 @@ export function TerminalOverlay() {
   const [histIdx, setHistIdx] = useState<number | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Global "/" to open, when not typing into a field and not already open.
@@ -41,18 +44,30 @@ export function TerminalOverlay() {
       const t = e.target as HTMLElement | null;
       const tag = (t?.tagName ?? '').toLowerCase();
       if (tag === 'input' || tag === 'textarea' || t?.isContentEditable) return;
-      if (e.key === '/') {
+      if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
         e.preventDefault();
         setOpen(true);
       }
     };
+    const onOpen = () => setOpen(true);
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener(TERMINAL_OPEN_EVENT, onOpen);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener(TERMINAL_OPEN_EVENT, onOpen);
+    };
   }, [open]);
 
   // Focus the input and keep the log scrolled to the bottom when open.
   useEffect(() => {
-    if (open) inputRef.current?.focus();
+    if (!open) return;
+    const previousFocus = document.activeElement;
+    inputRef.current?.focus();
+    return () => {
+      if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
+        previousFocus.focus();
+      }
+    };
   }, [open]);
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -131,7 +146,7 @@ export function TerminalOverlay() {
   };
 
   const navigate = (path: string) => {
-    print([{ kind: 'sys', text: `â†’ ${path}` }]);
+    print([{ kind: 'sys', text: `→ ${path}` }]);
     setOpen(false);
     router.push(path);
   };
@@ -166,22 +181,41 @@ export function TerminalOverlay() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[9000] flex flex-col" role="dialog" aria-label="Terminal">
+    <div
+      ref={dialogRef}
+      className="fixed inset-0 z-[9000] flex flex-col"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Terminal"
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          setOpen(false);
+        }
+        if (event.key !== 'Tab') return;
+        const controls = dialogRef.current?.querySelectorAll<HTMLElement>('button, input');
+        if (!controls?.length) return;
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }}
+    >
       <div
-        className="absolute inset-0 bg-black/40"
+        className="absolute inset-0 bg-[color:var(--bg-overlay)]"
         onClick={() => setOpen(false)}
         aria-hidden
       />
       <div
-        className="terminal-in relative max-h-[60vh] min-h-[14rem] w-full
+        className={`${terminal.panel} relative max-h-[60dvh] min-h-[14rem] w-full
                    border-b border-[color:var(--border-strong)]
-                   bg-[color:var(--bg-overlay)] backdrop-blur-md"
-        onClick={() => inputRef.current?.focus()}
+                   bg-[color:var(--bg-elevated)]`}
       >
-        <style>{`
-          @keyframes terminalIn { from { transform: translateY(-100%); } to { transform: translateY(0); } }
-          .terminal-in { animation: terminalIn 0.22s ease-out; }
-        `}</style>
 
         <div className="flex items-center justify-between border-b border-[color:var(--border)] px-4 py-2">
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[color:var(--accent)]">
@@ -190,8 +224,8 @@ export function TerminalOverlay() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)]
-                       transition-colors hover:text-[color:var(--accent)]"
+            className="min-h-11 px-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-muted)]
+                       hover:text-[color:var(--accent)] focus-visible:outline focus-visible:outline-offset-2"
           >
             esc to close
           </button>
@@ -199,11 +233,13 @@ export function TerminalOverlay() {
 
         <div
           ref={scrollRef}
-          className="max-h-[calc(60vh-5.5rem)] overflow-y-auto px-4 py-3 font-mono text-sm leading-relaxed"
+          className="max-h-[calc(60dvh-5.5rem)] overflow-y-auto px-4 py-3 font-mono text-xs leading-relaxed sm:text-sm"
         >
-          {lines.map((l, i) => (
-            <Row key={i} line={l} />
-          ))}
+          <div role="log" aria-label="Console output">
+            {lines.map((l, i) => (
+              <Row key={i} line={l} />
+            ))}
+          </div>
 
           <div className="flex items-center gap-2">
             <span className="text-[color:var(--accent)]">visitor@mythcorp:~$</span>
@@ -214,8 +250,11 @@ export function TerminalOverlay() {
               onKeyDown={onInputKey}
               spellCheck={false}
               autoComplete="off"
+              autoCapitalize="off"
+              autoCorrect="off"
+              enterKeyHint="send"
               aria-label="Terminal input"
-              className="flex-1 bg-transparent text-[color:var(--fg)] outline-none"
+              className="min-w-0 flex-1 bg-transparent text-[color:var(--fg)] outline-none"
             />
           </div>
         </div>
@@ -239,5 +278,5 @@ function Row({ line }: { line: Line }): ReactNode {
       : line.kind === 'sys'
         ? 'text-[color:var(--fg-subtle)]'
         : 'text-[color:var(--fg)]';
-  return <div className={color}>{line.text}</div>;
+  return <div className={`${color} whitespace-pre-wrap break-words`}>{line.text}</div>;
 }

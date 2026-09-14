@@ -13,10 +13,9 @@ export default function BuildAPlaygroundWalkthrough() {
       intro={
         <p>
           The other walkthroughs let you poke the real site: recolor its tokens,
-          crank its star density, step its boot sequence. This one is about the
-          three small pieces that make that possible, and it embeds each of them
-          as it describes them. The demos on this page are the components on this
-          page.
+          then crank its star density. This one is about the three small pieces
+          that make that possible, and it embeds each of them as it describes
+          them. The demos on this page are the components on this page.
         </p>
       }
     >
@@ -156,7 +155,6 @@ const getMiniDefaults = () => ({ ...MINI_DEFAULTS });`}</Code>
           <li><code>src/app/wc/learn/_components/TokenPlayground.tsx</code>, live CSS-variable editor</li>
           <li><code>src/app/wc/learn/_components/MiniStarField.tsx</code>, the pocket R3F scene</li>
           <li><code>src/app/wc/learn/_components/MiniStarFieldDemo.tsx</code>, its controls + ssr:false loader</li>
-          <li><code>src/app/wc/learn/_components/FlowStepper.tsx</code>, the boot-sequence stepper</li>
           <li><code>src/app/wc/learn/_components/Walkthrough.tsx</code>, Code with filename + highlight</li>
         </ul>
       </Section>

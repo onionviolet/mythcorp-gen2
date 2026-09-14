@@ -18,35 +18,35 @@ const ANIMAL_GIFS: ReadonlyArray<AnimalGif> = [
     url: 'https://media.giphy.com/media/lhekVSXhExiYo/giphy.gif',
     source: 'https://giphy.com/gifs/lhekVSXhExiYo',
     title: 'Guinea Pig Munching Veggies',
-    emoji: 'ðŸ¹ðŸ¥¬',
+    emoji: '🐹🥬',
     description: 'Working through a pile of fresh greens, one nibble at a time.',
   },
   {
     url: 'https://media.giphy.com/media/9FXP14IY0KIYjwS92m/giphy.gif',
     source: 'https://giphy.com/gifs/9FXP14IY0KIYjwS92m',
     title: 'Guinea Pig Eating Spinach',
-    emoji: 'ðŸ¹ðŸ¥—',
+    emoji: '🐹🥗',
     description: 'Spinach: the snack of champions. (via The Dodo)',
   },
   {
     url: 'https://media.giphy.com/media/nZpqJDxUW9tMBYUUZ8/giphy.gif',
     source: 'https://giphy.com/gifs/nZpqJDxUW9tMBYUUZ8',
     title: 'Hamster Munching Dinner',
-    emoji: 'ðŸ¹ðŸ¥•',
+    emoji: '🐹🥕',
     description: 'Tiny paws, enormous appetite.',
   },
   {
     url: 'https://media.giphy.com/media/xTiTnymLkyJtVXzc2s/giphy.gif',
     source: 'https://giphy.com/gifs/xTiTnymLkyJtVXzc2s',
     title: 'Bunny Eating Greens',
-    emoji: 'ðŸ°ðŸ¥¬',
+    emoji: '🐰🥬',
     description: 'This bunny takes its salad very seriously.',
   },
   {
     url: 'https://media.giphy.com/media/HzKsrt22tjTtC/giphy.gif',
     source: 'https://giphy.com/gifs/HzKsrt22tjTtC',
     title: 'Rabbit Munch Munch',
-    emoji: 'ðŸ‡ðŸ¥¦',
+    emoji: '🐇🥦',
     description: 'Munch, munch, munch. A rabbit at work.',
   },
 ];
@@ -81,7 +81,7 @@ export default function AnimalsPage() {
             [ INTERMISSION ]
           </p>
           <h1 className="themed-heading mt-3 text-3xl font-semibold sm:text-4xl">
-            ðŸ¹ Animal Break Time ðŸ¥•
+            🐹 Animal Break Time 🥕
           </h1>
           <p className="mt-3 text-sm text-[color:var(--fg-muted)]">
             Take a moment. Enjoy some animals enjoying some snacks.
@@ -127,7 +127,7 @@ export default function AnimalsPage() {
                          text-[color:var(--fg-subtle)] underline underline-offset-4
                          transition-colors hover:text-[color:var(--accent)]"
             >
-              View on GIPHY â†—
+              View on GIPHY ↗
             </a>
           </div>
 
@@ -155,26 +155,26 @@ export default function AnimalsPage() {
             onClick={pickRandomGif}
             className="themed-button px-6 py-2.5 text-sm uppercase tracking-wide"
           >
-            ðŸŽ² Show me another
+            🎲 Show me another
           </button>
           <Link
             href="/"
             className="themed-pill px-6 py-2.5 font-mono text-xs uppercase tracking-widest
                        text-[color:var(--fg)] transition-colors hover:text-[color:var(--accent)]"
           >
-            â† Back home
+            ← Back home
           </Link>
         </div>
 
         <div className="themed-surface mt-10 p-5">
           <h3 className="mb-2 font-serif text-base font-semibold text-[color:var(--accent-warm)]">
-            ðŸŒŸ Did you know?
+            🌟 Did you know?
           </h3>
           <ul className="space-y-1.5 text-sm text-[color:var(--fg-muted)]">
-            <li>â€¢ Guinea pigs need fresh veggies daily, they can&rsquo;t produce their own Vitamin C.</li>
-            <li>â€¢ Rabbits can eat their weight in hay every week.</li>
-            <li>â€¢ Hamsters store food in their cheek pouches for later.</li>
-            <li>â€¢ Guinea pig teeth never stop growing, so they chew constantly.</li>
+            <li>• Guinea pigs need fresh veggies daily, they can&rsquo;t produce their own Vitamin C.</li>
+            <li>• Rabbits can eat their weight in hay every week.</li>
+            <li>• Hamsters store food in their cheek pouches for later.</li>
+            <li>• Guinea pig teeth never stop growing, so they chew constantly.</li>
           </ul>
         </div>
 

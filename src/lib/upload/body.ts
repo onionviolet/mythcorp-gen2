@@ -14,7 +14,7 @@ import { LIMITS } from "./env";
 // Multipart wraps the file in boundary lines and per-part headers, so a legal
 // request is slightly larger than the file it carries. 1 MB of slack is far
 // more than that overhead and keeps the early reject from firing on a valid
-// upload sitting just under the file cap.
+// upload sitting just under the configured upload size cap.
 const MULTIPART_OVERHEAD_SLACK = 1024 * 1024;
 
 export type BodyResult =

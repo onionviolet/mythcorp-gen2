@@ -1,8 +1,8 @@
 # Flagship spec: Author the fourth theme
 
-Selected Phase 5 flagship (see PLAN.md). This is a **build spec for Weibao to hand-implement**, not a Codex task. It is the whole-page evolution of `TokenPlayground`: a learning page where the visitor authors a complete fourth theme live, watches the entire site restyle, and saves and shares it.
+Historical flagship candidate retained for a future decision. This is a **build spec for Weibao to hand-implement**, not a current Codex task. It is the whole-page evolution of `TokenPlayground`: a learning page where the visitor authors a complete fourth theme live, watches the entire site restyle, and saves and shares it.
 
-Written 2026-07-23. No em-dashes, theme tokens only, files under ~250 lines, `<SiteHeader />` never hand-rolled, `npm run check` green before commit, open a PR (never push main). Read DESIGN.md before any UI work.
+Written 2026-07-23. No em-dashes, theme tokens only, `<SiteHeader />` never hand-rolled, `npm run check` green before commit, open a PR (never push main). Read DESIGN.md before any UI work.
 
 ## The idea in one line
 
@@ -56,7 +56,7 @@ Each edit writes through the same inline-override path and updates a live-previe
 - **No flash**: the bootstrap change (step 2) is load-bearing. Verify first-paint has the custom tokens with JS disabled-until-hydration (view-source the inline script, and test a hard reload while `theme === 'custom'`).
 - **No corruption of the real theme**: follow TokenPlayground's ownership discipline. Only ever remove tokens you set. Never leave the site recolored after navigating away unless the visitor explicitly Saved.
 - **Alpha tokens**: `<input type="color">` refuses alpha; `--border` / `--bg-elevated` carry alpha in some themes. Keep those out of the color pickers (or give them a text input), same call TokenPlayground already made.
-- **Files under ~250 lines**: this will not fit one file. Split into `theme-lab/page.tsx` plus `_components/` siblings (ColorGroup, SurfaceGroup, MotionGroup, LivePreview, useCustomTheme hook). Follow the `src/app/components/landing/` folder pattern.
+- **Split by responsibility**: keep the route shell, control groups, preview, and state ownership separate when that makes their boundaries clearer. A cohesive long file is acceptable.
 - **Register it**: add `theme-lab` to `WALKTHROUGHS` in `src/app/wc/learn/page.tsx`, add the route to MAP.md, drop a `// Walkthrough: /wc/learn/theme-lab` pointer atop `ThemeContext.tsx` (it already points at theme-system; this is a second, more advanced one, decide whether to co-list).
 - **Accessibility**: every control keyboard-reachable and labeled, honor `prefers-reduced-motion` on the motion preview.
 

@@ -3,8 +3,8 @@
 import { Section, Code, Aside } from '../_components/Walkthrough';
 
 /**
- * The Canvas UI half of the plain-mode walkthrough. Split out because the page
- * was climbing past the 250-line file cap.
+ * The Canvas UI half of the plain-mode walkthrough. It has its own content and
+ * presentation responsibility.
  */
 export function CanvasUiSections() {
   return (

@@ -2,10 +2,10 @@
 
 Pointer file. Some agent harnesses look for this filename specifically.
 
-Read [CLAUDE.md](./CLAUDE.md) for conventions and [NEXT_SESSION.md](./NEXT_SESSION.md)
-for the cold-start handoff. Current state lives in [STATUS.md](./STATUS.md). The
-queue lives in [BACKLOG.md](./BACKLOG.md) and on GitHub Issues
-[#13 to #34](https://github.com/onionviolet/mythcorp-gen2/issues).
+Read [STATUS.md](./STATUS.md) for recent work, [MAP.md](./MAP.md) for navigation,
+and [CLAUDE.md](./CLAUDE.md) for conventions. The triaged local queue lives in
+[BACKLOG.md](./BACKLOG.md). GitHub Issues are an intake surface and may include
+completed items that still need closing.
 
 The single most important rule: **no em-dashes anywhere**, in code, copy, comments,
 commits, or markdown. Project memory at

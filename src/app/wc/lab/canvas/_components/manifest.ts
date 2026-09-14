@@ -17,8 +17,8 @@ import type { ColorToken } from './tokenInk';
  * stage is running. Where a default matches the vendored DEFAULTS block it is
  * copied from it; the charset presets deliberately do not.
  *
- * This file is over the repo's 250 line cap on purpose. It is one flat list
- * and splitting it would mean two places to edit when a component lands.
+ * This stays as one flat registry so adding a component remains one edit in
+ * one place.
  */
 
 export type StageProps = Record<string, unknown> & {

@@ -94,6 +94,8 @@ export function PlainField() {
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onUp);
       field.destroy();
+      canvas.width = 0;
+      canvas.height = 0;
       resetMetrics();
     };
     // scheme is in here because the ink colour is read once, off the CSS
@@ -107,6 +109,7 @@ export function PlainField() {
     <canvas
       ref={canvasRef}
       aria-hidden
+      data-plain-field
       className="pointer-events-none fixed inset-0 z-0 h-full w-full"
       style={{ fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' }}
     />

@@ -8,12 +8,12 @@ Read **`MAP.md`** first for the file index. This file explains *how* to make cha
 - 3D: `@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`, `three`.
 - Animation: `gsap`.
 - Deployed to Cloudflare Workers via `@opennextjs/cloudflare`.
-- `npm run dev` for local. `npm run check` is build + tsc, must stay green before commit.
+- `npm run dev` for local. `npm run check` is lint + text policy + build + tsc, and must stay green before commit.
 
 ## Style
 
 - **No inline tutorial comments.** A single `// Walkthrough: /wc/learn/<slug>` pointer at the top of an interesting file is the only allowed teaching comment. Real explanations live on `/wc/learn/*` pages where they can include the live demo.
-- **Files ≤ ~250 lines.** If a `.tsx` is climbing past 250, it's time to split into a folder with siblings (see `src/app/components/landing/` for the pattern).
+- **Split by responsibility, not line count.** Extract a feature when that gives it a clearer owner, isolates state, or makes the code easier to test and navigate. A cohesive long file is acceptable.
 - **Co-locate.** A feature lives in one folder. Sibling helpers and types stay next to the component.
 - **Greppable names.** Avoid generic `Container`, `Wrapper`, `Card`. Prefer `EnterBanner`, `LandingModals`, `WalkthroughSection`. Reduces grep noise; one search returns the consumer, not a dozen barrels.
 - **No barrel re-exports across the codebase.** Optional inside a single feature folder, never repo-wide.

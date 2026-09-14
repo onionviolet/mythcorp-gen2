@@ -1,5 +1,5 @@
-// Snippet strings for the 3d-scene walkthrough, split out so page.tsx stays
-// under the ~250-line ceiling once the live MiniStarField demo is embedded.
+// Snippet strings for the 3d-scene walkthrough, separate from the page's
+// presentation and live MiniStarField demo.
 
 export const CANVAS_SNIPPET = `<Canvas
   gl={{ alpha: false, antialias: true, powerPreference: 'high-performance' }}

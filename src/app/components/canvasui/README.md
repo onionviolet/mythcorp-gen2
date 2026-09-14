@@ -142,5 +142,5 @@ Three things to keep in mind.
 
 ## Repo conventions
 
-The 250-line file cap in CLAUDE.md does not apply to this folder. These are
-vendored build artifacts, not code we maintain.
+These are vendored build artifacts, not code we maintain. Keep them close to
+their upstream shape.

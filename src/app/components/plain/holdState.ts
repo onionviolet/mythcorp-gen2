@@ -1,3 +1,5 @@
+import { SITE_LOCKED } from '../../../siteLock';
+
 /**
  * Plain mode doubles as the site's holding mode: every route collapses to a
  * work-in-progress screen except the ones listed here.
@@ -22,6 +24,7 @@ export function isOpenRoute(pathname: string): boolean {
 }
 
 export function isHeld(theme: string | undefined, pathname: string): boolean {
+  if (SITE_LOCKED) return true;
   if (theme !== 'plain') return false;
   return !isOpenRoute(pathname);
 }

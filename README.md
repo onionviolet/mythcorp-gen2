@@ -7,15 +7,13 @@ local mirror.
 
 ## Agents start here
 
-If you (a Claude instance, on a phone via [claude.ai/code](https://claude.ai/code)
-or locally via the CLI) are picking this up, read these in order:
+If you are picking this up in a new session, read these in order:
 
-1. [NEXT_SESSION.md](./NEXT_SESSION.md), the cold-start handoff.
-2. [STATUS.md](./STATUS.md), what shipped most recently and what's next.
-3. [MAP.md](./MAP.md), the file index.
-4. [CLAUDE.md](./CLAUDE.md), conventions. The headline rule: **no em-dashes anywhere**.
-5. [BACKLOG.md](./BACKLOG.md), queued issues. Same content lives at
-   [github.com/onionviolet/mythcorp-gen2/issues](https://github.com/onionviolet/mythcorp-gen2/issues).
+1. [STATUS.md](./STATUS.md), what shipped most recently.
+2. [MAP.md](./MAP.md), the file index.
+3. [CLAUDE.md](./CLAUDE.md), working conventions.
+4. [DESIGN.md](./DESIGN.md), visual direction for UI work.
+5. [BACKLOG.md](./BACKLOG.md), the small, triaged local queue.
 
 That's under five minutes to be fully oriented.
 
@@ -37,22 +35,23 @@ Cloudflare Workers via `@opennextjs/cloudflare`.
 
 ```bash
 npm install
+npx playwright install chromium # one-time browser install for smoke tests
 npm run dev          # local dev server
-npm run check        # build + tsc, must stay green
+npm run check        # lint + text policy + build + tsc, must stay green
+npm run test:smoke   # focused Chromium route and behavior checks
 npm run preview      # Cloudflare Workers simulated build
 npm run deploy       # cloudflare workers deploy
 npm run fetch:fmhy   # refresh the FMHY catalog snapshot
 ```
 
-The repo includes a 24-category FMHY mirror at `/fmhy`, with per-category
-deep-dive routes at `/fmhy/<category>`. The catalog is a build-time snapshot of
-[github.com/fmhy/edit](https://github.com/fmhy/edit), refreshed by running
-`npm run fetch:fmhy` and committing the diff.
+The repo includes an FMHY backup-sites directory at `/fmhy`. Its data is a
+build-time snapshot of [github.com/fmhy/edit](https://github.com/fmhy/edit),
+refreshed by running `npm run fetch:fmhy` and committing the diff.
 
 ## CI
 
-GitHub Actions in [.github/workflows/](./.github/workflows/) runs `npm run check`
-on every push and PR. A weekly cron opens a PR with the refreshed FMHY snapshot.
+No CI workflow is currently tracked. Run `npm run check` locally before every
+commit. Restoring a PR build guard remains queued work.
 
 ## License
 

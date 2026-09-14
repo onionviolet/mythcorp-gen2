@@ -22,7 +22,7 @@ const WALKTHROUGHS = [
     slug: 'landing-flow',
     title: 'The cinematic boot flow',
     blurb:
-      'How LoadingScreen, LandingPage, and NewLandingPage hand off without a canvas flash. Step the boot sequence yourself and watch the state machine fire.',
+      'How LoadingScreen and NewLandingPage hand off without a flash, skip repeat boots in one tab, and replay the live two-stage sequence.',
     status: 'ready',
   },
   {

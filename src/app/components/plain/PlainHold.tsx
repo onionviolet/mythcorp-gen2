@@ -2,7 +2,7 @@
 
 // Walkthrough: /wc/learn/plain-mode
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '../../contexts/ThemeContext';
 import { HOLD_ATTR, isHeld } from './holdState';
@@ -11,6 +11,7 @@ import { useScramble } from './useScramble';
 import { HoldClickResponse } from './HoldClickResponse';
 import { HoldStatus } from './HoldStatus';
 import { HoldContact, HoldContactLinks } from './HoldContact';
+import { HoldOperator } from './HoldOperator';
 import { HoldMessage } from './HoldMessage';
 import { DisturbedText } from './DisturbedText';
 import {
@@ -20,7 +21,8 @@ import {
 import { HoldStage, HOLD_STYLES, type HoldStyle } from './HoldStage';
 import { HoldOverlay, OVERLAY_STYLES, type OverlayStyle } from './HoldOverlay';
 import { SchemePicker } from './HoldPickers';
-import { HOLD_COMPOSITIONS, compositionName } from './holdCompositions';
+import { DEFAULT_HOLD_COMPOSITION, HOLD_COMPOSITIONS, compositionName } from './holdCompositions';
+import { DEFAULT_HOLD_MODEL_ID, HOLD_MODEL_IDS, resolveHoldModel, type HoldModel } from './holdModels';
 import entrance from './holdEntrance.module.css';
 
 /** Advance to the next option, wrapping. The readout rows cycle rather than
@@ -30,22 +32,29 @@ function next<T>(items: readonly T[], current: T): T {
   return items[(i + 1) % items.length];
 }
 
-const DEFAULT_STYLE: HoldStyle = 'ascii';
-const DEFAULT_OVERLAY: OverlayStyle = 'none';
+function nextSecondaryOverlay(current: OverlayStyle): OverlayStyle {
+  const secondary = OVERLAY_STYLES.filter(item => item !== 'scan');
+  return next(secondary, current === 'scan' ? 'none' : current);
+}
 
 /**
- * The holding screen. There is no way out of it on purpose: no link back into
- * the site, no theme escape. What is in the DOM is the wordmark, the readout,
- * the two pickers and the contact details. The message in the middle is not
- * here at all, it is dye in the field behind this.
+ * The WIP installation, with direct contact links and a discoverable console.
  */
 export function PlainHold() {
   const { theme, ready } = useTheme();
   const pathname = usePathname() ?? '/';
   const held = isHeld(theme, pathname);
   const [mounted, setMounted] = useState(false);
-  const [style, setStyle] = useState<HoldStyle>(DEFAULT_STYLE);
-  const [overlay, setOverlay] = useState<OverlayStyle>(DEFAULT_OVERLAY);
+  const [style, setStyle] = useState<HoldStyle>(DEFAULT_HOLD_COMPOSITION.style);
+  const [overlay, setOverlay] = useState<OverlayStyle>(DEFAULT_HOLD_COMPOSITION.overlay);
+  const [modelId, setModelId] = useState<string>(DEFAULT_HOLD_MODEL_ID);
+  const [modelNotice, setModelNotice] = useState('');
+  const handleModelError = useCallback((failed: HoldModel) => {
+    setModelNotice(failed.id === DEFAULT_HOLD_MODEL_ID
+      ? 'Specimen unavailable. Try another render.'
+      : `${failed.label} unavailable. Showing Spectre.`);
+    setModelId(DEFAULT_HOLD_MODEL_ID);
+  }, []);
   const { choice, scheme, setChoice } = usePlainScheme();
   const message = useSyncExternalStore(
     subscribeMessageStyle, getMessageStyle, getServerMessageStyle,
@@ -68,13 +77,16 @@ export function PlainHold() {
 
   useEffect(() => {
     if (!held) return;
-    const composition = HOLD_COMPOSITIONS[Math.floor(Math.random() * HOLD_COMPOSITIONS.length)];
+    const composition = DEFAULT_HOLD_COMPOSITION;
     setStyle(composition.style);
     setOverlay(composition.overlay);
     setMessageStyle(composition.message);
+    setModelId(DEFAULT_HOLD_MODEL_ID);
+    setModelNotice('');
   }, [held]);
 
   const scene = compositionName({ style, message, overlay });
+  const model = resolveHoldModel(modelId);
   const cycleComposition = () => {
     const index = HOLD_COMPOSITIONS.findIndex(item => item.name === scene);
     const composition = HOLD_COMPOSITIONS[(index + 1) % HOLD_COMPOSITIONS.length];
@@ -92,7 +104,12 @@ export function PlainHold() {
       <HoldClickResponse />
       <h1 className="sr-only">Mythcorp, work in progress</h1>
 
-      <div className={entrance.identity}><HoldOverlay overlay={overlay} scheme={scheme} /><HoldMessage style={message} scheme={scheme} /><HoldContact /></div>
+      <div className={entrance.identity}>
+        <HoldOverlay overlay="scan" scheme={scheme} />
+        {overlay !== 'scan' && <HoldOverlay overlay={overlay} scheme={scheme} />}
+        <HoldMessage style={message} scheme={scheme} />
+        <HoldContact />
+      </div>
 
       <div className={`${entrance.identity} relative flex items-start justify-between gap-4 font-mono text-xs`}>
         <DisturbedText
@@ -105,8 +122,10 @@ export function PlainHold() {
       {/* The model owns the middle of the screen. The readout sits inside the
           same box so it stays put when the style changes underneath it. */}
       <div className={`${entrance.stage} pointer-events-none relative -mx-5 flex-1 sm:-mx-8`}>
-        <div className={`${entrance.specimen} absolute inset-x-0 top-[12%] bottom-[16%]`}><HoldStage style={style} scheme={scheme} /></div>
-        <div className="absolute inset-0 flex items-end justify-center pb-8">
+        <div className={`${entrance.specimen} absolute inset-x-0`}>
+          <HoldStage style={style} scheme={scheme} modelId={model.id} onModelError={handleModelError} />
+        </div>
+        <div className={`${entrance.readoutDock} absolute inset-0 flex items-end pb-8`}>
           <div className={`${entrance.readout} pointer-events-auto px-6 pt-8`}>
             <HoldStatus
               scene={scene}
@@ -115,12 +134,18 @@ export function PlainHold() {
               scheme={scheme}
               message={message}
               overlay={overlay}
+              model={model.label}
+              onModel={HOLD_MODEL_IDS.length > 1 ? () => {
+                setModelNotice('');
+                setModelId(next<string>(HOLD_MODEL_IDS, model.id));
+              } : undefined}
               onCycle={{
                 render: () => setStyle(next(HOLD_STYLES, style)),
                 words: () => setMessageStyle(next(MESSAGE_STYLES, message)),
-                over: () => setOverlay(next(OVERLAY_STYLES, overlay)),
+                over: () => setOverlay(nextSecondaryOverlay(overlay)),
               }}
             />
+            {modelNotice && <p role="status" className="max-w-72 font-mono text-[11px] text-[color:var(--fg-muted)]">{modelNotice}</p>}
           </div>
         </div>
       </div>
@@ -129,7 +154,8 @@ export function PlainHold() {
           fifteen buttons and every one of them duplicated a line the readout
           was already printing, which on a phone wrapped into a block taller
           than the model. The readout rows are the controls now. */}
-      <div className="relative flex justify-end font-mono text-xs">
+      <div className="relative flex flex-wrap justify-between gap-5 font-mono text-xs">
+        <HoldOperator />
         <HoldContactLinks />
       </div>
     </div>

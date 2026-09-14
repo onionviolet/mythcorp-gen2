@@ -6,7 +6,7 @@ Single-screen index of where things live. Read this first; grep second.
 
 | Route | File | Purpose |
 |---|---|---|
-| `/` | `src/app/page.tsx` | Cinematic boot: LoadingScreen → LandingPage → NewLandingPage |
+| `/` | `src/app/page.tsx` | Plain holding installation while the site lock is active |
 | `/experience` | `src/app/experience/page.tsx` | 3D simulation lab (menu + Simulation) |
 | `/og/animals` | `src/app/og/animals/page.tsx` | Parked animal intermission, queued for a licensed-art rebuild |
 | `/about` | `src/app/about/page.tsx` | Short "what is this" page |
@@ -39,7 +39,7 @@ Single-screen index of where things live. Read this first; grep second.
 | fatal | `src/app/global-error.tsx` | Layout-level fallback (own html/body, inline styles, no theme tokens) |
 | `/sitemap.xml` | `src/app/sitemap.ts` | Generated sitemap. Route list is hand-maintained, add new pages here. |
 | `i.mythcorp.org/<key>` | `src/middleware.ts` + `src/app/api/img/[key]/route.ts` | Image host. Host-header rewrite to a route that streams the object out of R2 over S3. Not an R2 custom domain: the bucket is in another Cloudflare account. |
-| `/robots.txt` | `src/app/robots.ts` | Allow-all, points at the sitemap. Base URL via `NEXT_PUBLIC_SITE_URL` (default `mythcorp.org`, the live custom domain). |
+| `/robots.txt` | `src/app/robots.txt/route.ts` | Static plain-text crawler rules plus a small console breadcrumb. Allows `/` except `/og`, `/d`, `/upload`; keeps `/a` available for embeds. Base URL via `NEXT_PUBLIC_SITE_URL` (default `mythcorp.org`). |
 
 `/og/*` houses unfinished ideas kept on purpose, labelled with `<DraftBanner />`. The `/og` index also lists graduated sketches (e.g. `/fmhy` used to live at `/og/fmhy` before getting a real implementation).
 
@@ -70,7 +70,7 @@ Single-screen index of where things live. Read this first; grep second.
 | File | Purpose |
 |---|---|
 | `src/app/wc/lab/canvas/page.tsx` | Route shell, header and intro |
-| `src/app/wc/lab/canvas/_components/manifest.ts` | **The only list of component names in the lab.** One entry per vendored component: loader, blurb, flag answer, prop schema, reduced-motion set. Over the file cap on purpose, so adding a component is one edit in one place |
+| `src/app/wc/lab/canvas/_components/manifest.ts` | **The only list of component names in the lab.** One entry per vendored component: loader, blurb, flag answer, prop schema, reduced-motion set. Kept as one cohesive registry so adding a component is one edit in one place |
 | `src/app/wc/lab/canvas/_components/CanvasLab.tsx` | Orchestrator: selection, per-entry prop state, probes |
 | `src/app/wc/lab/canvas/_components/Roster.tsx` | The component list, marks entries inert in this browser |
 | `src/app/wc/lab/canvas/_components/Stage.tsx` | Mounts exactly one component, resolves colour tokens |
@@ -91,8 +91,7 @@ The interactive figures embedded in `/wc/learn/*`. All `'use client'`, theme-tok
 | `src/app/wc/learn/_components/TokenPlayground.tsx` | Live-edits `--accent`/`--accent-soft`/`--fg`/`--bg` via inline `setProperty`. Tracks its overrides and clears them on reset/unmount/theme change. Never touches localStorage or `dataset.theme` |
 | `src/app/wc/learn/_components/MiniStarField.tsx` | Self-contained R3F star field, `MINI_MAX_STARS = 3000`, theme-matched backdrop, no GLB/bloom |
 | `src/app/wc/learn/_components/MiniStarFieldDemo.tsx` | Controls + `next/dynamic` `ssr:false` loader (height-matched skeleton) for MiniStarField. Reset uses the clone pattern |
-| `src/app/wc/learn/_components/FlowStepper.tsx` | Interactive `loading -> landing -> entered` boot stepper (prev/next/auto-play), highlights matching snippet lines per step |
-| `src/app/wc/learn/3d-scene/_snippets.ts` | Extracted snippet strings for the 3d-scene walkthrough (keeps the page under the line ceiling) |
+| `src/app/wc/learn/3d-scene/_snippets.ts` | Extracted snippet strings for the 3d-scene walkthrough so content and presentation have separate owners |
 | `src/app/wc/learn/landing-flow/_snippets.ts` | Extracted snippet strings for the landing-flow walkthrough |
 
 ## Upload feature
@@ -122,7 +121,7 @@ Config: KV binding `UPLOADS_KV` + public var `R2_PUBLIC_BASE_URL` in `wrangler.j
 | `src/app/experience/BehavioralSink.tsx` | Looping Universe 25 point cloud (phases A-D), reports phase + pop via `onState`. Used only by `CalhounSimulation`. |
 | `src/app/experience/MainMenu.tsx` | Entry card before Simulation |
 
-`spectre.glb` is preloaded in `Simulation.tsx`. It used to be preloaded in `LandingPage.tsx` too, and the drei cache meant the fetch still happened once per session; that second call went away with the two-stage boot. `/wc/learn/landing-flow` still teaches the old arrangement.
+`spectre.glb` is preloaded in `Simulation.tsx`. It used to be preloaded in `LandingPage.tsx` too, and the drei cache meant the fetch still happened once per session; that second call went away with the two-stage boot. `/wc/learn/landing-flow` now documents the current `LoadingScreen` to `NewLandingPage` handoff.
 
 ## Theme system
 
@@ -135,8 +134,10 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/ThemeSwitcher.tsx` | UI |
 | `src/app/layout.tsx` | Pre-paint bootstrap script (no flash), mounts `PlainField` |
 | `src/app/components/plain/PlainField.tsx` | Plain-theme canvas mount, pointer wiring, teardown |
-| `src/app/components/plain/PlainHold.tsx` | The holding screen: wordmark, both pickers, contacts, sr-only heading. No exits |
-| `src/app/components/plain/holdRoll.ts` | The per-visit combination, rolled inside a noise budget so effects cannot pile up. Checked by `npm run check:roll` |
+| `src/app/components/plain/plainFieldLifecycle.ts` | Synchronous canvas release before leaving plain mode |
+| `src/app/components/plain/PlainHold.tsx` | The holding screen: wordmark, scene readout, scheme controls, contacts, LinkedIn, and operator notes |
+| `src/app/components/plain/holdRoll.ts` | Retained budgeted randomizer and noise weights. Checked by `npm run check:roll`; the lander's cold load uses holdCompositions |
+| `src/app/components/plain/holdCompositions.ts` | Authored scenes and the deterministic Halo default; scan is the persistent base while each scene selects a secondary overlay |
 | `src/app/components/plain/holdState.ts` | `PLAIN_OPEN_PREFIXES` allowlist, read by React and the pre-paint script |
 | `src/app/components/plain/asciiFluid.ts` | The ASCII fluid solver, no React |
 | `src/app/components/plain/asciiRender.ts` | Ramp quantizer, dye field to characters |
@@ -144,16 +145,24 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/useScramble.ts` | Ideaboard #65, the decode effect |
 | `src/app/components/plain/DisturbedText.tsx` | Type the cursor erodes into the field's ramp, so what is behind shows through the holes |
 | `src/app/components/plain/holdPointer.ts` | One `pointermove` listener, published on a frame, read by every piece of disturbed type |
-| `src/app/components/plain/HoldStage.tsx` | One model, four Canvas UI styles, dynamic-imported, monochrome options. `ink` was cut for drawing nothing, see the file |
+| `src/app/components/plain/HoldStage.tsx` | Selected model in four dynamic monochrome renderers, with a bounded load-failure fallback |
+| `src/app/components/plain/holdModels.ts` | Model registry: local assets, per-model framing, source, license and credit metadata |
+| `docs/HOLD_MODEL_ONBOARDING.md` | How to add and verify future GLBs |
+| `scripts/generate-hold-calibration-glb.mjs` | Regenerates the original public/models/calibration.glb specimen |
 | `src/app/components/plain/HoldOverlay.tsx` | Full-screen Canvas UI layer: `rain`, `shield`, `fog`, `drops`, `scan`. All draw their own geometry. Five more were auditioned and cut, each for a recorded reason, see the file |
 | `src/app/components/plain/HoldPickers.tsx` | Just the scheme picker now. The style, message and overlay rows moved into the readout |
-| `src/app/components/plain/HoldStatus.tsx` | Live readout, and the controls: render, words and over cycle when clicked |
+| `src/app/components/plain/HoldStatus.tsx` | Full/compact readout, scene/model/render controls, persistent scan status and secondary overlay control; expands by default on wide screens |
 | `src/app/components/plain/fieldMetrics.ts` | One-value store the field publishes to and the readout reads |
+| `src/app/components/plain/fieldActivity.ts` | Speed-sensitive MOVEMENT signal with attack and exponential release |
 | `src/app/components/plain/holdScheme.ts` | Plain mode's own light/dark switch: key, attribute, ink colours |
 | `src/app/components/plain/usePlainScheme.ts` | Owns the scheme (`usePlainScheme`) and follows it (`useResolvedScheme`) |
 | `src/app/components/plain/HoldContact.tsx` | Contact details: the backdrop copy and the reachable copy |
+| `src/app/components/plain/LinkedInInvite.tsx` | Distinct profile control with a responsive external arrow, continuous two-ring proximity glow, idle cursor echo and a cat that follows movement then eases home; styling in LinkedInInvite.module.css |
+| `src/app/components/plain/HoldOperator.tsx` | Quiet `0w0` disclosure with console access and robot notes; LinkedIn stays visible in HoldContact |
+| `src/app/components/terminalEvents.ts` | Shared console-open event for the operator disclosure and terminal listener |
+| `src/app/components/terminalOverlay.module.css` | Theme-timed console entrance with a reduced-motion fallback |
 | `src/app/components/plain/messageStore.ts` | Which rendering of the message is showing. Named to dodge a case clash with `HoldMessage.tsx` |
-| `src/app/components/plain/HoldMessage.tsx` | The message renderings that are not the field: `solid`, `decode`, `dust` |
+| `src/app/components/plain/HoldMessage.tsx` | The message renderings that are not the field: passive type-phase `solid`, animated glyph-and-sweep `decode`, and particle `dust`; solid and decode styling lives in HoldMessage.module.css |
 | `src/app/components/plain/messageImage.ts` | The message as a PNG data URL, so it can feed the object pipeline |
 | `src/app/components/plain/supportsHtmlInCanvas.ts` | Chrome feature probe. The holding screen no longer needs it; `/wc/lab/canvas` imports it to label inert components |
 | `src/app/components/canvasui/` | **Vendored** Canvas UI source, 18 components. See its README for the per-component flag classification; do not hand-edit |
@@ -191,7 +200,8 @@ Walkthrough: `/wc/learn/theme-system`.
 
 ```
 npm run dev      # local dev server
-npm run check    # build + tsc
+npm run check    # lint + text policy + build + tsc
+npm run test:smoke  # public routes, theme bootstrap, reduced motion, browser errors
 npm run deploy   # cloudflare workers
 ```
 
@@ -204,8 +214,8 @@ Tech: Next.js 15 (app router), React 19, R3F, drei, postprocessing, GSAP, Tailwi
 
 ### Pending lander art direction
 
-- `src/app/components/plain/holdCompositions.ts`: four authored starting compositions and current-scene naming.
+- `src/app/components/plain/holdCompositions.ts`: five authored starting compositions and current-scene naming.
 - `src/app/components/plain/holdEntrance.module.css`: reduced-motion-aware entrance, focus treatment and short-viewport layout.
 
 - `src/app/components/plain/holdPress.ts`: shared pulse dimensions, wave intensity and control-target exclusion.
-- `src/app/components/plain/HoldClickResponse.tsx`: transient ring driven by the existing shared pointer subscription.
+- `src/app/components/plain/HoldClickResponse.tsx`: up to four concurrent transient rings driven by the existing shared pointer subscription.

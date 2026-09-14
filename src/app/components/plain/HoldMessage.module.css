@@ -1,0 +1,187 @@
+.decodeLine {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  text-shadow: 0 0 0.14em var(--accent-glow);
+}
+
+.decodeLine::before {
+  position: absolute;
+  z-index: -1;
+  top: 0.08em;
+  bottom: 0.08em;
+  left: -0.06em;
+  width: 0.08em;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0.55em var(--accent-glow-strong);
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(0);
+  animation: decodeSweep 5.2s var(--motion-ease, ease-in-out) infinite;
+}
+
+.decodeText {
+  display: inline-block;
+  animation: decodeSettle 5.2s var(--motion-ease, ease-in-out) infinite;
+}
+
+.solidLine {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  letter-spacing: 0.02em;
+  animation: solidTypePhase 12.8s var(--motion-ease, ease-in-out) infinite;
+}
+
+.solidText {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+}
+
+.solidLine::before,
+.solidLine::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  content: attr(data-solid-label);
+  color: transparent;
+  pointer-events: none;
+  -webkit-text-stroke: 0.012em var(--accent);
+}
+
+.solidLine::before {
+  opacity: 0;
+  text-shadow: 0 0 0.22em var(--accent-glow);
+  animation: solidOutlinePhase 12.8s var(--motion-ease, ease-in-out) infinite;
+}
+
+.solidLine::after {
+  z-index: 2;
+  opacity: 0;
+  text-shadow: 0 0 0.32em var(--accent-glow-strong);
+  clip-path: inset(0 100% 0 0);
+  animation: solidScanPhase 12.8s var(--motion-ease, ease-in-out) infinite;
+}
+
+@keyframes decodeSweep {
+  0%, 12% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  18% {
+    opacity: 0.9;
+  }
+
+  76%, 88% {
+    opacity: 0.35;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(calc(100% + 0.12em));
+  }
+}
+
+@keyframes decodeSettle {
+  0%, 16% {
+    opacity: 0.72;
+    filter: blur(0.035em);
+  }
+
+  28%, 84% {
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 0.9;
+    filter: blur(0.01em);
+  }
+}
+
+@keyframes solidTypePhase {
+  0%, 18%, 100% {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 0 var(--accent-glow);
+  }
+
+  34%, 48% {
+    font-weight: 780;
+    letter-spacing: 0.042em;
+    text-shadow: 0 0 0.1em var(--accent-glow);
+  }
+
+  66%, 82% {
+    font-weight: 640;
+    letter-spacing: 0.012em;
+    text-shadow: 0 0 0.04em var(--accent-glow);
+  }
+}
+
+@keyframes solidOutlinePhase {
+  0%, 22%, 70%, 100% {
+    opacity: 0;
+  }
+
+  36%, 52% {
+    opacity: 0.42;
+  }
+}
+
+@keyframes solidScanPhase {
+  0%, 50% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+
+  54% {
+    opacity: 0.5;
+  }
+
+  70% {
+    opacity: 0.28;
+  }
+
+  76%, 100% {
+    opacity: 0;
+    clip-path: inset(0 0 0 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .decodeLine::before,
+  .decodeText,
+  .solidLine,
+  .solidLine::before,
+  .solidLine::after {
+    animation: none;
+  }
+
+  .decodeLine::before {
+    display: none;
+  }
+
+  .decodeText {
+    filter: none;
+    opacity: 1;
+  }
+
+  .solidLine {
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    text-shadow: 0 0 0.06em var(--accent-glow);
+  }
+
+  .solidLine::before {
+    opacity: 0.28;
+  }
+
+  .solidLine::after {
+    display: none;
+  }
+}

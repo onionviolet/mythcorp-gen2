@@ -3,12 +3,13 @@
 // Walkthrough: /wc/learn/plain-mode
 
 import dynamic from 'next/dynamic';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MESSAGE_LINES, type MessageStyle } from './messageStore';
 import { SCHEME_INK, type Scheme } from './holdScheme';
 import { renderMessageImage } from './messageImage';
 import { useScramble } from './useScramble';
 import { DisturbedText } from './DisturbedText';
+import styles from './HoldMessage.module.css';
 
 const ParticleObject = dynamic(
   () => import('../canvasui/ParticleObject').then((m) => m.ParticleObject),
@@ -23,6 +24,21 @@ const ParticleObject = dynamic(
 export function HoldMessage({ style, scheme }: { style: MessageStyle; scheme: Scheme }) {
   const run = useDecodeCycle(style === 'decode');
   const printable = useMessageImage(style === 'dust');
+  const dustFrame = useRef<HTMLDivElement>(null);
+  const [dustScale, setDustScale] = useState(4.4);
+
+  useEffect(() => {
+    if (style !== 'dust' || !printable || !dustFrame.current) return;
+    const node = dustFrame.current;
+    const fit = () => {
+      const { width, height } = node.getBoundingClientRect();
+      if (height > 0) setDustScale(Math.min(7.2, 3.3 * width / height));
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [style, printable]);
 
   if (style === 'field') return null;
 
@@ -33,7 +49,7 @@ export function HoldMessage({ style, scheme }: { style: MessageStyle; scheme: Sc
   if (style === 'dust') {
     if (!printable) return null;
     return (
-      <div className="pointer-events-none absolute inset-x-0 top-[6%] h-[34%]">
+      <div ref={dustFrame} className="pointer-events-none absolute inset-x-0 top-[6%] h-[34%]">
         {/* pointer-events-auto on the canvas itself: the comment above promises
             you can put your hand through the words, and the component listens
             on its own canvas, which a non-interactive parent had been keeping
@@ -50,7 +66,7 @@ export function HoldMessage({ style, scheme }: { style: MessageStyle; scheme: Sc
           spring={0.05}
           damping={0.86}
           drift={0.12}
-          scale={5.2}
+          scale={dustScale}
           floatIntensity={0.5}
           rotationIntensity={0.15}
           floatSpeed={1.1}
@@ -72,15 +88,21 @@ export function HoldMessage({ style, scheme }: { style: MessageStyle; scheme: Sc
     >
       {MESSAGE_LINES.map((line) => (
         style === 'decode' ? (
-          <span key={line} className="text-[8.5vw] tracking-[0.02em]">
+          <span
+            key={line}
+            className={`${styles.decodeLine} text-[8.5vw] tracking-[0.02em]`}
+            data-decode-label={line}
+          >
             <DecodingLine key={run} text={line} />
           </span>
         ) : (
-          <DisturbedText
+          <span
             key={line}
-            text={line}
-            className="text-[8.5vw] tracking-[0.02em]"
-          />
+            className={`${styles.solidLine} text-[8.5vw]`}
+            data-solid-label={line}
+          >
+            <DisturbedText text={line} className={styles.solidText} />
+          </span>
         )
       ))}
     </div>
@@ -126,5 +148,5 @@ function useDecodeCycle(active: boolean): number {
 }
 
 function DecodingLine({ text }: { text: string }) {
-  return <>{useScramble(text, { active: true, frames: 34 })}</>;
+  return <span className={styles.decodeText}>{useScramble(text, { active: true, frames: 42 })}</span>;
 }

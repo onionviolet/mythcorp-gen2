@@ -1,24 +1,26 @@
-// Snippet strings for the landing-flow walkthrough, split out so page.tsx
-// stays under the ~250-line ceiling once the FlowStepper demo is embedded.
+// Snippet strings for the landing-flow walkthrough, separate from the page's
+// presentation.
 
-export const APPLOADER_SNIPPET = `// AppLoader: fixed-window boot gate in src/app/page.tsx
-const LOADING_DURATION_MS = 3500;
+export const APPLOADER_SNIPPET = `const LOADING_DURATION_MS = 3500;
 
 function AppLoader({ children }) {
   const [isReady, setIsReady] = useState(false);
   const [showChildren, setShowChildren] = useState(false);
+  const [skipBoot, setSkipBoot] = useState(null);
 
   useEffect(() => {
+    if (skipBoot !== false) return;
     const fadeTimer = setTimeout(() => setIsReady(true), LOADING_DURATION_MS);
     return () => clearTimeout(fadeTimer);
-  }, []);
+  }, [skipBoot]);
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady || skipBoot === true) return;
     const swapTimer = setTimeout(() => setShowChildren(true), 600);
     return () => clearTimeout(swapTimer);
-  }, [isReady]);
+  }, [isReady, skipBoot]);
 
+  if (skipBoot === null) return null;
   if (showChildren) return <>{children}</>;
 
   return (
@@ -29,40 +31,62 @@ function AppLoader({ children }) {
 }`;
 
 export const SESSION_SNIPPET = `useEffect(() => {
-  let alreadyBooted = false;
+  let forceBoot = false;
   try {
-    alreadyBooted = sessionStorage.getItem(SESSION_BOOTED_KEY) === '1';
+    forceBoot = new URLSearchParams(window.location.search).has('boot');
   } catch {
-    // sessionStorage is blocked in some private-browsing modes; fall through
+    /* ignore */
   }
+
+  let alreadyBooted = false;
+  if (!forceBoot) {
+    try {
+      alreadyBooted = sessionStorage.getItem(SESSION_BOOTED_KEY) === '1';
+    } catch {
+      /* fall through */
+    }
+  }
+
   setSkipBoot(alreadyBooted);
   if (alreadyBooted) {
     setIsReady(true);
     setShowChildren(true);
     return;
   }
+
   try { sessionStorage.setItem(SESSION_BOOTED_KEY, '1'); } catch { /* ignore */ }
 }, []);`;
 
-export const BINARY_SNIPPET = `// Inside BinaryDigit, position lerps from start to end each frame
+export const BINARY_SNIPPET = `// Inside BinaryDigit, position lerps from start to end each frame.
 useFrame(() => {
   if (textRef.current) {
     textRef.current.position.lerpVectors(startPosition, endPosition, progress);
   }
 });
 
-// Start position is end * 5: digits fly in from five times the distance
+// Start position is end * 5, so digits fly in from five times the distance.
 const startPos = endPos.clone().multiplyScalar(5);`;
 
-export const PRELOAD_SNIPPET = `// At the top of LandingPage.tsx, outside the component:
-useGLTF.preload('/spectre.glb');`;
+export const PRELOAD_SNIPPET = `<link
+  rel="preload"
+  href="/chicagoskyline.jpg"
+  as="image"
+/>`;
 
-export const GSAP_SNIPPET = `const tl = gsap.timeline({ onComplete: () => onTransitionComplete?.() });
+export const REPLAY_SNIPPET = `const [bootNonce, setBootNonce] = useState(0);
 
-tl.to(backgroundRef.current, { opacity: 0, duration: 1.5, ease: 'power2.in' }, 0);
-tl.to(promptRef.current,    { opacity: 0, duration: 1.0, ease: 'power2.in' }, 0);
+const replayIntro = () => {
+  try {
+    sessionStorage.removeItem(SESSION_BOOTED_KEY);
+  } catch {
+    /* ignore */
+  }
+  setBootNonce((n) => n + 1);
+};
 
-contentRef.current.traverse((child) => {
-  const mat = child.material;
-  if (mat) tl.to(mat, { opacity: 0, duration: 1, ease: 'power2.in' }, 0.2);
-});`;
+<AppLoader key={bootNonce}>
+  <NewLandingPage
+    onEnterExperience={() => router.push('/experience')}
+    onReplayIntro={replayIntro}
+  />
+</AppLoader>`;

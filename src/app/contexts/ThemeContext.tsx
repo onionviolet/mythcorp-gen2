@@ -12,6 +12,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { releasePlainFieldCanvas } from '../components/plain/plainFieldLifecycle';
+import { SITE_LOCKED } from '../../siteLock';
 
 export type ThemeName = 'cyberpunk' | 'luxury' | 'paper' | 'plain';
 
@@ -57,13 +59,22 @@ export function ThemeProvider({
   initialTheme?: ThemeName;
   children: ReactNode;
 }) {
-  const [theme, setThemeState] = useState<ThemeName>(initialTheme);
+  const [theme, setThemeState] = useState<ThemeName>(SITE_LOCKED ? 'plain' : initialTheme);
   const [ready, setReady] = useState(false);
   // 'idle' | 'cover' (curtain at full opacity, theme swap moment) | 'reveal' (curtain fading away)
   const [phase, setPhase] = useState<'idle' | 'cover' | 'reveal'>('idle');
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (SITE_LOCKED) {
+      setThemeState('plain');
+      document.documentElement.dataset.theme = 'plain';
+      setReady(true);
+      requestAnimationFrame(() => {
+        document.documentElement.classList.add('theme-ready');
+      });
+      return;
+    }
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY);
       if (isThemeName(stored)) {
@@ -82,6 +93,7 @@ export function ThemeProvider({
   }, [initialTheme]);
 
   const applyTheme = useCallback((next: ThemeName) => {
+    if (next !== 'plain') releasePlainFieldCanvas();
     document.documentElement.dataset.theme = next;
     try {
       window.localStorage.setItem(STORAGE_KEY, next);
@@ -119,9 +131,12 @@ export function ThemeProvider({
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
   }, []);
 
-  const setTheme = useCallback((next: ThemeName) => swapWithCurtain(next), [swapWithCurtain]);
+  const setTheme = useCallback((next: ThemeName) => {
+    if (!SITE_LOCKED) swapWithCurtain(next);
+  }, [swapWithCurtain]);
 
   const cycleTheme = useCallback(() => {
+    if (SITE_LOCKED) return;
     const idx = THEMES.findIndex((t) => t.name === theme);
     const next = THEMES[(idx + 1) % THEMES.length].name;
     swapWithCurtain(next);

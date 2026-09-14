@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "24.0.4",
     "@types/react": "19.2.18",
@@ -42,17 +43,19 @@
   "scripts": {
     "build": "next build --no-lint",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts",
-    "check": "npm run build && tsc",
+    "check": "npm run lint && npm run check:text && npm run build && tsc",
     "cf:build": "npm run clean && opennextjs-cloudflare build",
     "deploy": "npm run clean && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "dev": "next dev",
-    "lint": "next lint",
+    "lint": "eslint src scripts tools tests playwright.config.ts eslint.config.mjs next.config.ts open-next.config.ts postcss.config.mjs",
     "preview": "npm run clean && opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "start": "next start",
     "prod": "next build --no-lint && next start",
     "fetch:fmhy": "tsx scripts/fetch-fmhy.ts",
     "post:backlog": "node tools/post-backlog-to-issues.mjs",
     "clean": "node scripts/clean-build-dirs.mjs",
-    "check:roll": "tsx scripts/check-hold-roll.ts"
+    "check:roll": "tsx scripts/check-hold-roll.ts",
+    "check:text": "node scripts/check-text.mjs",
+    "test:smoke": "playwright test"
   }
 }

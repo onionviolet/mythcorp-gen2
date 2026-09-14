@@ -1,0 +1,15 @@
+.panel {
+  border-radius: 0 0 var(--radius) var(--radius);
+  backdrop-filter: blur(var(--surface-blur));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .panel {
+    animation: enter var(--motion-base) var(--motion-ease) both;
+  }
+}
+
+@keyframes enter {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
