@@ -137,7 +137,7 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/plainFieldLifecycle.ts` | Synchronous canvas release before leaving plain mode |
 | `src/app/components/plain/PlainHold.tsx` | The holding screen: wordmark, scene readout, scheme controls, contacts, LinkedIn, and operator notes |
 | `src/app/components/plain/holdRoll.ts` | Retained budgeted randomizer and noise weights. Checked by `npm run check:roll`; the lander's cold load uses holdCompositions |
-| `src/app/components/plain/holdCompositions.ts` | Authored scenes and the deterministic Halo default; scan is the persistent base while each scene selects a secondary overlay |
+| `src/app/components/plain/holdCompositions.ts` | Four authored scenes and the deterministic Signal default; Halo is the persistent base while each scene selects a secondary overlay |
 | `src/app/components/plain/holdState.ts` | `PLAIN_OPEN_PREFIXES` allowlist, read by React and the pre-paint script |
 | `src/app/components/plain/asciiFluid.ts` | The ASCII fluid solver, no React |
 | `src/app/components/plain/asciiRender.ts` | Ramp quantizer, dye field to characters |
@@ -151,7 +151,7 @@ Four files. All other components consume tokens via `var(--name)`.
 | `scripts/generate-hold-calibration-glb.mjs` | Regenerates the original public/models/calibration.glb specimen |
 | `src/app/components/plain/HoldOverlay.tsx` | Full-screen Canvas UI layer: `rain`, `shield`, `fog`, `drops`, `scan`. All draw their own geometry. Five more were auditioned and cut, each for a recorded reason, see the file |
 | `src/app/components/plain/HoldPickers.tsx` | Just the scheme picker now. The style, message and overlay rows moved into the readout |
-| `src/app/components/plain/HoldStatus.tsx` | Full/compact readout, scene/model/render controls, persistent scan status and secondary overlay control; expands by default on wide screens |
+| `src/app/components/plain/HoldStatus.tsx` | Full/compact readout, scene/model/render controls, persistent Halo status and secondary overlay control; expands by default on wide screens |
 | `src/app/components/plain/fieldMetrics.ts` | One-value store the field publishes to and the readout reads |
 | `src/app/components/plain/fieldActivity.ts` | MOVEMENT signal fed only by the fake cursor, cat and click rings, with speed-sensitive attack and exponential release |
 | `src/app/components/plain/holdScheme.ts` | Plain mode's own light/dark switch: key, attribute, ink colours |
@@ -214,7 +214,7 @@ Tech: Next.js 15 (app router), React 19, R3F, drei, postprocessing, GSAP, Tailwi
 
 ### Pending lander art direction
 
-- `src/app/components/plain/holdCompositions.ts`: five authored starting compositions and current-scene naming.
+- `src/app/components/plain/holdCompositions.ts`: four authored starting compositions and current-scene naming.
 - `src/app/components/plain/holdEntrance.module.css`: reduced-motion-aware entrance, focus treatment and short-viewport layout.
 
 - `src/app/components/plain/holdPress.ts`: shared pulse dimensions, wave intensity and control-target exclusion.

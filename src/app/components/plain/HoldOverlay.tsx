@@ -88,7 +88,7 @@ export function HoldOverlay({
     : [0.25, 0.25, 0.25];
 
   return (
-    <div className="pointer-events-none absolute inset-0 -z-10">
+    <div className="pointer-events-none absolute inset-0 -z-10" data-hold-overlay={overlay}>
       {overlay === 'rain' ? (
         <GlyphRain
           className={FILL}

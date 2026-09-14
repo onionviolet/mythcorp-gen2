@@ -71,10 +71,10 @@ for (const composition of HOLD_COMPOSITIONS) {
 if (compositionName({ style: 'liquid', message: 'decode', overlay: 'none' }) !== 'Custom') {
   throw new Error('Manual composition must remain identifiable as Custom');
 }
-if (DEFAULT_HOLD_COMPOSITION.name !== 'Halo') {
-  throw new Error('Cold visits must begin with Halo');
+if (DEFAULT_HOLD_COMPOSITION.name !== 'Signal') {
+  throw new Error('Cold visits must begin with Signal');
 }
 if (DEFAULT_HOLD_COMPOSITION.overlay !== 'none') {
-  throw new Error('Halo must begin without a secondary overlay');
+  throw new Error('Signal must begin without a secondary overlay');
 }
 console.log(`${authoredKeys.size} authored compositions: unique and within budget`);

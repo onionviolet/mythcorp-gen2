@@ -105,6 +105,8 @@ export function PlainHold() {
       <h1 className="sr-only">Mythcorp, work in progress</h1>
 
       <div className={entrance.identity}>
+        {/* Halo is the permanent atmospheric background. Scenes only change
+            the specimen, words and optional secondary overlay above it. */}
         <HoldOverlay overlay="scan" scheme={scheme} />
         {overlay !== 'scan' && <HoldOverlay overlay={overlay} scheme={scheme} />}
         <HoldMessage style={message} scheme={scheme} />

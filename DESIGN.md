@@ -207,10 +207,11 @@ Before a reference-inspired study graduates, ask:
 
 ## Current lander defaults, 2026-09-13
 
-Cold visits begin with Halo: the ASCII spectre, dust lettering, and the scan
-effect across the full screen. The scan remains active while the `over` control
-adds one optional secondary background. Scene cycling remains available. The old
-budgeted randomizer is retained for its existing consumers, not the cold load.
+Cold visits begin with Signal: the ASCII spectre and dust lettering. Halo is a
+separate atmospheric background that remains active across every scene, while
+the `over` control adds one optional secondary background. Scene cycling remains
+available. The old budgeted randomizer is retained for its existing consumers,
+not the cold load. Trace is not a scene until it produces a visible trace.
 
 The expanded readout is the default at 1200px wide and 680px tall or larger.
 It sits to the left of the specimen, where its exposed controls add character

@@ -1,5 +1,17 @@
 # STATUS
 
+## Halo separated from scenes, 2026-09-14
+
+Halo is now named and treated as the permanent atmospheric background. It stays
+active while any scene changes the specimen, words and optional secondary
+overlay. The readout reports `halo active`, so the visible control model matches
+the installation instead of exposing the internal scan implementation.
+
+The scene rotation is now Signal, Suspension, Drift and Surface. Trace was
+removed because its ASCII, decode and shield combination did not create a clear
+trace. Signal preserves the former cold-load composition without incorrectly
+presenting Halo as a scene.
+
 ## Cursor echo return path, 2026-09-13
 
 Fresh real-mouse movement no longer makes the decorative cursor echo disappear

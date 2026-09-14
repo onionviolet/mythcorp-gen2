@@ -67,6 +67,25 @@ for (const path of ['/about', '/experience', '/wc', '/og', '/contact']) {
   });
 }
 
+test('Halo stays active behind the authored scene rotation', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+
+  const scene = () => page.getByRole('button', { name: /^scene,/ });
+  const halo = page.locator('[data-hold-overlay="scan"]');
+  await expect(scene()).toHaveAccessibleName('scene, Signal, activate to change');
+  await expect(page.locator('dt').filter({ hasText: /halo/i })).toBeVisible();
+  await expect(halo).toHaveCount(1);
+
+  for (const expected of ['Suspension', 'Drift', 'Surface', 'Signal']) {
+    await scene().click();
+    await expect(scene()).toHaveAccessibleName(`scene, ${expected}, activate to change`);
+    await expect(halo).toHaveCount(1);
+  }
+
+  await expect(page.getByRole('button', { name: /scene, (Halo|Trace),/ })).toHaveCount(0);
+});
+
 test('movement meter ignores the real pointer and reacts to click rings', async ({ page }) => {
   const errors = captureRuntimeErrors(page);
   await page.goto('/');

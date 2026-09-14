@@ -81,7 +81,7 @@ export function HoldStatus({
         <Row label="render" value={style} onCycle={onCycle?.render} />
         <Row label="scheme" value={scheme} />
         <Row label="words" value={message} onCycle={onCycle?.words} />
-        <Row label="scan" value="active" />
+        <Row label="halo" value="active" />
         <Row label="over" value={overlay} onCycle={onCycle?.over} />
       </>}
       <Row
