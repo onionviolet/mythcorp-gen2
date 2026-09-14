@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getPointer, subscribePointer } from './holdPointer';
 import { PRESS_DURATION, PRESS_RADIUS } from './holdPress';
+import { reportVisibleClick } from './fieldActivity';
 
 const MAX_WAVES = 4;
 type Wave = { id: number; x: number; y: number; started: number };
@@ -30,6 +31,7 @@ export function HoldClickResponse() {
       const isNewPulse = previousProgress.current === null || pulse.progress < previousProgress.current - 0.05;
       previousProgress.current = pulse.progress;
       if (!isNewPulse) return;
+      reportVisibleClick();
       setWaves(current => [...current, {
         id: nextId.current++, x: pulse.x, y: pulse.y, started: performance.now(),
       }].slice(-MAX_WAVES));

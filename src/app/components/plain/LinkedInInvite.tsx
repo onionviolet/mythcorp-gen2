@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import styles from './LinkedInInvite.module.css';
+import { reportVisibleMovement } from './fieldActivity';
 
 const IDLE_DELAY = 5000;
 const APPROACH_DURATION = 2400;
@@ -18,6 +19,7 @@ const INTERACTIVE_SELECTOR =
   'a, button, input, textarea, select, summary, [role="button"], [role="link"]';
 
 type PetPhase = 'waiting' | 'approaching' | 'settled' | 'following';
+type CursorMode = 'hidden' | 'pulling' | 'returning';
 type MotionProfile = { reduced: boolean; canFollow: boolean };
 type Point = { x: number; y: number };
 
@@ -75,13 +77,13 @@ function LinkedInPet({ phase, petRef }: {
   );
 }
 
-function MagneticCursor({ cursorRef, pulling }: {
+function MagneticCursor({ cursorRef, visible }: {
   cursorRef: React.RefObject<HTMLSpanElement | null>;
-  pulling: boolean;
+  visible: boolean;
 }) {
   return (
     <span ref={cursorRef} aria-hidden data-magnetic-cursor
-      className={`${styles.magneticCursor} ${pulling ? styles.pulling : ''}`}>
+      className={`${styles.magneticCursor} ${visible ? styles.pulling : ''}`}>
       <svg viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M1.5 1.5v14l4-3.6 3.2 6.6 2.5-1.25-3.15-6.45H14L1.5 1.5Z"
           fill="var(--bg)" stroke="currentColor" strokeWidth="1.25"
@@ -94,7 +96,7 @@ function MagneticCursor({ cursorRef, pulling }: {
 export function LinkedInInvite() {
   const [phase, setPhase] = useState<PetPhase>('waiting');
   const [pointerNear, setPointerNear] = useState(false);
-  const [pulling, setPulling] = useState(false);
+  const [cursorMode, setCursorMode] = useState<CursorMode>('hidden');
   const [motionProfile, setMotionProfile] = useState<MotionProfile | null>(null);
   const inviteRef = useRef<HTMLAnchorElement>(null);
   const petRef = useRef<HTMLSpanElement>(null);
@@ -162,19 +164,36 @@ export function LinkedInInvite() {
   }, [motionProfile]);
 
   useEffect(() => {
+    if (phase !== 'approaching' || motionProfile?.reduced) return;
+    let frame = 0;
+    const sampleCat = (time: number) => {
+      const rect = petRef.current?.getBoundingClientRect();
+      if (rect) reportVisibleMovement('cat', rect.left, rect.top, time);
+      frame = window.requestAnimationFrame(sampleCat);
+    };
+    frame = window.requestAnimationFrame(sampleCat);
+    return () => window.cancelAnimationFrame(frame);
+  }, [phase, motionProfile?.reduced]);
+
+  useEffect(() => {
     if (!motionProfile) return;
     let petFrame: number | undefined;
     let pullFrame: number | undefined;
+    let returnFrame: number | undefined;
     let pullTimer: number | undefined;
     let lastFrame = 0;
+    let returnLastFrame = 0;
     let currentPoint: Point | null = null;
     let targetPoint: Point | null = null;
     let lastPointer: Point | null = null;
+    let cursorPoint: Point | null = null;
+    let cursorReturnTarget: Point | null = null;
     let returning = false;
 
-    const placePet = (point: Point) => petRef.current?.style.setProperty(
-      'transform', `translate3d(${point.x}px, ${point.y}px, 0)`,
-    );
+    const placePet = (point: Point) => {
+      petRef.current?.style.setProperty('transform', `translate3d(${point.x}px, ${point.y}px, 0)`);
+      reportVisibleMovement('cat', point.x, point.y);
+    };
     const stopPet = () => {
       if (petFrame !== undefined) window.cancelAnimationFrame(petFrame);
       petFrame = undefined;
@@ -215,25 +234,73 @@ export function LinkedInInvite() {
       setPointerNear((current) => current === near ? current : near);
     };
 
-    const cancelPull = () => {
+    const hideCursor = () => {
+      if (returnFrame !== undefined) window.cancelAnimationFrame(returnFrame);
+      returnFrame = undefined;
+      returnLastFrame = 0;
+      cursorPoint = null;
+      cursorReturnTarget = null;
+      cursorRef.current?.style.removeProperty('transform');
+      setCursorMode('hidden');
+    };
+    const stopPull = () => {
       window.clearTimeout(pullTimer);
       pullTimer = undefined;
       if (pullFrame !== undefined) window.cancelAnimationFrame(pullFrame);
       pullFrame = undefined;
-      cursorRef.current?.style.removeProperty('transform');
-      setPulling(false);
+    };
+    const returnCursor = (target: Point) => {
+      stopPull();
+      if (!cursorPoint) return;
+      cursorReturnTarget = target;
+      setCursorMode('returning');
+      if (returnFrame !== undefined) return;
+      const drawReturn = (time: number) => {
+        if (!cursorPoint || !cursorReturnTarget) {
+          hideCursor();
+          return;
+        }
+        const seconds = returnLastFrame ? Math.min((time - returnLastFrame) / 1000, 0.05) : 1 / 60;
+        const ease = 1 - Math.exp(-3.2 * seconds);
+        cursorPoint = {
+          x: cursorPoint.x + (cursorReturnTarget.x - cursorPoint.x) * ease,
+          y: cursorPoint.y + (cursorReturnTarget.y - cursorPoint.y) * ease,
+        };
+        cursorRef.current?.style.setProperty(
+          'transform', `translate3d(${cursorPoint.x}px, ${cursorPoint.y}px, 0)`,
+        );
+        reportVisibleMovement('cursor-echo', cursorPoint.x, cursorPoint.y, time);
+        applyGlow(cursorPoint);
+        returnLastFrame = time;
+        if (Math.hypot(
+          cursorReturnTarget.x - cursorPoint.x,
+          cursorReturnTarget.y - cursorPoint.y,
+        ) > 1) {
+          returnFrame = window.requestAnimationFrame(drawReturn);
+        } else {
+          const settledAt = cursorReturnTarget;
+          hideCursor();
+          applyGlow(settledAt);
+        }
+      };
+      returnFrame = window.requestAnimationFrame(drawReturn);
     };
     const startPull = () => {
       const invite = inviteRef.current;
       const cursor = cursorRef.current;
       if (!invite || !cursor || !lastPointer || motionProfile.reduced
           || !motionProfile.canFollow || document.visibilityState !== 'visible') return;
-      const from = lastPointer;
+      if (returnFrame !== undefined) window.cancelAnimationFrame(returnFrame);
+      returnFrame = undefined;
+      returnLastFrame = 0;
+      const from = cursorPoint ?? lastPointer;
       const rect = invite.getBoundingClientRect();
       const to = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
       if (Math.hypot(to.x - from.x, to.y - from.y) < 12) return;
       const started = performance.now();
-      setPulling(true);
+      cursorPoint = from;
+      cursorReturnTarget = null;
+      setCursorMode('pulling');
       returnPet();
       const draw = (time: number) => {
         const progress = Math.min(1, (time - started) / MAGNET_DURATION);
@@ -242,7 +309,9 @@ export function LinkedInInvite() {
           x: from.x + (to.x - from.x) * eased,
           y: from.y + (to.y - from.y) * eased,
         };
+        cursorPoint = point;
         cursor.style.setProperty('transform', `translate3d(${point.x}px, ${point.y}px, 0)`);
+        reportVisibleMovement('cursor-echo', point.x, point.y, time);
         applyGlow(point);
         if (progress < 1) pullFrame = window.requestAnimationFrame(draw);
         else pullFrame = undefined;
@@ -295,7 +364,8 @@ export function LinkedInInvite() {
       if (petFrame === undefined) petFrame = window.requestAnimationFrame(animatePet);
     };
     const parkAll = () => {
-      cancelPull();
+      stopPull();
+      hideCursor();
       settlePet();
       lastPointer = null;
       applyGlow(null);
@@ -307,8 +377,10 @@ export function LinkedInInvite() {
       }
       const invite = inviteRef.current;
       if (!invite) return;
-      cancelPull();
-      lastPointer = { x: event.clientX, y: event.clientY };
+      const pointer = { x: event.clientX, y: event.clientY };
+      if (cursorPoint) returnCursor(pointer);
+      else stopPull();
+      lastPointer = pointer;
       applyGlow(lastPointer);
       schedulePull();
       if (!motionProfile.canFollow || motionProfile.reduced
@@ -337,7 +409,8 @@ export function LinkedInInvite() {
     window.addEventListener('scroll', parkAll, { passive: true });
     return () => {
       stopPet();
-      cancelPull();
+      stopPull();
+      hideCursor();
       document.removeEventListener('pointermove', handlePointerMove);
       document.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('blur', parkAll);
@@ -349,6 +422,7 @@ export function LinkedInInvite() {
   const pulseEnabled = motionProfile?.reduced === false;
   const following = phase === 'following' && motionProfile?.canFollow === true
     && !motionProfile.reduced;
+  const cursorVisible = cursorMode !== 'hidden';
 
   return (
     <a ref={inviteRef} href="https://www.linkedin.com/in/0w0/" target="_blank"
@@ -356,11 +430,12 @@ export function LinkedInInvite() {
       data-linkedin-invite data-pointer-near={pointerNear ? 'true' : 'false'}
       data-pulse-enabled={pulseEnabled ? 'true' : 'false'}
       data-following={following ? 'true' : 'false'}
-      data-magnetic-pull={pulling ? 'true' : 'false'}
+      data-magnetic-pull={cursorMode === 'pulling' ? 'true' : 'false'}
+      data-magnetic-return={cursorMode === 'returning' ? 'true' : 'false'}
       className={`${styles.invite} mb-2 flex min-h-11 w-fit items-center gap-3 px-3
                   text-[13px] normal-case font-medium tracking-normal text-[color:var(--fg)]`}>
       <LinkedInPet phase={phase} petRef={petRef} />
-      <MagneticCursor cursorRef={cursorRef} pulling={pulling} />
+      <MagneticCursor cursorRef={cursorRef} visible={cursorVisible} />
       <span className={styles.linkedInMark} aria-hidden data-linkedin-mark>in</span>
       <span className={styles.label}>Find me on LinkedIn</span>
       <span className={styles.exitArrow} aria-hidden data-linkedin-arrow>↗</span>

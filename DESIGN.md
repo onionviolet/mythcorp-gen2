@@ -218,11 +218,12 @@ without covering the model. Smaller screens begin compact; visitors can switch
 either way. At short heights the compact view omits the clock and field size.
 Expanded phone layouts scroll, preserving separate room for the specimen.
 
-The readout's MOVEMENT bar measures pointer speed rather than average dye or
-event count. Slow movement raises it gently, faster travel ramps it toward
-SURGE, and an exponential release returns it through ACTIVE to CALM. Clicks do
-not alter it. The grid size remains a separate GRID row. This keeps the label
-and the measured input honest.
+The readout's MOVEMENT bar measures only the visible cursor echo and cat travel,
+plus click-ring impulses. The real pointer, average dye, touch travel and
+unrelated events do not feed it. Slow actor movement raises it gently, faster
+travel and clicks ramp it toward SURGE, and an exponential release returns it
+through ACTIVE to CALM. The grid size remains a separate GRID row. This keeps
+the label tied to movement the installation visibly performs.
 
 The user authorized bounded local exceptions to plain mode's no-glow rule: the
 scan effect, a restrained pulse around the obvious LinkedIn link, and the decode
@@ -240,8 +241,8 @@ and reduced motion keep it static.
 Browsers cannot move the visitor's real operating-system pointer. After a fine
 pointer rests for 900ms, a decorative cursor echo slowly travels toward LinkedIn
 and drives the same glow curve while the cat eases home beside it. Fresh movement
-cancels the echo immediately, while click location and the real cursor stay
-truthful. The close-range glow adds a second continuous ring and stronger halo,
+calls the echo back toward the real pointer before it disappears, while click
+location and the real cursor stay truthful. The close-range glow adds a second continuous ring and stronger halo,
 so proximity changes brightness as well as size. The echo, cat and link cannot
 click, navigate, move the visitor's pointer, or block a control. These exceptions
 are specific to this installation.

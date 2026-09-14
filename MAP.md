@@ -153,7 +153,7 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/HoldPickers.tsx` | Just the scheme picker now. The style, message and overlay rows moved into the readout |
 | `src/app/components/plain/HoldStatus.tsx` | Full/compact readout, scene/model/render controls, persistent scan status and secondary overlay control; expands by default on wide screens |
 | `src/app/components/plain/fieldMetrics.ts` | One-value store the field publishes to and the readout reads |
-| `src/app/components/plain/fieldActivity.ts` | Speed-sensitive MOVEMENT signal with attack and exponential release |
+| `src/app/components/plain/fieldActivity.ts` | MOVEMENT signal fed only by the fake cursor, cat and click rings, with speed-sensitive attack and exponential release |
 | `src/app/components/plain/holdScheme.ts` | Plain mode's own light/dark switch: key, attribute, ink colours |
 | `src/app/components/plain/usePlainScheme.ts` | Owns the scheme (`usePlainScheme`) and follows it (`useResolvedScheme`) |
 | `src/app/components/plain/HoldContact.tsx` | Contact details: the backdrop copy and the reachable copy |

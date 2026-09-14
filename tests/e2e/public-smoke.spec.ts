@@ -67,23 +67,19 @@ for (const path of ['/about', '/experience', '/wc', '/og', '/contact']) {
   });
 }
 
-test('movement meter ramps with pointer speed and settles', async ({ page }) => {
+test('movement meter ignores the real pointer and reacts to click rings', async ({ page }) => {
   const errors = captureRuntimeErrors(page);
   await page.goto('/');
   const meter = page.locator('[data-field-activity]');
 
   await expect(page.locator('html')).toHaveClass(/theme-ready/);
   await expect(meter).toHaveAttribute('data-field-activity', 'calm');
-  await page.mouse.move(100, 160);
-  await page.waitForTimeout(120);
-  await page.mouse.move(140, 160);
-  await expect(meter).toHaveAttribute('data-field-activity', 'active');
-  const slowLevel = Number(await meter.getAttribute('data-movement-level'));
-  await page.mouse.move(760, 180, { steps: 4 });
+  await page.mouse.move(80, 120);
+  await page.mouse.move(620, 240, { steps: 4 });
+  await expect(meter).toHaveAttribute('data-field-activity', 'calm');
+
+  await page.mouse.click(620, 240);
   await expect(meter).toHaveAttribute('data-field-activity', 'surge');
-  const fastLevel = Number(await meter.getAttribute('data-movement-level'));
-  expect(fastLevel).toBeGreaterThan(slowLevel);
-  await expect(meter).toHaveAttribute('data-field-activity', 'calm', { timeout: 4_500 });
   expect(errors).toEqual([]);
 });
 
@@ -114,13 +110,16 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
 
   const invite = page.locator('[data-linkedin-invite]');
   const pet = page.locator('[data-linkedin-pet]');
+  const meter = page.locator('[data-field-activity]');
   await expect(pet).toHaveAttribute('data-pet-phase', 'waiting');
   await expect(invite).toHaveAttribute('data-pointer-near', 'false');
   await expect(invite).toHaveAttribute('data-pulse-enabled', 'true');
+  await expect(invite).toHaveAttribute('data-magnetic-return', 'false');
   await expect.poll(() => invite.evaluate(element => getComputedStyle(element, '::before').animationName))
     .not.toBe('none');
 
   await expect(pet).toHaveAttribute('data-pet-phase', 'approaching', { timeout: 6_000 });
+  await expect(meter).not.toHaveAttribute('data-field-activity', 'calm');
   await expect(pet).toHaveAttribute('data-pet-phase', 'settled', { timeout: 3_500 });
 
   const initialPetBox = await pet.boundingBox();
@@ -163,6 +162,7 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
   await page.mouse.move(100, 100);
   await expect(invite).toHaveAttribute('data-pointer-near', 'false');
   await expect(invite).toHaveAttribute('data-magnetic-pull', 'true', { timeout: 2_000 });
+  await expect(meter).not.toHaveAttribute('data-field-activity', 'calm');
   const magneticCursor = page.locator('[data-magnetic-cursor]');
   const pullStart = await magneticCursor.boundingBox();
   await page.waitForTimeout(700);
@@ -177,8 +177,19 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
   const pullDistance = (box: Box) => Math.hypot(box.x - linkCentre.x, box.y - linkCentre.y);
   expect(pullDistance(pullLater)).toBeLessThan(pullDistance(pullStart));
   await expect(pet).toHaveAttribute('data-pet-phase', 'settled', { timeout: 4_500 });
+  const returnStart = await magneticCursor.boundingBox();
   await page.mouse.move(120, 120);
   await expect(invite).toHaveAttribute('data-magnetic-pull', 'false');
+  await expect(invite).toHaveAttribute('data-magnetic-return', 'true');
+  await page.waitForTimeout(500);
+  const returnLater = await magneticCursor.boundingBox();
+  expect(returnStart).not.toBeNull();
+  expect(returnLater).not.toBeNull();
+  if (!returnStart || !returnLater) throw new Error('Magnetic cursor return has no layout box');
+  const realPointer = { x: 120, y: 120 };
+  const returnDistance = (box: Box) => Math.hypot(box.x - realPointer.x, box.y - realPointer.y);
+  expect(returnDistance(returnLater)).toBeLessThan(returnDistance(returnStart));
+  await expect(invite).toHaveAttribute('data-magnetic-return', 'false', { timeout: 3_500 });
   expect(errors).toEqual([]);
 });
 
@@ -253,6 +264,8 @@ test('reduced motion keeps the LinkedIn cat static and disables pulse and follow
   await expect(pet).toHaveAttribute('data-pet-phase', 'settled');
   await expect(invite).toHaveAttribute('data-pulse-enabled', 'false');
   await expect(invite).toHaveAttribute('data-following', 'false');
+  await expect(invite).toHaveAttribute('data-magnetic-pull', 'false');
+  await expect(invite).toHaveAttribute('data-magnetic-return', 'false');
   await expect.poll(() => invite.evaluate(element => getComputedStyle(element, '::before').animationName))
     .toBe('none');
   const startBox = await pet.boundingBox();

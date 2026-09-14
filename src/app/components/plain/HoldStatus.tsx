@@ -40,8 +40,8 @@ const OPENED_AT = Date.now();
 
 /**
  * The readout. Every number here is measured rather than decorative: the grid
- * really is that size, the activity meter reflects recent visitor input, and
- * the clock really is how long you have been on the page.
+ * really is that size, the activity meter reflects the visible fake cursor,
+ * cat and click rings, and the clock really is how long you have been on the page.
  */
 export function HoldStatus({
   style, scheme, message, overlay, onCycle, scene, onScene, model, onModel,

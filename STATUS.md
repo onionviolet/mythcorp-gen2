@@ -1,5 +1,20 @@
 # STATUS
 
+## Cursor echo return path, 2026-09-13
+
+Fresh real-mouse movement no longer makes the decorative cursor echo disappear
+at its LinkedIn position. The echo now eases toward the latest real-pointer
+position, updates that destination while the visitor keeps moving and disappears
+only after catching it. If idleness resumes during the return, the echo can
+reverse from its current position without teleporting.
+
+## Actor-only movement meter, 2026-09-13
+
+MOVEMENT now listens only to the decorative cursor echo, cat and visible click
+rings. Cat approach, following and return all contribute measured travel. The
+real pointer only guides those actors and cannot activate the meter directly.
+Touch travel, the fluid field, overlays and unrelated timers also cannot feed it.
+
 ## Stronger LinkedIn proximity light, 2026-09-13
 
 LinkedIn proximity now increases light density as well as reach. The close state

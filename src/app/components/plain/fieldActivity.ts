@@ -15,7 +15,7 @@ let level = 0;
 let updatedAt = 0;
 let current = EMPTY;
 let timer: ReturnType<typeof setTimeout> | null = null;
-let lastPointer: { id: number; x: number; y: number; at: number } | null = null;
+const actorSamples = new Map<string, { x: number; y: number; at: number }>();
 const listeners = new Set<() => void>();
 
 function stateFor(next: number): FieldActivity['state'] {
@@ -46,16 +46,20 @@ function decay() {
   if (level > 0) timer = setTimeout(decay, TICK_MS);
 }
 
-function recordFieldMovement(event: PointerEvent) {
-  const now = performance.now();
-  if (!lastPointer || lastPointer.id !== event.pointerId) {
-    lastPointer = { id: event.pointerId, x: event.clientX, y: event.clientY, at: now };
+export function reportVisibleMovement(
+  actor: 'cat' | 'cursor-echo',
+  x: number,
+  y: number,
+  now = performance.now(),
+) {
+  const previous = actorSamples.get(actor);
+  actorSamples.set(actor, { x, y, at: now });
+  if (!previous) {
     return;
   }
 
-  const elapsed = Math.max(1, now - lastPointer.at);
-  const distance = Math.hypot(event.clientX - lastPointer.x, event.clientY - lastPointer.y);
-  lastPointer = { id: event.pointerId, x: event.clientX, y: event.clientY, at: now };
+  const elapsed = Math.max(1, now - previous.at);
+  const distance = Math.hypot(x - previous.x, y - previous.y);
   release(now);
   const target = Math.min(1, distance / elapsed / FULL_SPEED_PX_PER_MS);
   const attack = 1 - Math.exp(-Math.min(80, Math.max(16, elapsed)) / ATTACK_MS);
@@ -66,26 +70,25 @@ function recordFieldMovement(event: PointerEvent) {
   timer = setTimeout(decay, TICK_MS);
 }
 
-function onMove(event: PointerEvent) {
-  if (event.isPrimary) recordFieldMovement(event);
-}
-
-function start() {
-  window.addEventListener('pointermove', onMove, { passive: true });
+export function reportVisibleClick() {
+  const now = performance.now();
+  release(now);
+  level = Math.max(level, 0.78);
+  publish(level);
+  if (timer) clearTimeout(timer);
+  timer = setTimeout(decay, TICK_MS);
 }
 
 function stop() {
-  window.removeEventListener('pointermove', onMove);
   if (timer) clearTimeout(timer);
   timer = null;
   level = 0;
   updatedAt = 0;
-  lastPointer = null;
+  actorSamples.clear();
   current = EMPTY;
 }
 
 export function subscribeFieldActivity(listener: () => void) {
-  if (listeners.size === 0) start();
   listeners.add(listener);
   return () => {
     listeners.delete(listener);
