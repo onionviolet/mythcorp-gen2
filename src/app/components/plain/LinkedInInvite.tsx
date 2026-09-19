@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './LinkedInInvite.module.css';
 import { reportVisibleMovement } from './fieldActivity';
+import { HOLD_SCENE_CHANGE_EVENT } from './holdSceneEvents';
 
 const IDLE_DELAY = 5000;
 const APPROACH_DURATION = 2400;
@@ -56,20 +57,28 @@ function followerPoint(pointer: Point, invite: HTMLAnchorElement): Point {
   return candidates.find(clearOfControls) ?? restingPoint(invite);
 }
 
-function LinkedInPet({ phase, petRef }: {
+function LinkedInPet({ phase, petRef, reactionActive, reactionSequence, onReactionEnd }: {
   phase: PetPhase;
   petRef: React.RefObject<HTMLSpanElement | null>;
+  reactionActive: boolean;
+  reactionSequence: number;
+  onReactionEnd: () => void;
 }) {
   return (
     <span ref={petRef} aria-hidden data-linkedin-pet data-pet-phase={phase}
+      data-pet-reaction={reactionActive ? 'active' : 'idle'}
       className={`${styles.pet} ${styles[phase]}`}>
       <svg viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           d="M4.5 13.5c0-4.15 3.1-7 8.2-7h4.2c3.7 0 6.6 2.2 6.6 5.5S20.7 17.5 17 17.5H9.8c-3.2 0-5.3-1.45-5.3-4Z"
           stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
         />
-        <path
-          d="m7.25 7.1-.5-3.6 3.15 2.55M18.45 6.55l1.55-3.05.95 3.8M20.55 12.2h.01M14.35 12.2h.01M4.5 12.5c-1.5-.1-2.55-.75-3-1.8"
+        <g key={reactionSequence} className={reactionActive ? styles.petReaction : undefined}
+          onAnimationEnd={onReactionEnd}>
+          <path d="m7.25 7.1-.5-3.6 3.15 2.55M18.45 6.55l1.55-3.05.95 3.8"
+            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </g>
+        <path d="M20.55 12.2h.01M14.35 12.2h.01M4.5 12.5c-1.5-.1-2.55-.75-3-1.8"
           stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
         />
       </svg>
@@ -98,6 +107,8 @@ export function LinkedInInvite() {
   const [pointerNear, setPointerNear] = useState(false);
   const [cursorMode, setCursorMode] = useState<CursorMode>('hidden');
   const [motionProfile, setMotionProfile] = useState<MotionProfile | null>(null);
+  const [reactionActive, setReactionActive] = useState(false);
+  const [reactionSequence, setReactionSequence] = useState(0);
   const inviteRef = useRef<HTMLAnchorElement>(null);
   const petRef = useRef<HTMLSpanElement>(null);
   const cursorRef = useRef<HTMLSpanElement>(null);
@@ -119,6 +130,29 @@ export function LinkedInInvite() {
       pointerQuery.removeEventListener('change', updateProfile);
     };
   }, []);
+
+  useEffect(() => {
+    const resetReaction = () => setReactionActive(false);
+    if (motionProfile?.reduced) resetReaction();
+    const reactToSceneChange = () => {
+      if (!motionProfile || motionProfile.reduced || document.visibilityState !== 'visible') {
+        resetReaction();
+        return;
+      }
+      setReactionSequence((current) => current + 1);
+      setReactionActive(true);
+    };
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') resetReaction();
+    };
+
+    window.addEventListener(HOLD_SCENE_CHANGE_EVENT, reactToSceneChange);
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      window.removeEventListener(HOLD_SCENE_CHANGE_EVENT, reactToSceneChange);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [motionProfile]);
 
   useEffect(() => {
     if (!motionProfile) return;
@@ -434,7 +468,13 @@ export function LinkedInInvite() {
       data-magnetic-return={cursorMode === 'returning' ? 'true' : 'false'}
       className={`${styles.invite} mb-2 flex min-h-11 w-fit items-center gap-3 px-3
                   text-[13px] normal-case font-medium tracking-normal text-[color:var(--fg)]`}>
-      <LinkedInPet phase={phase} petRef={petRef} />
+      <LinkedInPet
+        phase={phase}
+        petRef={petRef}
+        reactionActive={reactionActive}
+        reactionSequence={reactionSequence}
+        onReactionEnd={() => setReactionActive(false)}
+      />
       <MagneticCursor cursorRef={cursorRef} visible={cursorVisible} />
       <span className={styles.linkedInMark} aria-hidden data-linkedin-mark>in</span>
       <span className={styles.label}>Find me on LinkedIn</span>

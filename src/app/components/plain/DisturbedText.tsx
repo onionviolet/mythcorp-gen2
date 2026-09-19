@@ -7,6 +7,7 @@ import { pressWave } from './holdPress';
 import type { PointerAt } from './holdPointer';
 import { RAMP } from './asciiRender';
 import { getPointer, getServerPointer, subscribePointer } from './holdPointer';
+import { useReducedMotion } from './useReducedMotion';
 
 /**
  * Type you can push your hand through. The cursor erodes the characters it
@@ -123,10 +124,12 @@ export function DisturbedText({
   text,
   className,
   strength = FULL,
+  active = true,
 }: {
   text: string;
   className?: string;
   strength?: number;
+  active?: boolean;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const tick = useRef(0);
@@ -136,10 +139,9 @@ export function DisturbedText({
 
   tick.current += 1;
 
-  const calm = typeof window !== 'undefined'
-    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const calm = useReducedMotion();
 
-  const cells = (!pointer.active && !pointer.pulse) || calm
+  const cells = !active || (!pointer.active && !pointer.pulse) || calm
     ? [...text].map((ch) => ({ ch, heat: 0 }))
     : erode(text, ref.current?.getBoundingClientRect() ?? null, pointer.x, pointer.y, tick.current, pointer.pulse);
 

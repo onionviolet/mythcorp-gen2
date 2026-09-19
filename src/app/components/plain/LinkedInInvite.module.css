@@ -1,5 +1,6 @@
 .invite {
   --linkedin-pet-duration: 2.4s;
+  --linkedin-pet-reaction-duration: 280ms;
   --linkedin-pet-travel: clamp(120px, 22vw, 280px);
   --linkedin-glow-radius: 14px;
   --linkedin-glow-spread: -9px;
@@ -92,6 +93,12 @@
   height: 100%;
 }
 
+.petReaction {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: pet-ear-flick var(--linkedin-pet-reaction-duration) var(--motion-ease) 1 both;
+}
+
 .waiting {
   transform: translate(calc(var(--linkedin-pet-travel) * -1), -50%);
 }
@@ -162,6 +169,19 @@
   }
 }
 
+@keyframes pet-ear-flick {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  35% {
+    transform: translateY(-0.3px) rotate(-6deg);
+  }
+  68% {
+    transform: rotate(3deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .invite {
     transition: none;
@@ -176,6 +196,10 @@
   .approaching,
   .settled,
   .following {
+    animation: none;
+  }
+
+  .petReaction {
     animation: none;
   }
 

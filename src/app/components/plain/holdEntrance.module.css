@@ -14,6 +14,18 @@
   .readoutDock { justify-content: flex-start; padding-inline: 2.5vw; }
 }
 
+@media (max-width: 1199px) {
+  .stage:has([data-readout="full"]) {
+    min-height: 960px;
+  }
+
+  .stage:has([data-readout="full"]) .specimen {
+    top: 200px;
+    bottom: auto;
+    height: 240px;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .identity, .specimen, .readout {
     animation: resolve var(--hold-reveal) ease-out both;

@@ -27,8 +27,10 @@ const cinzel = Cinzel({
 });
 
 export const metadata: Metadata = {
-  title: "MYTHCORP - Discover Your Potential",
-  description: "Founded in Chicago - Discover Your Potential with MYTHCORP",
+  title: SITE_LOCKED ? "MYTHCORP / work in progress" : "MYTHCORP - Discover Your Potential",
+  description: SITE_LOCKED
+    ? "An interactive work in progress. Explore the specimens, change the scene, and find the human behind MYTHCORP."
+    : "Founded in Chicago - Discover Your Potential with MYTHCORP",
 };
 
 // Inline so it runs before paint: it avoids a flash of the wrong theme or the
@@ -81,11 +83,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Preload the heavy assets the boot sequence depends on so the
-            crossfade into the landing has no waterfall. */}
         <link rel="preload" href="/spectre.glb" as="fetch" type="model/gltf-binary" crossOrigin="anonymous" />
-        <link rel="preload" href="/fonts/Inter_Bold.json" as="fetch" crossOrigin="anonymous" />
-        <link rel="preload" href="/chicagoskyline.jpg" as="image" />
+        {!SITE_LOCKED && <>
+          <link rel="preload" href="/fonts/Inter_Bold.json" as="fetch" crossOrigin="anonymous" />
+          <link rel="preload" href="/chicagoskyline.jpg" as="image" />
+        </>}
         {originTrialTokens.map((token) => (
           <meta key={token} httpEquiv="origin-trial" content={token} />
         ))}

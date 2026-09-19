@@ -3,9 +3,12 @@
 // Walkthrough: /wc/learn/plain-mode
 
 import dynamic from 'next/dynamic';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
+import sceneStyles from './HoldStage.module.css';
 import type { Scheme } from './holdScheme';
 import { SCHEME_INK } from './holdScheme';
+import { useReducedMotion } from './useReducedMotion';
 import {
   DEFAULT_HOLD_MODEL,
   DEFAULT_HOLD_MODEL_ID,
@@ -78,6 +81,10 @@ const FILL = 'absolute inset-0 h-full w-full';
  * inert on purpose rather than by accident.
  */
 const REACTIVE = `${FILL} pointer-events-auto`;
+const SCENE_DURATION_MS = 360;
+
+type SceneLayer = { id: number; style: HoldStyle; model: HoldModel };
+type SceneLayers = { visible: SceneLayer; incoming: SceneLayer | null; ready: boolean };
 
 /**
  * The resolved model stays transparent in every renderer, so the fluid field
@@ -96,15 +103,92 @@ export type HoldStageProps = {
 
 export function HoldStage({ style, scheme, modelId, onModelError }: HoldStageProps) {
   const selectedModel = resolveHoldModel(modelId);
+  const reducedMotion = useReducedMotion();
+  const nextLayerId = useRef(0);
+  const [layers, setLayers] = useState<SceneLayers>(() => ({
+    visible: { id: 0, style, model: selectedModel },
+    incoming: null,
+    ready: false,
+  }));
+
+  useEffect(() => {
+    setLayers(previous => {
+      if (previous.visible.style === style && previous.visible.model.id === selectedModel.id) {
+        return previous.incoming ? { ...previous, incoming: null, ready: false } : previous;
+      }
+      if (previous.incoming?.style === style && previous.incoming.model.id === selectedModel.id) {
+        return previous;
+      }
+      const incoming = { id: ++nextLayerId.current, style, model: selectedModel };
+      if (reducedMotion) {
+        return { visible: incoming, incoming: null, ready: false };
+      }
+      return { ...previous, incoming, ready: false };
+    });
+  }, [style, selectedModel, reducedMotion]);
+
+  useEffect(() => {
+    if (!reducedMotion) return;
+    setLayers(previous => previous.incoming
+      ? { visible: previous.incoming, incoming: null, ready: false }
+      : previous);
+  }, [reducedMotion]);
+
+  useEffect(() => {
+    if (!layers.incoming || !layers.ready) return;
+    const incomingId = layers.incoming.id;
+    const timer = window.setTimeout(() => {
+      setLayers(previous => previous.incoming?.id === incomingId
+        ? { visible: previous.incoming, incoming: null, ready: false }
+        : previous);
+    }, SCENE_DURATION_MS);
+    return () => window.clearTimeout(timer);
+  }, [layers.incoming, layers.ready]);
+
+  const onIncomingLoad = (id: number) => {
+    setLayers(previous => previous.incoming?.id === id
+      ? { ...previous, ready: true }
+      : previous);
+  };
+
+  const onIncomingFailure = (id: number) => {
+    setLayers(previous => previous.incoming?.id === id
+      ? { ...previous, incoming: null, ready: false }
+      : previous);
+  };
+
+  const renderedLayers = layers.incoming
+    ? [layers.visible, layers.incoming]
+    : [layers.visible];
 
   return (
-    <ResolvedHoldStage
-      key={selectedModel.id}
-      style={style}
-      scheme={scheme}
-      selectedModel={selectedModel}
-      onModelError={onModelError}
-    />
+    <div
+      className={sceneStyles.stage}
+      style={{ '--hold-scene-duration': `${SCENE_DURATION_MS}ms` } as CSSProperties}
+    >
+      {renderedLayers.map(layer => {
+        const incoming = layer.id === layers.incoming?.id;
+        return (
+          <div
+            key={layer.id}
+            data-specimen-layer={incoming ? 'incoming' : layers.incoming ? 'outgoing' : 'current'}
+            data-specimen-render={layer.style}
+            data-specimen-model={layer.model.id}
+            data-ready={incoming ? layers.ready : undefined}
+            className={`${sceneStyles.layer} ${incoming ? sceneStyles.incoming : ''} ${incoming && !layers.ready ? sceneStyles.waiting : ''} ${incoming && layers.ready ? sceneStyles.ready : ''} ${!incoming && layers.incoming ? sceneStyles.retired : ''} ${!incoming && layers.ready ? sceneStyles.outgoing : ''}`}
+          >
+            <ResolvedHoldStage
+              style={layer.style}
+              scheme={scheme}
+              selectedModel={layer.model}
+              onModelError={incoming || !layers.incoming ? onModelError : undefined}
+              onLoad={incoming ? () => onIncomingLoad(layer.id) : undefined}
+              onFatalError={incoming ? () => onIncomingFailure(layer.id) : undefined}
+            />
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -113,21 +197,26 @@ function ResolvedHoldStage({
   scheme,
   selectedModel,
   onModelError,
+  onLoad,
+  onFatalError,
 }: {
   style: HoldStyle;
   scheme: Scheme;
   selectedModel: HoldModel;
   onModelError?: (model: HoldModel) => void;
+  onLoad?: () => void;
+  onFatalError?: () => void;
 }) {
   const { ink, highlight } = SCHEME_INK[scheme];
   const [model, setModel] = useState(selectedModel);
-  const reportedFailure = useRef(false);
+  const reportedFailure = useRef<string | null>(null);
   const handleModelError = useCallback(() => {
-    if (reportedFailure.current) return;
-    reportedFailure.current = true;
+    if (reportedFailure.current === model.id) return;
+    reportedFailure.current = model.id;
     onModelError?.(model);
     if (model.id !== DEFAULT_HOLD_MODEL_ID) setModel(DEFAULT_HOLD_MODEL);
-  }, [model, onModelError]);
+    else onFatalError?.();
+  }, [model, onModelError, onFatalError]);
   const frame = { src: model.src, ...model.frame };
 
   switch (style) {
@@ -137,6 +226,7 @@ function ResolvedHoldStage({
           {...frame}
           className={REACTIVE}
           onError={handleModelError}
+          onLoad={onLoad}
           color={ink}
           count={26000}
           size={1.4}
@@ -153,6 +243,7 @@ function ResolvedHoldStage({
           {...frame}
           className={REACTIVE}
           onError={handleModelError}
+          onLoad={onLoad}
           color={ink}
           count={3200}
           size={5}
@@ -172,6 +263,7 @@ function ResolvedHoldStage({
           {...frame}
           className={REACTIVE}
           onError={handleModelError}
+          onLoad={onLoad}
           tint={ink}
           saturation={0}
           iridescence={0}
@@ -189,6 +281,7 @@ function ResolvedHoldStage({
           {...frame}
           className={FILL}
           onError={handleModelError}
+          onLoad={onLoad}
           cellSize={11}
           colored={false}
           color={ink}

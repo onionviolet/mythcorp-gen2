@@ -1,0 +1,41 @@
+.stage,
+.layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.layer {
+  opacity: 1;
+  pointer-events: none;
+}
+
+.retired > *,
+.waiting > * {
+  pointer-events: none !important;
+}
+
+.incoming {
+  opacity: 0;
+}
+
+.ready {
+  opacity: 1;
+  transition: opacity var(--hold-scene-duration) var(--motion-ease);
+}
+
+.outgoing {
+  opacity: 0;
+  transition: opacity var(--hold-scene-duration) var(--motion-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layer {
+    transition: none;
+  }
+
+  .incoming {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,55 @@
+.cycleControl {
+  --readout-acknowledgement-duration: 620ms;
+  display: inline-flex;
+  min-block-size: 24px;
+  align-items: center;
+  color: var(--fg-muted);
+}
+
+.hintLine {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  min-block-size: 1.2em;
+  max-inline-size: 100%;
+  overflow: hidden;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cycleControl[data-activated='true'] {
+    animation: readout-acknowledgement var(--readout-acknowledgement-duration) ease-out both;
+  }
+}
+
+@keyframes readout-acknowledgement {
+  0% {
+    color: var(--accent);
+  }
+
+  100% {
+    color: var(--fg-muted);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cycleControl {
+    transition: none;
+  }
+
+  .cycleControl:focus-visible,
+  .cycleControl:active {
+    color: var(--accent);
+  }
+
+}
+
+@media (pointer: coarse) {
+  .cycleControl {
+    min-block-size: 44px;
+  }
+}

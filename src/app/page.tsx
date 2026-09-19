@@ -6,6 +6,7 @@ import { useState, Suspense, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { LoadingScreen } from './components/LoadingScreen';
 import { NewLandingPage } from './components/NewLandingPage';
+import { SITE_LOCKED } from '../siteLock';
 
 const LOADING_DURATION_MS = 3500;
 const SESSION_BOOTED_KEY = 'mythcorp-booted';
@@ -99,6 +100,10 @@ function AppLoader({ children }: { children: React.ReactNode }) {
  *   to /experience (real route, full 3D scene)
  */
 export default function HomePage() {
+  return SITE_LOCKED ? null : <UnlockedHomePage />;
+}
+
+function UnlockedHomePage() {
   const router = useRouter();
   
   // Bumping this remounts AppLoader; paired with clearing the session flag it
@@ -127,5 +132,4 @@ export default function HomePage() {
     </main>
   );
 }
-
 

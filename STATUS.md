@@ -1,5 +1,38 @@
 # STATUS
 
+## Small holding-page interactions, 2026-09-19
+
+Cyclic controls now show their next value in one reserved hint line on hover
+or keyboard focus. The hint follows the current options after each change,
+and only the directly activated value briefly brightens. Focused and hovered
+values stay readable instead of eroding under the pointer. Desktop controls
+remain compact, while coarse pointers receive 44px targets. An explicit full
+or compact readout choice survives reloads, with safe viewport defaults when
+storage is absent, invalid or blocked.
+
+Scene changes trigger one small cat ear flick, without disturbing its existing
+follow or return paths. The specimen keeps its outgoing render until the next
+model loads, then crossfades over 360ms. There are at most two layers, and the
+incoming canvas survives promotion rather than loading again. Rapid selections
+replace the pending layer. Failed replacements release their candidate, and
+reduced motion skips the transition. Halo, contacts and the readout stay mounted.
+
+The browser title now reads `MYTHCORP / work in progress`. While locked, the
+page no longer mounts the hidden landing boot or preloads its unused 3D font
+and skyline. The active Spectre preload remains. Changes to the system motion
+preference now stop or restart the plain fluid field and resolve scrambled type
+during the visit. No dependencies or production configuration changed.
+
+Three parallel implementation lanes owned readout, cat and specimen changes;
+root integrated them and added focused browser coverage. `npm run check` and
+`npm run check:roll` passed. All 28 Chromium cases passed across the full suite
+and corrected or affected focused reruns. Motion tests record brief animation
+states in the page so test round trips cannot miss them. Browser coverage includes
+load failures, rapid changes, canvas retention, saved and blocked storage,
+keyboard hints, touch spacing, live reduced motion and existing cat behavior.
+Desktop and phone layouts were visually checked in both schemes, and the final
+desktop preview had no console warnings or errors. No commit, push or deployment.
+
 ## Halo separated from scenes, 2026-09-14
 
 Halo is now named and treated as the permanent atmospheric background. It stays

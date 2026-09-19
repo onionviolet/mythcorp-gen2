@@ -11,6 +11,7 @@ import { renderTextMask } from './textMask';
 import { isHeld } from './holdState';
 import { publishMetrics, resetMetrics } from './fieldMetrics';
 import { useResolvedScheme } from './usePlainScheme';
+import { useReducedMotion } from './useReducedMotion';
 import {
   MESSAGE_LINES, getMessageStyle, getServerMessageStyle, subscribeMessageStyle,
 } from './messageStore';
@@ -46,10 +47,10 @@ export function PlainField() {
   );
   const active = theme === 'plain';
   const held = isHeld(theme, pathname);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (!active) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!active || reducedMotion) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -101,7 +102,7 @@ export function PlainField() {
     // scheme is in here because the ink colour is read once, off the CSS
     // variable, when the field is built. Without it a light/dark switch leaves
     // the glyphs the previous scheme's colour, which on white is invisible.
-  }, [active, held, scheme, messageStyle]);
+  }, [active, held, scheme, messageStyle, reducedMotion]);
 
   if (!active) return null;
 

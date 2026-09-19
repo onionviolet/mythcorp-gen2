@@ -145,13 +145,15 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/useScramble.ts` | Ideaboard #65, the decode effect |
 | `src/app/components/plain/DisturbedText.tsx` | Type the cursor erodes into the field's ramp, so what is behind shows through the holes |
 | `src/app/components/plain/holdPointer.ts` | One `pointermove` listener, published on a frame, read by every piece of disturbed type |
-| `src/app/components/plain/HoldStage.tsx` | Selected model in four dynamic monochrome renderers, with a bounded load-failure fallback |
+| `src/app/components/plain/HoldStage.tsx` | Selected model in four dynamic monochrome renderers; load-aware crossfade retains at most two keyed layers and preserves the loaded canvas on promotion; styles in HoldStage.module.css |
 | `src/app/components/plain/holdModels.ts` | Model registry: local assets, per-model framing, source, license and credit metadata |
 | `docs/HOLD_MODEL_ONBOARDING.md` | How to add and verify future GLBs |
 | `scripts/generate-hold-calibration-glb.mjs` | Regenerates the original public/models/calibration.glb specimen |
 | `src/app/components/plain/HoldOverlay.tsx` | Full-screen Canvas UI layer: `rain`, `shield`, `fog`, `drops`, `scan`. All draw their own geometry. Five more were auditioned and cut, each for a recorded reason, see the file |
 | `src/app/components/plain/HoldPickers.tsx` | Just the scheme picker now. The style, message and overlay rows moved into the readout |
-| `src/app/components/plain/HoldStatus.tsx` | Full/compact readout, scene/model/render controls, persistent Halo status and secondary overlay control; expands by default on wide screens |
+| `src/app/components/plain/HoldStatus.tsx` | Full/compact readout, saved layout preference, next-value hints and direct-change acknowledgement; styles in HoldStatus.module.css |
+| `src/app/components/plain/useReducedMotion.ts` | Live system motion preference for the field, disturbed type, title scramble and specimen transitions |
+| `src/app/components/plain/holdSceneEvents.ts` | User scene-change event consumed by the cat's one-shot ear reaction |
 | `src/app/components/plain/fieldMetrics.ts` | One-value store the field publishes to and the readout reads |
 | `src/app/components/plain/fieldActivity.ts` | MOVEMENT signal fed only by the fake cursor, cat and click rings, with speed-sensitive attack and exponential release |
 | `src/app/components/plain/holdScheme.ts` | Plain mode's own light/dark switch: key, attribute, ink colours |

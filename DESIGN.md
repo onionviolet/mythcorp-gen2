@@ -213,11 +213,15 @@ the `over` control adds one optional secondary background. Scene cycling remains
 available. The old budgeted randomizer is retained for its existing consumers,
 not the cold load. Trace is not a scene until it produces a visible trace.
 
-The expanded readout is the default at 1200px wide and 680px tall or larger.
+An explicit full or compact readout choice is remembered. Without a saved
+choice, the expanded readout is the default at 1200px wide and 680px tall or larger.
 It sits to the left of the specimen, where its exposed controls add character
 without covering the model. Smaller screens begin compact; visitors can switch
 either way. At short heights the compact view omits the clock and field size.
-Expanded phone layouts scroll, preserving separate room for the specimen.
+Expanded phone layouts scroll, preserving separate room for the specimen and
+44px controls on touch devices. Next-value hints share one reserved line below
+the readout, and only an activated value briefly brightens. Control values stay
+clear while hovered or focused.
 
 The readout's MOVEMENT bar measures only the visible cursor echo and cat travel,
 plus click-ring impulses. The real pointer, average dye, touch travel and

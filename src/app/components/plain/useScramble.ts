@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useReducedMotion } from './useReducedMotion';
 
 const CHARSET = '<>/\\[]{}=+*#%$&@01';
 
@@ -13,10 +14,10 @@ const CHARSET = '<>/\\[]{}=+*#%$&@01';
 export function useScramble(text: string, { active = true, frames = 26 } = {}) {
   const [out, setOut] = useState(text);
   const raf = useRef(0);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (!active) { setOut(text); return; }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setOut(text); return; }
+    if (!active || reducedMotion) { setOut(text); return; }
 
     let frame = 0;
     // Stagger: character i is still noise until frame i * step.
@@ -41,7 +42,7 @@ export function useScramble(text: string, { active = true, frames = 26 } = {}) {
 
     raf.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf.current);
-  }, [text, active, frames]);
+  }, [text, active, frames, reducedMotion]);
 
   return out;
 }

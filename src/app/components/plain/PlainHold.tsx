@@ -24,6 +24,7 @@ import { SchemePicker } from './HoldPickers';
 import { DEFAULT_HOLD_COMPOSITION, HOLD_COMPOSITIONS, compositionName } from './holdCompositions';
 import { DEFAULT_HOLD_MODEL_ID, HOLD_MODEL_IDS, resolveHoldModel, type HoldModel } from './holdModels';
 import entrance from './holdEntrance.module.css';
+import { HOLD_SCENE_CHANGE_EVENT } from './holdSceneEvents';
 
 /** Advance to the next option, wrapping. The readout rows cycle rather than
  *  listing, which is what let fifteen buttons come off the screen. */
@@ -87,12 +88,15 @@ export function PlainHold() {
 
   const scene = compositionName({ style, message, overlay });
   const model = resolveHoldModel(modelId);
+  const nextComposition = HOLD_COMPOSITIONS[
+    (HOLD_COMPOSITIONS.findIndex(item => item.name === scene) + 1) % HOLD_COMPOSITIONS.length
+  ];
   const cycleComposition = () => {
-    const index = HOLD_COMPOSITIONS.findIndex(item => item.name === scene);
-    const composition = HOLD_COMPOSITIONS[(index + 1) % HOLD_COMPOSITIONS.length];
+    const composition = nextComposition;
     setStyle(composition.style);
     setOverlay(composition.overlay);
     setMessageStyle(composition.message);
+    window.dispatchEvent(new Event(HOLD_SCENE_CHANGE_EVENT));
   };
 
   const wordmark = useScramble('MYTHCORP', { active: held && mounted });
@@ -137,6 +141,13 @@ export function PlainHold() {
               message={message}
               overlay={overlay}
               model={model.label}
+              nextValues={{
+                scene: nextComposition.name,
+                model: resolveHoldModel(next<string>(HOLD_MODEL_IDS, model.id)).label,
+                render: next(HOLD_STYLES, style),
+                words: next(MESSAGE_STYLES, message),
+                over: nextSecondaryOverlay(overlay),
+              }}
               onModel={HOLD_MODEL_IDS.length > 1 ? () => {
                 setModelNotice('');
                 setModelId(next<string>(HOLD_MODEL_IDS, model.id));
