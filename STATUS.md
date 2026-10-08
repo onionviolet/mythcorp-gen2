@@ -1,5 +1,45 @@
 # STATUS
 
+## Banner publishing scope, 2026-10-08
+
+User authorized pushing the banner work and sending its evidence to the
+planning chat for a whole-profile review. Prepared `codex/linkedin-banner`
+from `origin/main`, following README branch rules, so the three unrelated
+local paper commits are excluded. Portrait and preview assets remain outside
+the repo in Downloads/LinkedIn. Deployment and LinkedIn upload are outside
+this publishing step. The local main checkout retains its original changes.
+
+
+## Banner navigation and LinkedIn format research, 2026-10-08
+
+Added a Banner tab beside the front-page room switch, with an Installation
+return link and browser back/forward support. The original four rooms and
+cold-load Installation remain. The banner page now includes a 390px legibility
+view and source-linked format guidance; neither affects the PNG export.
+
+Recommendation for this portrait: one light still, whose fixed composition
+keeps the gaze connected to the ASCII ribbon. The website carries the live
+installation. This is a design recommendation, not human acceptance.
+LinkedIn supports JPG/PNG covers below 8 MB, with 1584 x 396 recommended;
+GIF covers are unsupported. Certain paid plans offer up to five still images
+rotating every three seconds. A LinkedIn Live broadcaster's cover temporarily
+shows the live stream during a broadcast. Subscription availability was not
+checked on the user's account. Sources checked today:
+[cover rules and live stream behavior](https://www.linkedin.com/help/linkedin/answer/a568217),
+[slideshow](https://www.linkedin.com/help/linkedin/answer/a7145577),
+[GIF restriction](https://www.linkedin.com/help/linkedin/answer/a564109/).
+
+Observed: `npm run check` passed. Built app at localhost:3012 verified in the
+browser: Banner/Installation links, back/forward, both scheme controls,
+phone-size view, overlap guide and expanded guidance. Main message reads at
+390px; the tiny URL is secondary. Download still measures 1584 x 396 and
+154250 bytes; browser error log empty. `git diff --check` passed. Page images
+saved in Downloads/LinkedIn as `banner-tab-preview.jpg` and
+`banner-phone-check.jpg`. Actual LinkedIn crop and compression remain untested.
+No commit, push, deployment or LinkedIn upload.
+
+
+
 ## Front page restored to its spectacle, paper made public, 2026-10-08
 
 Decision: the front page's goal is awe (DESIGN.md, "The front page's job").

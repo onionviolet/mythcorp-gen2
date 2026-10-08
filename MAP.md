@@ -6,6 +6,7 @@ Single-screen index of where things live. Read this first; grep second.
 
 | Route | File | Purpose |
 |---|---|---|
+| `/?banner=linkedin` | `src/app/components/plain/LinkedInBanner.tsx` | Banner tab from holding rooms; installation still, phone-size check and 1584 x 396 PNG export |
 | `/` | `src/app/page.tsx` | Plain holding installation while the site lock is active |
 | `/experience` | `src/app/experience/page.tsx` | 3D simulation lab (menu + Simulation) |
 | `/og/animals` | `src/app/og/animals/page.tsx` | Parked animal intermission, queued for a licensed-art rebuild |
