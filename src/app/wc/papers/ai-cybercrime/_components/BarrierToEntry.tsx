@@ -30,8 +30,8 @@ const ROWS: ReadonlyArray<BarrierRow> = [
     label: 'Targeted phishing',
     pre: [N, Y, Y, N, Y],
     post: [Y, Y, Y, Y, Y],
-    reasoning: 'Before 2023 the part that took skill was a fluent, personal lure in the target\'s language, written one at a time. Models write those in bulk, which the NCSC flagged in 2024 and the FBI describes in 2025 complaints.',
-    evidence: ['ncsc-2024', 'ic3-2025'],
+    reasoning: 'Before 2023 the part that took skill was a fluent, personal lure in the target\'s language, written one at a time. Models write those in bulk, which the NCSC flagged in 2024 and the FBI describes in 2025 complaints. In a controlled study with university participants, fully AI-written lures drew as many clicks as an expert\'s.',
+    evidence: ['ncsc-2024', 'ic3-2025', 'heiding-2024'],
   },
   {
     label: 'Voice or video impersonation',
@@ -44,8 +44,8 @@ const ROWS: ReadonlyArray<BarrierRow> = [
     label: 'Build a ransomware variant',
     pre: [N, N, N, Y, N],
     post: [Y, N, Y, Y, Y],
-    reasoning: 'Anthropic describes a seller who appeared unable to build working malware without AI. Google documents an underground market for AI tools. No report says how long it takes, so I leave time unchecked.',
-    evidence: ['anthropic-2025-08', 'gtig-2025-11'],
+    reasoning: 'Anthropic describes a seller who appeared unable to build working malware without AI. Google documents an underground market for AI tools, and an academic study of 212 samples of such services found them cheaper for malicious code than traditional malware vendors. No report says how long it takes, so I leave time unchecked.',
+    evidence: ['anthropic-2025-08', 'gtig-2025-11', 'malla-2024'],
   },
   {
     label: 'Fake remote-worker identity',

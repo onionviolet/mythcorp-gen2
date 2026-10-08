@@ -246,7 +246,7 @@ export function EndingsBranch() {
               For scale only, two independent rates from other pipelines: CVE submissions grew about ×1.3 a year from 2020
               to 2025 (my arithmetic from NIST&rsquo;s 263%),<Cite ids={['nist-nvd-2026']} /> and flaws added to CISA&rsquo;s
               exploited catalog went from 186 in 2024 to 245 in 2025, also about ×1.3.<Cite ids={['cisa-kev-2026']} /> Neither
-              counts this queue, and I found no source that measures how fast repair grows, so the sliders stay my guesses.
+              counts this queue. A research preprint cites industry data that companies close a median 15.5% of their open flaws a month,<Cite ids={['jacobs-2023']} /> but that is deployment at companies, not patch-writing by maintainers. I found no source that measures how fast repair grows, so the sliders stay my guesses.
             </li>
             <li>Scope is one program&rsquo;s open-source queue, not all software. Nothing leaves the queue except a patch, until {new Date(MODEL_END).getUTCFullYear()}.</li>
           </ul>

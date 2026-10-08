@@ -4,10 +4,42 @@ export type PaperSource = {
   title: string;
   date: string;
   url: string;
-  kind: 'primary' | 'reporting';
+  kind: 'primary' | 'reporting' | 'peer-reviewed' | 'preprint';
 };
 
 export const PAPER_SOURCES = [
+  {
+    id: 'li-2017',
+    author: 'Li and Paxson',
+    title: 'A Large-Scale Empirical Study of Security Patches (ACM CCS 2017, author copy)',
+    date: '2017-10-30',
+    url: 'https://faculty.cc.gatech.edu/~frankli/papers/li-ccs2017.pdf',
+    kind: 'peer-reviewed',
+  },
+  {
+    id: 'collier-2019',
+    author: 'Collier, Thomas, Clayton and Hutchings',
+    title: 'Booting the Booters: Evaluating the Effects of Police Interventions in the Market for Denial-of-Service Attacks (IMC 2019, author copy)',
+    date: '2019-10-21',
+    url: 'https://www.cl.cam.ac.uk/~ah793/papers/2019booting.pdf',
+    kind: 'peer-reviewed',
+  },
+  {
+    id: 'collier-2021',
+    author: 'Collier, Clayton, Hutchings and Thomas',
+    title: 'Cybercrime is (often) boring: infrastructure and alienation in a deviant subculture (British Journal of Criminology 61(5), accepted manuscript)',
+    date: '2021-04-15',
+    url: 'https://strathprints.strath.ac.uk/76156/1/Collier_etal_BJC_2021_Cybercrime_is_often_boring_infrastructure_and_alientation.pdf',
+    kind: 'peer-reviewed',
+  },
+  {
+    id: 'jacobs-2023',
+    author: 'Jacobs, Romanosky, Suciu, Edwards and Sarabi',
+    title: 'Enhancing Vulnerability Prioritization: Data-Driven Exploit Predictions with Community-Driven Insights, arXiv:2302.14172',
+    date: '2023-02-27',
+    url: 'https://arxiv.org/abs/2302.14172',
+    kind: 'preprint',
+  },
   {
     id: 'grace-2024',
     author: 'Grace, Stewart, Sandkühler, Thomas, Weinstein-Raun, Brauner, Korzekwa',
@@ -15,6 +47,14 @@ export const PAPER_SOURCES = [
     date: '2024-01-05 (v1; v3 revised 2025-10-08)',
     url: 'https://arxiv.org/abs/2401.02843',
     kind: 'primary',
+  },
+  {
+    id: 'malla-2024',
+    author: 'Lin, Cui, Liao and Wang',
+    title: 'Malla: Demystifying Real-world Large Language Model Integrated Malicious Services (USENIX Security 2024), arXiv:2401.03315',
+    date: '2024-01-06',
+    url: 'https://arxiv.org/abs/2401.03315',
+    kind: 'peer-reviewed',
   },
   {
     id: 'ncsc-2024',
@@ -41,6 +81,30 @@ export const PAPER_SOURCES = [
     kind: 'primary',
   },
   {
+    id: 'fang-2024',
+    author: 'Fang, Bindu, Gupta and Kang',
+    title: 'LLM Agents can Autonomously Exploit One-day Vulnerabilities, arXiv:2404.08144',
+    date: '2024-04-11',
+    url: 'https://arxiv.org/abs/2404.08144',
+    kind: 'preprint',
+  },
+  {
+    id: 'zhu-2024',
+    author: 'Zhu, Kellermann, Gupta, Li, Fang, Bindu and Kang',
+    title: 'Teams of LLM Agents can Exploit Zero-Day Vulnerabilities, arXiv:2406.01637',
+    date: '2024-06-02 (v2 2025-03-30)',
+    url: 'https://arxiv.org/abs/2406.01637',
+    kind: 'preprint',
+  },
+  {
+    id: 'cybench-2024',
+    author: 'Zhang, Perry, Dulepet and others',
+    title: 'Cybench: A Framework for Evaluating Cybersecurity Capabilities and Risks of Language Models (ICLR 2025), arXiv:2408.08926',
+    date: '2024-08-15',
+    url: 'https://arxiv.org/abs/2408.08926',
+    kind: 'peer-reviewed',
+  },
+  {
     id: 'gtte-2024',
     author: 'Google Threat Intelligence (Mandiant): Charrier and Weiner',
     title: 'How Low Can You Go? An Analysis of 2023 Time-to-Exploit Trends',
@@ -63,6 +127,14 @@ export const PAPER_SOURCES = [
     date: '2024-11-01',
     url: 'https://projectzero.google/2024/10/from-naptime-to-big-sleep.html',
     kind: 'primary',
+  },
+  {
+    id: 'heiding-2024',
+    author: 'Heiding, Lermen, Kao, Schneier and Vishwanath',
+    title: 'Evaluating Large Language Models\' Capability to Launch Fully Automated Spear Phishing Campaigns, arXiv:2412.00586',
+    date: '2024-11-30',
+    url: 'https://arxiv.org/abs/2412.00586',
+    kind: 'preprint',
   },
   {
     id: 'chainalysis-2025',
@@ -89,12 +161,28 @@ export const PAPER_SOURCES = [
     kind: 'primary',
   },
   {
+    id: 'cvebench-2025',
+    author: 'Zhu, Kellermann, Bowman and others',
+    title: 'CVE-Bench: A Benchmark for AI Agents\' Ability to Exploit Real-World Web Application Vulnerabilities, arXiv:2503.17332',
+    date: '2025-03-21',
+    url: 'https://arxiv.org/abs/2503.17332',
+    kind: 'preprint',
+  },
+  {
     id: 'ncsc-2025',
     author: 'UK National Cyber Security Centre',
     title: 'Impact of AI on cyber threat from now to 2027',
     date: '2025-05-07',
     url: 'https://www.ncsc.gov.uk/report/impact-ai-cyber-threat-now-2027',
     kind: 'primary',
+  },
+  {
+    id: 'cybergym-2025',
+    author: 'Wang, Shi, He, Cai, Zhang and Song',
+    title: 'CyberGym: Evaluating AI Agents\' Real-World Cybersecurity Capabilities at Scale (ICLR 2026), arXiv:2506.02548',
+    date: '2025-06-03 (v3 2026-03-24)',
+    url: 'https://arxiv.org/abs/2506.02548',
+    kind: 'peer-reviewed',
   },
   {
     id: 'xbow-2025',

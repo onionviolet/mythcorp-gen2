@@ -81,6 +81,8 @@ export function Cite({ ids }: { ids: PaperSourceId[] }) {
                 </a>
                 . <span className="font-mono">{s.date}</span>
                 {s.kind === 'reporting' && <span> (news report of an official statement)</span>}
+                {s.kind === 'preprint' && <span> (preprint, not peer reviewed)</span>}
+                {s.kind === 'peer-reviewed' && <span> (peer reviewed)</span>}
               </span>
             );
           })}

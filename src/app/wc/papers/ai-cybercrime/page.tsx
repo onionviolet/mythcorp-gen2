@@ -9,8 +9,9 @@ import { EvidenceTimeline } from './_components/EvidenceTimeline';
 import { ExploitWindow } from './_components/ExploitWindow';
 import { FIGURE } from './_components/figureNumbers';
 import { HorizonExtrapolator } from './_components/HorizonExtrapolator';
+import { AMENDMENTS, AmendmentsLog, PAPER_VERSION } from './_components/AmendmentsLog';
 import { Cite, ClaimTag, ForecastFrame, Supplement } from './_components/PaperApparatus';
-import { PAPER_SOURCES } from './_components/paperSources';
+import { PAPER_SOURCES, type PaperSourceId } from './_components/paperSources';
 import { ScenarioSection } from './_components/ScenarioSection';
 import { ReadingProgressBar } from '../_components/ReadingProgressBar';
 import { SectionNav } from '../_components/SectionNav';
@@ -29,6 +30,7 @@ const SECTIONS = [
   { id: 'endings', eyebrow: '[ 7 · FORECAST ]', title: 'Two endings' },
   { id: 'wrong', eyebrow: '[ 8 ]', title: 'What would prove me wrong' },
   { id: 'implications', eyebrow: '[ 9 ]', title: 'What follows' },
+  { id: 'amendments', eyebrow: '[ AMENDMENTS ]', title: 'Amendments log' },
   { id: 'reviewer-feedback', eyebrow: '[ HONEST NOTE ]', title: 'What the reviewer flagged' },
   { id: 'revision-notes', eyebrow: '[ REVISION ]', title: 'Revision notes' },
   { id: 'sources', eyebrow: '[ SOURCES ]', title: 'Sources' },
@@ -57,18 +59,25 @@ export default function AiCybercrimePaper() {
           <span className="themed-pill px-3 py-1 font-mono uppercase tracking-widest">2025, revised 2026-10</span>
           <span className="themed-pill px-3 py-1 font-mono uppercase tracking-widest">Pioneer Scholars</span>
         </div>
+        <p className="mt-3 font-mono text-xs text-[color:var(--fg-muted)]">
+          {PAPER_VERSION.label} · {PAPER_VERSION.date} ·{' '}
+          <a href="#amendments" className="text-[color:var(--accent)] underline underline-offset-4">
+            {AMENDMENTS.length} amendments since the 2025 paper
+          </a>
+        </p>
 
         <div className="mt-10 border-y border-[color:var(--border)] py-6">
           <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-[color:var(--accent)]">thesis</p>
           <p className="mt-3 font-serif text-xl leading-snug text-[color:var(--fg)] sm:text-2xl">
-            AI is moving the hard part of cybercrime from skill to access. For fraud that shift has already
-            happened. For breaking into systems it happened in 2026 at the gated frontier, and downloadable
-            models are a few months behind.
+            AI is moving the hard part of cybercrime from skill to access, for the second time. Crime-as-a-service
+            did it first. AI arrives into a repair window that was already closing, and the question for 2027 to 2030
+            is whether fixing can speed up as fast as AI speeds up finding.
           </p>
           <p className="mt-4 text-base leading-relaxed text-[color:var(--fg-muted)]">
-            On the current trend I expect attackers to get expert-level vulnerability tools within a year or two. The
-            question I think decides 2027 to 2030 is whether the capacity to fix flaws grows as fast as AI&rsquo;s
-            capacity to find them.
+            For fraud the shift in who can attack is visible now. For breaking into systems it reached the gated
+            frontier in 2026, and downloadable models are a few months behind. The time from a flaw going public to its
+            first exploitation fell from 63 days to 5 before AI agents existed.<Cite ids={['gtte-2024']} /> The harm data
+            so far show no AI-driven crime wave, so read this as a forecast about capability and access.<Cite ids={['chainalysis-2026', 'ic3-2025']} />
           </p>
         </div>
 
@@ -103,8 +112,9 @@ export default function AiCybercrimePaper() {
             <p>
               Most of the 2025 and 2026 evidence comes from AI developers describing misuse of their own models and
               the abilities of their own models. They have reasons to emphasize both the danger and their own
-              response. The outside checks I found are a government benchmark of a rival model<Cite ids={['caisi-2026-09']} /> and
-              independent validation of a sample of reported flaws.<Cite ids={['glasswing-2026-05']} />
+              response. The outside checks I found are a government benchmark of a rival model,<Cite ids={['caisi-2026-09']} />
+              independent validation of a sample of reported flaws,<Cite ids={['glasswing-2026-05']} /> and the academic studies
+              below.
             </p>
             <p>
               The FBI&rsquo;s count of AI-related complaints depends on victims noticing AI was involved. In investment
@@ -112,6 +122,22 @@ export default function AiCybercrimePaper() {
               how much AI was involved.<Cite ids={['ic3-2025']} />
             </p>
           </Supplement>
+          <h3 className="pt-4 font-serif text-xl text-[color:var(--fg)]">What independent research measures</h3>
+          <p>
+            Academic tests of attacker-side ability back the developer reports on phishing and give a more modest picture
+            on exploitation. Every one of them is narrower than this paper&rsquo;s claims, and each row says how.
+          </p>
+          <ul className="text-sm">
+            {STUDY_ROWS.map((r) => (
+              <li key={r.study} className="grid gap-1 border-b border-[color:var(--border)] py-3 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-4">
+                <span className="font-mono text-xs text-[color:var(--fg)]">{r.study}<Cite ids={[r.source]} /></span>
+                <span>
+                  <span className="text-[color:var(--fg)]">{r.result}</span>{' '}
+                  <span className="text-[color:var(--fg-subtle)]">Narrower because: {r.limit}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </Section>
 
         <Section id="repair" eyebrow="[ 2 · EVIDENCE ]" title="The repair side">
@@ -146,6 +172,15 @@ export default function AiCybercrimePaper() {
             maintainers call themselves unpaid hobbyists and 12% earn most or all of their income from
             maintenance.<Cite ids={['tidelift-2024']} /> Tidelift sells maintainer funding, so it has a stake in that finding.
           </p>
+          <p>
+            Two research findings frame the same problem. A study of more than 4,000 security fixes across 682
+            open-source projects found that a third of the flaws had sat in the code for over three years before repair,
+            and 7% of fixes did not fully close the hole.<Cite ids={['li-2017']} /> An exploit-prediction preprint, citing
+            industry data, reports that companies close a median 15.5% of their open vulnerabilities each month, while
+            only about 5% of known vulnerabilities are ever exploited in the wild.<Cite ids={['jacobs-2023']} /> That gap
+            is the defenders&rsquo; best lever: most flaws never need the three-day treatment, if you can tell which ones
+            do.
+          </p>
         </Section>
 
         <Section id="against" eyebrow="[ 3 · EVIDENCE ]" title="What cuts against this">
@@ -173,6 +208,13 @@ export default function AiCybercrimePaper() {
               fraud reports to the FTC rose from 2.6 million in 2024 to 3 million in 2025, and reported losses from about $12
               billion to $15.9 billion.<Cite ids={['ftc-2026']} /> These are reports, not counted incidents, and the FTC
               testimony does not attribute any of it to AI. Fraud is rising; these numbers cannot say AI is why.
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Policing rented attack services has worked.</strong>{' '}
+              Using five years of attack measurements, Cambridge researchers found that an FBI operation in December 2018
+              cut denial-of-service attacks by about a third for at least 10 weeks.<Cite ids={['collier-2019']} /> Malicious AI
+              services are sold through similar underground markets,<Cite ids={['malla-2024']} /> so the same lever may
+              apply. That last step is my inference.
             </li>
             <li>
               <strong className="text-[color:var(--fg)]">The early record found no new capability.</strong>{' '}
@@ -310,6 +352,15 @@ export default function AiCybercrimePaper() {
           </ForecastFrame>
         </Section>
 
+        <Section id="amendments" eyebrow="[ AMENDMENTS ]" title="Amendments log">
+          <p>
+            Where the argument itself changed since the 2025 paper, the change is logged here with its date, what I
+            claimed before, what I claim now and the evidence that moved it. Each entry says whether it strengthens,
+            narrows or reverses the original. Presentation changes are in the revision notes further down.
+          </p>
+          <AmendmentsLog />
+        </Section>
+
         <Section id="reviewer-feedback" eyebrow="[ HONEST NOTE ]" title="What the reviewer flagged">
           <p>
             The original paper was a first-time research project graded B+. The reviewer (Prof. Suleyman Uludag,
@@ -330,7 +381,8 @@ export default function AiCybercrimePaper() {
             <li>
               <strong className="text-[color:var(--fg)]">Depth and primary sources.</strong>{' '}
               The reference list below has {PAPER_SOURCES.length} dated sources. All but one are the original
-              report, assessment or dataset.
+              report, study or dataset, and {PAPER_SOURCES.filter((x) => x.kind === 'peer-reviewed' || x.kind === 'preprint').length} are
+              academic research, with preprints marked.
             </li>
           </ul>
         </Section>
@@ -349,19 +401,9 @@ export default function AiCybercrimePaper() {
               the AI companies, a section on what cuts against the thesis, and a list of readings that would prove me wrong.
             </li>
             <li>
-              <strong className="text-[color:var(--fg)]">Dates moved.</strong>{' '}
-              The 2025 version put Stage 3 at 2027 to 2032 and Stage 4 at 2030 to 2047. The record now shows Stage 3
-              abilities at the gated frontier in April 2026, so the scenario runs 2023 to 2030.
-            </li>
-            <li>
               <strong className="text-[color:var(--fg)]">Stages renamed.</strong>{' '}
               Unreliable Agent, Reliable Agent, Superhuman Coder and Superhuman Attacker became Assistant, Supervised
               agent, Expert vulnerability work and Unsupervised campaigns, which name what is observable.
-            </li>
-            <li>
-              <strong className="text-[color:var(--fg)]">Scores rebuilt.</strong>{' '}
-              The 1 to 10 barrier scores came from tables in the paper I built on, with no rubric. They are now my
-              ratings on a five-question rubric, and several numbers changed.
             </li>
             <li>
               <strong className="text-[color:var(--fg)]">Survey kept in its lane.</strong>{' '}
@@ -375,7 +417,8 @@ export default function AiCybercrimePaper() {
             </li>
           </ul>
           <p>
-            Added: the evidence section, the scenario readout, two endings with signposts and this list. The next
+            Added: the evidence section, the scenario readout, two endings with signposts, the amendments log and this
+            list. The next
             revision should re-read the signposts against new reports and replace scenario values with measurements
             as they arrive.
           </p>
@@ -383,8 +426,9 @@ export default function AiCybercrimePaper() {
 
         <Section id="sources" eyebrow="[ SOURCES ]" title="Sources">
           <p className="text-sm">
-            Each source was opened and read for this revision. Dates are publication dates. Entries marked as reporting
-            are news accounts of an official statement I could not find in the original.
+            Each source was opened and read for this revision, using open copies only. Dates are publication dates.
+            Entries marked peer-reviewed passed a conference or journal review; preprints have not. Entries marked
+            reporting are news accounts of an official statement I could not find in the original.
           </p>
           <ol className="space-y-3 text-sm">
             {PAPER_SOURCES.map((s, i) => (
@@ -396,7 +440,7 @@ export default function AiCybercrimePaper() {
                     {s.title}
                   </a>
                   . <span className="font-mono text-xs">{s.date}</span>
-                  {s.kind === 'reporting' && <span className="font-mono text-xs"> · reporting</span>}
+                  {s.kind !== 'primary' && <span className="font-mono text-xs"> · {s.kind}</span>}
                 </span>
               </li>
             ))}
@@ -410,6 +454,45 @@ export default function AiCybercrimePaper() {
     </div>
   );
 }
+
+const STUDY_ROWS: ReadonlyArray<{ study: string; source: PaperSourceId; result: string; limit: string }> = [
+  {
+    study: 'Spear phishing, 2024',
+    source: 'heiding-2024',
+    result: 'Fully AI-written phishing emails drew a 54% click rate, the same as emails written by human experts, against 12% for a generic control.',
+    limit: '101 participants recruited at a university, and a preprint.',
+  },
+  {
+    study: 'Known flaws, 2024',
+    source: 'fang-2024',
+    result: 'A GPT-4 agent exploited 13 of 15 known flaws when handed the public advisory, and 7% without it.',
+    limit: 'a small set of 15 flaws, and the agent leaned on the advisory text.',
+  },
+  {
+    study: 'Unknown flaws, 2024',
+    source: 'zhu-2024',
+    result: 'A team of agents exploited 42% of 14 real web flaws it was not told about, within five tries.',
+    limit: '14 web flaws in a test setting, and a preprint.',
+  },
+  {
+    study: 'Capture the flag, 2024',
+    source: 'cybench-2024',
+    result: 'The best 2024 models only solved competition tasks that took human teams up to 11 minutes.',
+    limit: 'competition puzzles with 2024 models; the frontier has moved since.',
+  },
+  {
+    study: 'Web exploits, 2025',
+    source: 'cvebench-2025',
+    result: 'The best agent framework exploited up to 13% of real web application flaws.',
+    limit: 'web applications only, and a preprint.',
+  },
+  {
+    study: 'Real flaws at scale, 2025 to 2026',
+    source: 'cybergym-2025',
+    result: 'Top agents wrote a working test case for about 20% of 1,507 real vulnerabilities, given a description of each, and the work turned up 34 new ones.',
+    limit: 'reproducing a described flaw is a step short of a full attack.',
+  },
+];
 
 const WRONG_ROWS: ReadonlyArray<{ reading: string; latest: ReactNode; against: string }> = [
   {
