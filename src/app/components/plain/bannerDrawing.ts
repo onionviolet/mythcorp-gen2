@@ -24,10 +24,10 @@ export function drawLinkedInBanner(canvas: HTMLCanvasElement, fontFamily: string
     for (let v = -1; v <= 1; v += 0.055) {
       const width = 10 + 56 * Math.sin(Math.PI * u);
       const twist = u * Math.PI * 2.2;
-      const x = 350 + 500 * u + v * width * Math.sin(twist);
-      const y = 322 - 152 * u - 90 * Math.sin(Math.PI * u) + v * width * Math.cos(twist);
+      const x = 400 + 450 * u + v * width * Math.sin(twist);
+      const y = 304 - 134 * u - 90 * Math.sin(Math.PI * u) + v * width * Math.cos(twist);
       if (random() < 0.13) continue;
-      ctx.globalAlpha = (0.17 + 0.42 * (v + 1) / 2) * Math.sin(Math.PI * u * 0.88);
+      ctx.globalAlpha = (0.22 + 0.5 * (v + 1) / 2) * Math.sin(Math.PI * u * 0.88);
       ctx.fillText(glyphs[Math.floor(random() * glyphs.length)], x, y);
     }
   }
@@ -55,10 +55,10 @@ export function drawLinkedInBanner(canvas: HTMLCanvasElement, fontFamily: string
   for (let y = 80; y < 314; y += 2) {
     for (let x = 896; x < 1525; x += 2) {
       if (pixels[(y * mask.width + x) * 4 + 3] < 100) continue;
-      const erosion = 0.04 + 0.17 * Math.max(0, (1100 - x) / 204);
+      const erosion = 0.03 + 0.14 * Math.max(0, (1100 - x) / 204);
       if (random() < erosion) continue;
-      ctx.globalAlpha = 0.7 + random() * 0.3;
-      ctx.fillRect(x + random() * 0.5, y, 1.45, 1.45);
+      ctx.globalAlpha = 0.76 + random() * 0.24;
+      ctx.fillRect(x + random() * 0.5, y, 1.65, 1.65);
       if (random() < erosion * 0.7) {
         ctx.globalAlpha = 0.16;
         ctx.fillText('.', x - 10 - random() * 30, y + random() * 12);

@@ -1,5 +1,37 @@
 # STATUS
 
+## Banner v2 checked against the real LinkedIn screenshot, 2026-10-08
+
+Inspected the supplied 2964 x 1668 profile screenshot. It shows the existing
+banner and an orange W placeholder, not the portrait. Its concrete CS/student
+headline supports the WORK IN PROGRESS perspective; no profile text changed.
+Measured orange-circle bounds: x 294 to 597, y 354 to 657, a 304px diameter.
+The banner mockup uses x 238, y 142, width 1584, height 396; circle center is
+207.5, 363.5 relative to that banner, with radius 152. The screenshot-based
+preview replaces only the banner and placeholder with the local portrait at
+its existing full-square crop, without extra zoom or face/collar edits.
+
+Candidate changes: ribbon origin moves 50px right and 18px up, with its upper
+endpoint preserved, modestly stronger glyph opacity, and lettering core
+particles enlarged from 1.45 to 1.65px with slightly less erosion. Wording,
+wordmark/domain and light monochrome composition remain. The on-page desktop
+photo guide now reflects measured width/overlap rather than the first estimate.
+
+Observed: final `npm run check` and `git diff --check` passed. Built candidate
+served on localhost:3014. Browser inspected before/after at screenshot geometry
+and at 390px, plus banner phone view and photo guide. Main wording reads more
+clearly; the domain stays secondary. Browser error log empty. Downloaded light
+v2 PNG is exactly 1584 x 396, below 8 MB. Files are versioned in
+Downloads/LinkedIn: `mythcorp-linkedin-light-v2-1584x396.png`,
+`mythcorp-profile-after-v2.png`, `mythcorp-profile-before-v2.png`,
+`mythcorp-profile-comparison-v2.png`, `mythcorp-profile-banners-v2.png`,
+`profile-geometry-v2.html`, and phone/page JPG evidence. Local screenshot and
+portrait assets stay outside Git. This is a recommendation pending human
+acceptance and LinkedIn's final crop/compression, not a profile upload.
+Updates target existing PR #42 on codex/linkedin-banner. No merge or manual
+deployment; the original primary checkout and unrelated paper work are intact.
+
+
 ## Banner publishing scope, 2026-10-08
 
 User authorized pushing the banner work and sending its evidence to the

@@ -67,14 +67,14 @@ export function LinkedInBanner({ scheme, schemeChoice, onSchemeChoice, onExit }:
         </div>
         <div className={`${styles.preview} ${phone ? styles.phone : ''}`} data-banner-preview>
           <canvas ref={canvas} role="img" aria-label="Mythcorp banner: an ascending ASCII ribbon flowing into Work in progress" />
-          {safeArea && <div className={styles.safeArea}>Profile photo<br />approximate overlap</div>}
+          {safeArea && <div className={styles.safeArea}>Profile photo<br />desktop overlap</div>}
         </div>
         <div className={styles.controls}>
           <button type="button" onClick={download} disabled={!ready}>Download PNG</button>
           <label><input type="checkbox" checked={safeArea} onChange={event => setSafeArea(event.target.checked)} /> Show photo overlap</label>
           <span>1584 × 396</span>
         </div>
-        <p className={styles.note}>Phone size checks legibility at 390px wide, not the exact LinkedIn crop. The overlap guide stays out of the download. LinkedIn cropping varies by screen.</p>
+        <p className={styles.note}>Phone size checks legibility at 390px wide, not the exact LinkedIn crop. The overlap guide follows the supplied desktop screenshot and stays out of the download. LinkedIn cropping varies by screen.</p>
         <details className={styles.guidance}>
           <summary>What works on LinkedIn</summary>
           <p>Use one light PNG for this portrait. The still keeps the gaze connected to the ribbon; the website carries the live installation. An uploaded banner keeps its own colors in either LinkedIn theme.</p>

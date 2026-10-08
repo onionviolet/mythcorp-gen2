@@ -22,9 +22,9 @@
 .preview canvas { width: 100%; height: auto; display: block; }
 .safeArea {
   position: absolute;
-  left: 3%;
-  bottom: -12%;
-  width: 17%;
+  left: 3.5%;
+  bottom: -29%;
+  width: 19.2%;
   aspect-ratio: 1;
   border-radius: 50%;
   border: 1px dashed var(--fg-muted);
