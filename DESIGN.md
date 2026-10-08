@@ -205,9 +205,23 @@ Before a reference-inspired study graduates, ask:
 7. Is any nearby effect now redundant?
 8. Would removing it make the page less meaningful, or merely less busy?
 
+## Front-page rooms, 2026-10-07
+
+The held front page is now one of four rooms: Installation (the specimen and
+readout), Tour (a scroll through the locked projects, each with a live
+figure), Let go (the words fall and can be thrown) and Console (a lock-aware
+terminal). A first visit opens the Installation; each later load opens the
+next room, and `?room=<id>` pins one. Every room keeps the wordmark, the room
+switch, the scheme picker and the contact links through `HoldRoomFrame`, so no
+room can lose the page's job. A room earns its place only if it shows
+something true about the person or the work. See
+`docs/audits/AI_TELLS_2026-10-07.md` for why.
+
 ## Current lander defaults, 2026-09-13
 
-Cold visits begin with Signal: the ASCII spectre and dust lettering. Halo is a
+A first visit begins with Signal: the ASCII spectre and dust lettering. Each
+later load opens on the next authored scene, so a reload always shows a new
+room; `?scene=<name>` pins one for sharing. Halo is a
 separate atmospheric background that remains active across every scene, while
 the `over` control adds one optional secondary background. Scene cycling remains
 available. The old budgeted randomizer is retained for its existing consumers,
@@ -253,9 +267,8 @@ click, navigate, move the visitor's pointer, or block a control. These exception
 are specific to this installation.
 
 Solid message mode retains the existing typeface but no longer behaves like a
-static fallback. A restrained 12.8-second phase changes weight, tracking, glow,
-outline and a clipped scan pass. Pointer disturbance still affects the letters.
-Reduced motion preserves a crisp static outline without the passive cycle.
+static fallback. It holds a fixed weight and tracking with no passive cycle, so
+pointer disturbance is the only thing that moves the letters.
 
 Models are selected through `holdModels.ts`; renderer treatments share the same
 asset and framing. See `docs/HOLD_MODEL_ONBOARDING.md` before adding an asset.

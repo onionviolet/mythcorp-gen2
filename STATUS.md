@@ -1,5 +1,73 @@
 # STATUS
 
+## Cybercrime paper revised, 2026-10-07
+
+An Opus agent rebuilt `/wc/papers/ai-cybercrime` as an AI 2027-style piece:
+thesis and reading key, a 2024 to 2026 evidence timeline, the barrier figure
+rebuilt as the author's ratings on a stated rubric, a METR task-length
+projection, four dated stages with a sticky readout, two endings, policy
+points, revision notes and 22 dated primary sources. It answers audit findings
+F4 to F6 and the reviewer's three critiques. Decision: sources live only in
+`paperSources.ts`. No operational attack detail by rule.
+
+Checks: the agent's `npm run check` passed. Root re-verified 21 of 22 source
+URLs (Microsoft blocks scripts with 403), the FBI IC3 figures against the PDF
+and the NIST CAISI four-month lag against its page, and looked at the paper in
+paper, cyberpunk and luxury at desktop, luxury at 390px, and the Tour embed.
+Open: the original 2025 PDF was not available to check stage dating against.
+
+## Front page becomes rooms, AI-tells audit, 2026-10-07
+
+The held front page is now one of four rooms, rotated per load: Installation,
+Tour, Let go and Console (`landerRooms.ts`, `HoldRoomFrame.tsx`, `rooms/`).
+Three read-only Codex audits found the site reads as generated mainly because
+the front page has systems and no person; consolidated in
+`docs/audits/AI_TELLS_2026-10-07.md` with its owner questions. The
+Installation lost erosion on everything but the field message, the solid
+message's passive effect stack, two duplicate readout rows, the ghosted
+contact backdrop and its narrating comments. Contact values now live once in
+`CONTACT`.
+
+`SITE_LOCKED` now reads `NEXT_PUBLIC_SITE_UNLOCK`, set only by the
+`mythcorp-unlocked` launch config, so local previews can open locked routes.
+Production and the Playwright server stay locked. Approved by the user.
+
+Verification: lint, text policy and `tsc` passed. In the browser, the Console
+booted with true values and its commands, including `room tour`, worked; the
+Tour rendered four acts; Let go's auto-drop needed a StrictMode fix, then
+dropped and piled. The rooms were built by four Sonnet lanes; their own
+screenshots failed because the machine sat near load 400 from unrelated
+processes. Playwright did not run: its Chromium is not installed. The Tour's
+star field and phone layouts of the new rooms are not yet seen.
+
+## Reload rotates the lander scene, 2026-10-07
+
+A first visit still opens on Signal. Each later load opens on the next of the
+four authored scenes (Signal, Suspension, Drift, Surface), stored under
+`mythcorp:hold-cold-scene`, so every reload looks different and every scene
+gets its turn. Rotation beats random here: random repeats one time in four and
+can hide a scene for many visits. `?scene=drift` pins a scene without advancing
+the rotation. The pick happens once per page load, so StrictMode double effects
+and plain-theme round trips do not skip a scene. Blocked storage falls back to
+Signal. This supersedes the 2026-09-14 deterministic cold load at the user's
+request. Inspired by a 3D-site tutorial review; the remaining ideas are in
+`docs/plans/VIDEO_IDEAS_2026-10-07.md`, unaccepted.
+
+Checks: `npm run check` passed. In the dev browser, five reloads gave Signal,
+Suspension, Drift, Surface, Signal, `?scene=drift` held, and the console showed
+no errors. Playwright did not run: its Chromium binary is not installed here.
+
+## Text layout library decision, 2026-09-23
+
+Do not add `@chenglou/pretext` for the current holding page. Its short,
+authored lines already use a single Canvas width measurement for the ASCII
+mask; the message's DOM measurement sizes the particle display rather than
+laying out paragraphs. Reconsider Pretext if a future text-heavy interactive
+page needs repeated multiline measurement or manual Canvas line wrapping,
+especially across resizes. Prototype on that page first and check its results
+against the site's actual font, line height, letter spacing and browser
+rendering. Source: https://github.com/chenglou/pretext (reviewed 2026-09-23).
+
 ## Small holding-page interactions, 2026-09-19
 
 Cyclic controls now show their next value in one reserved hint line on hover

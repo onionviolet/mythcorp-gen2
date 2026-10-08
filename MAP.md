@@ -34,12 +34,17 @@ Single-screen index of where things live. Read this first; grep second.
 | `/d/[token]` | `src/app/d/[token]/page.tsx` | Delete-token confirm page. Renders read-only, the delete is a POST from `DeleteConfirm.tsx` |
 | `POST /api/delete` | `src/app/api/delete/route.ts` | Redeems a delete token. POST only, so unfurlers and prefetch cannot destroy an image |
 | `/og/chat` | `src/app/og/chat/page.tsx` | Local-only chat sandbox |
+| `/og/specimen-story` | `src/app/og/specimen-story/page.tsx` | Scrollytelling study: a sticky R3F stage beside five acts on how the holding installation works; scroll scrubs the camera between act poses. Data in `storyData.ts`, scroll in `useStoryScroll.ts` |
+| `/og/orbit` | `src/app/og/orbit/page.tsx` | Navigable-world study: the sketches orbit the spectre on a descending helix, scroll or arrow keys turn it, list view is the fallback. `OrbitGallery.tsx` + `SpectreCore.tsx` |
+| `/og/gravity` | `src/app/og/gravity/page.tsx` | Playful-system study: the holding words fall, pile and can be thrown. Pure 2D solver in `letterSolver.ts`, canvas and input in `GravityLab.tsx` |
 | 404 | `src/app/not-found.tsx` | Whimsical 404 |
 | error | `src/app/error.tsx` | Themed route error boundary (reset button) |
 | fatal | `src/app/global-error.tsx` | Layout-level fallback (own html/body, inline styles, no theme tokens) |
 | `/sitemap.xml` | `src/app/sitemap.ts` | Generated sitemap. Route list is hand-maintained, add new pages here. |
 | `i.mythcorp.org/<key>` | `src/middleware.ts` + `src/app/api/img/[key]/route.ts` | Image host. Host-header rewrite to a route that streams the object out of R2 over S3. Not an R2 custom domain: the bucket is in another Cloudflare account. |
 | `/robots.txt` | `src/app/robots.txt/route.ts` | Static plain-text crawler rules plus a small console breadcrumb. Allows `/` except `/og`, `/d`, `/upload`; keeps `/a` available for embeds. Base URL via `NEXT_PUBLIC_SITE_URL` (default `mythcorp.org`). |
+
+The `/og` sketch list lives in `src/app/og/sketches.ts`, shared by the index and `/og/orbit`. `src/app/og/spectreFit.ts` gives a study a private, correctly measured skinned clone of the spectre.
 
 `/og/*` houses unfinished ideas kept on purpose, labelled with `<DraftBanner />`. The `/og` index also lists graduated sketches (e.g. `/fmhy` used to live at `/og/fmhy` before getting a real implementation).
 
@@ -64,6 +69,22 @@ Single-screen index of where things live. Read this first; grep second.
 | `src/app/wc/learn/_components/Walkthrough.tsx` | Layout + helpers (`Walkthrough`, `Section`, `Code`, `Aside`) for `/wc/learn/*` pages. `Code` takes optional `filename` + `highlight?: number[]` |
 | `src/app/fmhy/_data/backup-sites.json` | FMHY backup-sites snapshot, the only data `/fmhy` reads |
 | `scripts/fetch-fmhy.ts` | Fetches `docs/other/backups.md` from fmhy/edit and outputs `backup-sites.json`. Runs via `npm run fetch:fmhy` |
+
+## AI cybercrime paper
+
+`/wc/papers/ai-cybercrime`, revised October 2026 in the manner of AI 2027:
+evidence, dated scenario, two endings. Everything lives in
+`src/app/wc/papers/ai-cybercrime/_components/`.
+
+| File | Role |
+|---|---|
+| `paperSources.ts` | **The only source list.** Every citation number on the page resolves here (`sourceNumber`) |
+| `PaperApparatus.tsx` | Citation markers, evidence/forecast/rating tags, expandable supplements |
+| `EvidenceTimeline.tsx` | Figure 1: dated, filterable record of reported AI offense and defense |
+| `BarrierToEntry.tsx` | Figure 2: author's 1 to 10 ratings on a five-question rubric. Also embedded by the front page's Tour room |
+| `HorizonExtrapolator.tsx` + `horizonModel.ts` | Figure 3: METR task-length trend with a doubling-time slider |
+| `ScenarioSection.tsx` + `scenarioChapters.tsx` | Dated stages and the sticky scenario readout |
+| `EndingsBranch.tsx` | Figure 4: two endings with conditions and signposts |
 
 ## Canvas bench
 
@@ -135,9 +156,16 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/layout.tsx` | Pre-paint bootstrap script (no flash), mounts `PlainField` |
 | `src/app/components/plain/PlainField.tsx` | Plain-theme canvas mount, pointer wiring, teardown |
 | `src/app/components/plain/plainFieldLifecycle.ts` | Synchronous canvas release before leaving plain mode |
-| `src/app/components/plain/PlainHold.tsx` | The holding screen: wordmark, scene readout, scheme controls, contacts, LinkedIn, and operator notes |
+| `src/app/components/plain/PlainHold.tsx` | The held front page: picks one room per load (`?room=` pins one) and owns the hold attribute |
+| `src/app/components/plain/landerRooms.ts` | Room list and per-load rotation: first visit Installation, then the next room each load |
+| `src/app/components/plain/HoldRoomFrame.tsx` | Shared room chrome: wordmark, room switch, scheme picker, operator notes, contact links. Rooms own only the middle |
+| `src/app/components/plain/HoldRoomSwitch.tsx` | Steps to the next room without a reload |
+| `src/app/components/plain/HoldInstallation.tsx` | Room 1: specimen, field-drawn words and the readout (the original holding screen) |
+| `src/app/components/plain/rooms/TourRoom.tsx` | Room 2: scroll through the locked projects, each with a live figure. Figures in `rooms/tour/` |
+| `src/app/components/plain/rooms/LetGoRoom.tsx` | Room 3: the words fall and can be thrown. Uses `src/app/og/gravity/letterSolver.ts` |
+| `src/app/components/plain/rooms/ConsoleRoom.tsx` | Room 4: lock-aware terminal with true-valued commands. Commands in `rooms/console/commands.ts` |
 | `src/app/components/plain/holdRoll.ts` | Retained budgeted randomizer and noise weights. Checked by `npm run check:roll`; the lander's cold load uses holdCompositions |
-| `src/app/components/plain/holdCompositions.ts` | Four authored scenes and the deterministic Signal default; Halo is the persistent base while each scene selects a secondary overlay |
+| `src/app/components/plain/holdCompositions.ts` | Four authored scenes, Signal on a first visit, then one scene further per load (`?scene=` pins one); Halo is the persistent base while each scene selects a secondary overlay |
 | `src/app/components/plain/holdState.ts` | `PLAIN_OPEN_PREFIXES` allowlist, read by React and the pre-paint script |
 | `src/app/components/plain/asciiFluid.ts` | The ASCII fluid solver, no React |
 | `src/app/components/plain/asciiRender.ts` | Ramp quantizer, dye field to characters |
@@ -158,7 +186,7 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/fieldActivity.ts` | MOVEMENT signal fed only by the fake cursor, cat and click rings, with speed-sensitive attack and exponential release |
 | `src/app/components/plain/holdScheme.ts` | Plain mode's own light/dark switch: key, attribute, ink colours |
 | `src/app/components/plain/usePlainScheme.ts` | Owns the scheme (`usePlainScheme`) and follows it (`useResolvedScheme`) |
-| `src/app/components/plain/HoldContact.tsx` | Contact details: the backdrop copy and the reachable copy |
+| `src/app/components/plain/HoldContact.tsx` | `CONTACT`, the single source for contact values, and the corner contact links |
 | `src/app/components/plain/LinkedInInvite.tsx` | Distinct profile control with a responsive external arrow, continuous two-ring proximity glow, idle cursor echo and a cat that follows movement then eases home; styling in LinkedInInvite.module.css |
 | `src/app/components/plain/HoldOperator.tsx` | Quiet `0w0` disclosure with console access and robot notes; LinkedIn stays visible in HoldContact |
 | `src/app/components/terminalEvents.ts` | Shared console-open event for the operator disclosure and terminal listener |
@@ -191,8 +219,8 @@ Walkthrough: `/wc/learn/theme-system`.
 - **A new walkthrough**: create `src/app/wc/learn/<slug>/page.tsx` using `Walkthrough` from `_components/`. Add to `WALKTHROUGHS` array in `src/app/wc/learn/page.tsx`.
 - **A new paper**: add to `PAPERS` array in `src/app/wc/papers/page.tsx`. Create `src/app/wc/papers/<slug>/page.tsx` for the body.
 - **A new stub page**: use `<ComingSoon>` from `src/app/components/ComingSoon.tsx`.
-- **A new back-room sketch** (rough idea you want to keep): create `src/app/og/<slug>/page.tsx`, mount `<SiteHeader />` and `<DraftBanner />`, then add it to `SKETCHES` in `src/app/og/page.tsx`.
-- **Promote a sketch out of `/og/`**: move the folder up, remove `<DraftBanner />`, drop it from `/og/page.tsx` SKETCHES, add to MAP.md routes table.
+- **A new back-room sketch** (rough idea you want to keep): create `src/app/og/<slug>/page.tsx`, mount `<SiteHeader />` and `<DraftBanner />`, then add it to `SKETCHES` in `src/app/og/sketches.ts`.
+- **Promote a sketch out of `/og/`**: move the folder up, remove `<DraftBanner />`, drop it from `SKETCHES` in `src/app/og/sketches.ts`, add to MAP.md routes table.
 - **A new themed page**: add `<SiteHeader />` at top, use `bg-[color:var(--bg)]` and `text-[color:var(--fg)]`. Done.
 - **A new upload validation rule / cap**: edit `src/lib/upload/validate.ts` (types, magic bytes) or `env.ts` `LIMITS` (sizes/quotas). The `route.ts` files stay untouched.
 - **A new allowed image type**: add it to `ALLOWED` in `env.ts` AND a magic-byte branch in `validate.ts`. Never add `image/svg+xml` (executable, stored-XSS risk).
