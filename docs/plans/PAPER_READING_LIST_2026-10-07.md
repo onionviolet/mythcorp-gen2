@@ -35,3 +35,13 @@ Seven of the eight were read in full through Washington and Lee's library;
 notes are in `docs/plans/PAPER_READING_NOTES_2026-10-07.md`. Holt 2013 was not
 available. EPSS turned out to be open access and is now cited from the journal
 directly.
+
+## Added 2026-10-08 from the literature sweep (unread)
+
+Metadata from the sweep's Crossref check; content not yet read. For W&L access.
+
+| Citation | DOI | Claim it would support or test | Priority | Status |
+|---|---|---|---|---|
+| Arora, A., Telang, R., and Xu, H. (2008). Optimal Policy for Software Vulnerability Disclosure. *Management Science* 54(4), 642-656. | [10.1287/mnsc.1070.0771](https://doi.org/10.1287/mnsc.1070.0771) | Whether CISA's three-day deadline and AI-speed disclosure fit a welfare-optimal disclosure window (section 2). | Medium | unread |
+| Arora, A., Krishnan, R., Telang, R., and Yang, Y. (2010). An Empirical Analysis of Software Vendors' Patch Release Behavior: Impact of Vulnerability Disclosure. *Information Systems Research* 21(1), 115-132. | [10.1287/isre.1080.0226](https://doi.org/10.1287/isre.1080.0226) | Whether disclosure pressure speeds patches, which tests "can repair speed up" and Figure 6's repair growth. | High | unread |
+| Bilge, L., and Dumitras, T. (2012). Before We Knew It: An Empirical Study of Zero-Day Attacks in the Real World. ACM CCS 2012, 833-844. | [10.1145/2382196.2382284](https://doi.org/10.1145/2382196.2382284) | Pre-AI baseline for how long zero-days are used before disclosure, context for Mandiant's minus 7 days (A1). Check for an author copy first. | High | unread |

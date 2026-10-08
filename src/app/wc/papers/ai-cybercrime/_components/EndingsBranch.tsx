@@ -253,6 +253,11 @@ export function EndingsBranch() {
               flaws published in 2016 to 2018 within a year,<Cite ids={['epss-2021']} /> so a growing queue does less harm if
               the dangerous few are fixed first. Repair is partly a sorting problem, which this model leaves out.
             </li>
+            <li>
+              The model stops at the patch. A CSET model suggests most exposure comes after it, while patches wait to be
+              installed: there, five times faster adoption cut peak exposure by about 25%.<Cite ids={['lohn-2022']} /> That is a
+              one-time change at a later stage, so it cannot set a yearly growth rate for either preset here.
+            </li>
             <li>Scope is one program&rsquo;s open-source queue, not all software. Nothing leaves the queue except a patch, until {new Date(MODEL_END).getUTCFullYear()}.</li>
           </ul>
         </div>

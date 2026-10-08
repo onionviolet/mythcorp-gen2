@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Cite } from './PaperApparatus';
 
-export const PAPER_VERSION = { label: 'v2.2', date: '2026-10-07' } as const;
+export const PAPER_VERSION = { label: 'v2.3', date: '2026-10-08' } as const;
 
 type Effect = 'strengthens' | 'narrows' | 'reverses';
 
@@ -62,7 +62,11 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     evidence: (
       <>
         Developer reports of expert-level vulnerability work in 2026.<Cite ids={['glasswing-2026-04', 'mythos-2026-04']} /> Academic
-        tests: 13% of real web flaws on CVE-Bench<Cite ids={['cvebench-2025']} /> and about 20% on CyberGym.<Cite ids={['cybergym-2025']} />
+        tests: 13% of real web flaws on CVE-Bench<Cite ids={['cvebench-2025']} /> and about 20% on CyberGym.<Cite ids={['cybergym-2025']} /> The
+        name Superhuman Coder is also AI 2027&rsquo;s, which put one in March 2027.<Cite ids={['ai2027-2025']} /> A critique
+        argued its timeline model was built to blow up and fit METR&rsquo;s data poorly,<Cite ids={['titotal-2025']} /> and by
+        April 2026 two of its authors had moved their medians for an automated coder from late 2029 and early 2032 to
+        mid 2028 and mid 2030.<Cite ids={['aifutures-2026']} /> Dated stages, theirs and mine, move by years within a year.
       </>
     ),
   },
@@ -94,7 +98,11 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
         directly caused breaches.<Cite ids={['mtrends-2026']} /> Police action has measurably cut rented attack services
         before.<Cite ids={['collier-2019']} /> The limit: in a Dutch survey of 97,186 crime victims from 2012 to 2015, only
         7.1% of hacking, 24.0% of consumer fraud and 26.3% of identity theft reached the police, against 37.5% for all
-        crimes.<Cite ids={['vandeweijer-2019']} />
+        crimes.<Cite ids={['vandeweijer-2019']} /> The 2026 International AI Safety Report, backed by more than 30 countries and international organizations,
+        says criminals and state groups do use AI, and that it is still uncertain whether attackers or defenders gain
+        more.<Cite ids={['iasr-2026']} /> Older economics points the same way on size: in 2019 new computer crimes cost a
+        typical citizen tens of cents a year, against tens of dollars for payment fraud,<Cite ids={['anderson-2019']} /> and
+        open underground markets were full of cheats, with their profits widely overestimated.<Cite ids={['herley-2009']} />
       </>
     ),
   },
@@ -126,6 +134,21 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
         Stolen-data forums sold calls by hired voices to pass bank voice checks, around 10 to 12 WebMoney dollars a
         call,<Cite ids={['hutchings-holt-2015']} /> and Dutch phishing networks used human callers posing as bank
         staff.<Cite ids={['leukfeldt-2017']} /> The Hong Kong call faked the victim&rsquo;s own company executives.<Cite ids={['hk-2024']} />
+      </>
+    ),
+  },
+  {
+    id: 'am-8',
+    date: '2026-10-08',
+    topic: 'What the open-weight lag means',
+    effect: 'narrows',
+    before: 'A shrinking gap between downloadable models and the frontier is a direct risk signal.',
+    now: 'The lag measures how fast capability spreads. Whether a downloadable model adds risk beyond the tools attackers already have is a separate question that has not been answered yet, so I read the lag as a precondition for Ending A and nothing more.',
+    evidence: (
+      <>
+        A broad review of open foundation models found current research insufficient to pin down their marginal risk,
+        cyberattacks included.<Cite ids={['kapoor-2024']} /> Government measures of the lag itself: about four months from
+        CAISI,<Cite ids={['caisi-2026-09']} /> four to eight months in the UK AI Security Institute&rsquo;s report, drawing on outside indexes.<Cite ids={['aisi-2025']} />
       </>
     ),
   },

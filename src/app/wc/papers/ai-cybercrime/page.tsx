@@ -81,7 +81,9 @@ export default function AiCybercrimePaper() {
             frontier in 2026, and downloadable models are a few months behind. The time from a flaw going public to its
             first exploitation fell from 63 days to 5 before AI agents existed.<Cite ids={['gtte-2024']} /> The harm data
             so far show no AI-driven crime wave, though official counts catch only a small share of cybercrime, so read
-            this as a forecast about capability and access.<Cite ids={['chainalysis-2026', 'ic3-2025', 'vandeweijer-2019']} />
+            this as a forecast about capability and access.<Cite ids={['chainalysis-2026', 'ic3-2025', 'vandeweijer-2019']} /> The
+            international consensus leaves the biggest question open too: the 2026 International AI Safety Report says it
+            is still uncertain whether attackers or defenders will gain more from AI.<Cite ids={['iasr-2026']} />
           </p>
         </div>
 
@@ -191,6 +193,21 @@ export default function AiCybercrimePaper() {
             industry data that companies close a median 15.5% of their open flaws a month.<Cite ids={['jacobs-2023']} /> If AI
             multiplies the flaws found, telling which few matter becomes worth more.
           </p>
+          <p>
+            Writing a patch is usually not the slow step. A CSET model drawing on historical data found that about 80% of
+            flaws have a patch ready by the day they are disclosed, and that installing patches is what lags. In that
+            model, making adoption five times faster cut the peak number of exposed flaws by about 25%, while removing
+            the patch-writing delay entirely cut it by about 13%.<Cite ids={['lohn-2022']} /> The 2026 AI-found queue sits a
+            step earlier: those flaws were not public yet, and the maintainers had to write the fixes.<Cite ids={['glasswing-2026-05']} /> So
+            the two bottlenecks stack. AI-found flaws wait for someone to write a fix, then for everyone to install it.
+          </p>
+          <p>
+            Organizations are fixing the most urgent flaws more slowly. In Verizon&rsquo;s 2026 breach report, organizations fully fixed only
+            26% of the flaws on CISA&rsquo;s exploited list in 2025, down from 38% the year before, and the median time to a
+            full fix rose from 32 to 43 days. The median organization had 16 such flaws to patch, up from 11.<Cite ids={['dbir-2026']} /> Verizon
+            sells security services and its data comes from partners, not a random sample, so I read the direction more
+            than the exact values.
+          </p>
         </Section>
 
         <Section id="against" eyebrow="[ 3 · EVIDENCE ]" title="What cuts against this">
@@ -234,11 +251,51 @@ export default function AiCybercrimePaper() {
               another back 20 minutes after a takedown.<Cite ids={['dupont-2017']} />
             </li>
             <li>
+              <strong className="text-[color:var(--fg)]">A controlled test found no clear help for novice intruders.</strong>{' '}
+              Meta had 62 employee volunteers, half security experts, attempt hacking challenges with and without its
+              largest open model. Novices completed 22% more steps with the model, a difference that was not statistically
+              significant, and none finished a whole challenge; experts did slightly worse.<Cite ids={['cse3-2024']} /> That was a
+              2024 model, a small sample, and a company testing its own model, but it is the only controlled uplift study on
+              intrusion I found, and it supports keeping the intrusion scores in Figure {FIGURE.barrier} low.
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Defense may gain more.</strong>{' '}
+              Narayanan and Kapoor argue that giving defenders strong AI tools often shifts the balance their
+              way,<Cite ids={['narayanan-2025']} /> and Schneier argued in 2018 that AI could tip the scales toward defense by
+              doing at machine speed the analysis humans do poorly.<Cite ids={['schneier-2018']} /> My reply, which is mine and not
+              theirs: finding flaws faster helps defense only if fixing and installing keep up, and section 2 shows both
+              lagging.
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Open models have not been shown to add risk.</strong>{' '}
+              A broad review found current research insufficient to measure the marginal risk of open foundation models,
+              cyberattacks included.<Cite ids={['kapoor-2024']} /> That is why amendment A8 reads the open-weight lag as a
+              measure of spread, not of harm.
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">New computer crime is a small share of the cost.</strong>{' '}
+              In 2019, frauds that moved online cost a typical citizen in the low hundreds of dollars a year, payment fraud
+              in the tens, and new computer crimes in the tens of cents; the authors argued for spending less on
+              anticipation and more on response.<Cite ids={['anderson-2019']} /> Open underground markets were also less
+              lucrative than they looked, taxed by cheats, with serious groups trading privately.<Cite ids={['herley-2009']} /> Both
+              suggest AI&rsquo;s effect on harm may be smaller than its effect on capability.
+            </li>
+            <li>
               <strong className="text-[color:var(--fg)]">The early record found no new capability.</strong>{' '}
               Through January 2025, the reviews of state-backed misuse found speed-ups to old work and nothing new in
               kind.<Cite ids={['msft-2024', 'gtig-2025-01']} />
             </li>
           </ul>
+          <p>
+            The other direction deserves a word. Security vendors report an AI surge: CrowdStrike says operations by
+            AI-enabled adversaries rose 89% in 2025,<Cite ids={['crowdstrike-2026']} /> and ENISA says AI-supported phishing
+            &ldquo;reportedly&rdquo; made up more than 80% of social engineering by early 2025.<Cite ids={['enisa-2025']} /> I give
+            these less weight. CrowdStrike sells the detection it reports on and does not publish how it decides an
+            operation is AI-enabled. ENISA&rsquo;s figure is secondhand by its own wording. Neither measures harm. What would
+            change my mind: a published definition and denominator for the vendor counts, or an independent measure
+            moving the same way, such as the FBI&rsquo;s AI-tagged share rising or Mandiant naming breaches caused directly
+            by AI.
+          </p>
           <p>
             What this leaves standing: the case for a crime wave already caused by AI is weak, and I am not making it. My
             claims are about who can reach which attacks, and about the race between finding and fixing, where the
@@ -272,6 +329,13 @@ export default function AiCybercrimePaper() {
             days; since 2024, every 89.<Cite ids={['metr-2026-01']} /> Figure {FIGURE.horizon} projects it forward. The survey stays as a
             cross-check, labelled as one.
           </p>
+          <p>
+            A government measurement specific to cyber points the same way. The UK AI Security Institute found that the
+            best models went from under 9% success on apprentice-level cyber tasks in late 2023 to about 50%, that the
+            first model to complete any expert-level task appeared in 2025, and that the length of cyber tasks models
+            finish alone doubles roughly every eight months, which it gives as an upper bound.<Cite ids={['aisi-2025']} /> That is
+            slower than METR&rsquo;s recent software rate and somewhat slower than its whole-record one.
+          </p>
           <RevealOnView><HorizonExtrapolator /></RevealOnView>
           <Supplement title="Why a software benchmark is a fair proxy, and where it breaks">
             <p>
@@ -303,6 +367,15 @@ export default function AiCybercrimePaper() {
             get fixed, which is the one number from 2026 that looks worst.
           </p>
           <EndingsBranch />
+          <div className="border border-dotted border-[color:var(--border-strong)] p-4 text-sm" style={{ borderRadius: 'var(--radius)' }}>
+            <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)]">a third possibility, theory</p>
+            <p className="mt-2">
+              The endings may not be a choice at all. Garfinkel and Dafoe argue that as investment grows, the balance tends
+              to favor offense at low levels and defense at high ones, with attacks on software flaws as one of their
+              cases.<Cite ids={['garfinkel-2019']} /> Applied here, which is my reading, heavily invested defenders could land in
+              Ending B while the thinly defended tail lands in Ending A, at the same time.
+            </p>
+          </div>
         </Section>
 
         <Section id="wrong" eyebrow="[ 8 ]" title="What would prove me wrong">
@@ -430,6 +503,12 @@ export default function AiCybercrimePaper() {
               <strong className="text-[color:var(--fg)]">Independent data added.</strong>{' '}
               Time-to-exploit, vulnerability-database, CISA, maintainer, ransomware-payment and FTC figures from outside
               the AI companies, a section on what cuts against the thesis, and a list of readings that would prove me wrong.
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Literature sweep added (v2.3).</strong>{' '}
+              Sixteen more works, including the 2026 International AI Safety Report, the UK AI Security Institute&rsquo;s
+              trends report, a CSET patching model, Verizon&rsquo;s 2026 breach report and the strongest arguments against the
+              thesis, plus amendment A8.
             </li>
             <li>
               <strong className="text-[color:var(--fg)]">Library readings added (v2.2).</strong>{' '}
