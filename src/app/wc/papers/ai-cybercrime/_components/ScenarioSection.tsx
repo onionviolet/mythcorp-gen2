@@ -1,5 +1,6 @@
 'use client';
 
+import { FIGURE } from './figureNumbers';
 import { useEffect, useRef, useState } from 'react';
 import { ClaimTag, ForecastFrame, Supplement } from './PaperApparatus';
 import {
@@ -63,7 +64,7 @@ function ScenarioDashboard({ chapter, index }: { chapter: ScenarioChapter; index
           {INDICATORS.map((ind) => (
             <li key={ind.key}><span className="text-[color:var(--fg-muted)]">{ind.name}.</span> {ind.definition}</li>
           ))}
-          <li>Scenario values after May 2026 extend METR&rsquo;s 131-day doubling from a 16-hour floor (Figure 3).</li>
+          <li>Scenario values after May 2026 extend METR&rsquo;s 131-day doubling from a 16-hour floor (Figure {FIGURE.horizon}).</li>
         </ul>
       </details>
     </div>

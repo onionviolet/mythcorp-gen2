@@ -6,6 +6,8 @@ import { SiteHeader } from '../../../components/SiteHeader';
 import { BarrierToEntry } from './_components/BarrierToEntry';
 import { EndingsBranch } from './_components/EndingsBranch';
 import { EvidenceTimeline } from './_components/EvidenceTimeline';
+import { ExploitWindow } from './_components/ExploitWindow';
+import { FIGURE } from './_components/figureNumbers';
 import { HorizonExtrapolator } from './_components/HorizonExtrapolator';
 import { Cite, ClaimTag, ForecastFrame, Supplement } from './_components/PaperApparatus';
 import { PAPER_SOURCES } from './_components/paperSources';
@@ -19,11 +21,14 @@ import { RevealOnView } from '../_components/RevealOnView';
 
 const SECTIONS = [
   { id: 'record', eyebrow: '[ 1 · EVIDENCE ]', title: 'What the record shows' },
-  { id: 'barrier', eyebrow: '[ 2 · RATING ]', title: 'How far the barrier fell' },
-  { id: 'trend', eyebrow: '[ 3 · INFERENCE ]', title: 'From trend to forecast' },
-  { id: 'scenario', eyebrow: '[ 4 · SCENARIO ]', title: 'Four stages, dated' },
-  { id: 'endings', eyebrow: '[ 5 · FORECAST ]', title: 'Two endings' },
-  { id: 'implications', eyebrow: '[ 6 ]', title: 'What follows' },
+  { id: 'repair', eyebrow: '[ 2 · EVIDENCE ]', title: 'The repair side' },
+  { id: 'against', eyebrow: '[ 3 · EVIDENCE ]', title: 'What cuts against this' },
+  { id: 'barrier', eyebrow: '[ 4 · RATING ]', title: 'How far the barrier fell' },
+  { id: 'trend', eyebrow: '[ 5 · INFERENCE ]', title: 'From trend to forecast' },
+  { id: 'scenario', eyebrow: '[ 6 · SCENARIO ]', title: 'Four stages, dated' },
+  { id: 'endings', eyebrow: '[ 7 · FORECAST ]', title: 'Two endings' },
+  { id: 'wrong', eyebrow: '[ 8 ]', title: 'What would prove me wrong' },
+  { id: 'implications', eyebrow: '[ 9 ]', title: 'What follows' },
   { id: 'reviewer-feedback', eyebrow: '[ HONEST NOTE ]', title: 'What the reviewer flagged' },
   { id: 'revision-notes', eyebrow: '[ REVISION ]', title: 'Revision notes' },
   { id: 'sources', eyebrow: '[ SOURCES ]', title: 'Sources' },
@@ -109,7 +114,80 @@ export default function AiCybercrimePaper() {
           </Supplement>
         </Section>
 
-        <Section id="barrier" eyebrow="[ 2 · RATING ]" title="How far the barrier fell">
+        <Section id="repair" eyebrow="[ 2 · EVIDENCE ]" title="The repair side">
+          <p>
+            Everything above is about finding flaws and attacking. The thesis turns on fixing them, so here is what
+            sources outside the AI companies measure on that side.
+          </p>
+          <p>
+            The window between a flaw going public and its first exploitation has been closing for years. Mandiant
+            measured an average of 63 days in 2018 to 2019 and 5 days in 2023.<Cite ids={['gtte-2024']} /> Its report on
+            2025 puts the figure at minus 7 days, meaning exploitation on average began before disclosure.<Cite ids={['mtrends-2026']} /> Most
+            of that fall came before AI agents existed, so AI did not start it. What AI can do is push a trend that was
+            already running.
+          </p>
+          <RevealOnView><ExploitWindow /></RevealOnView>
+          <p>
+            The systems that turn a found flaw into a fix are strained. CVE submissions to NIST&rsquo;s National
+            Vulnerability Database grew 263% from 2020 to 2025. NIST enriched nearly 42,000 in 2025, 45% more than in any
+            earlier year. In April 2026 it switched to analyzing the highest-priority entries first, and moved unenriched
+            entries published before March 2026 to &ldquo;Not Scheduled&rdquo;.<Cite ids={['nist-nvd-2026']} />
+          </p>
+          <p>
+            Deadlines are getting shorter. In June 2026 CISA ordered federal agencies to patch the highest-risk flaws
+            within three days, and said attackers&rsquo; use of AI may narrow the time defenders have to
+            react.<Cite ids={['cisa-bod-2026', 'cisa-patch-2026']} /> Its catalog of flaws exploited in the wild grew from 186
+            additions in 2024 to 245 in 2025, and 2026 passed that total by 4 October. Of the 2025 additions, 226 carried
+            a 21-day federal deadline; of 250 added in 2026, 125 carry 3 days.<Cite ids={['cisa-kev-2026']} /> Those counts
+            are mine, from CISA&rsquo;s feed.
+          </p>
+          <p>
+            The people who do the fixing in open source are mostly volunteers. In Tidelift&rsquo;s 2024 report, 60% of
+            maintainers call themselves unpaid hobbyists and 12% earn most or all of their income from
+            maintenance.<Cite ids={['tidelift-2024']} /> Tidelift sells maintainer funding, so it has a stake in that finding.
+          </p>
+        </Section>
+
+        <Section id="against" eyebrow="[ 3 · EVIDENCE ]" title="What cuts against this">
+          <p>
+            Some of the best independent data does not fit a story of AI making cybercrime worse. Here it is in one
+            place.
+          </p>
+          <ul className="ml-5 list-disc space-y-3">
+            <li>
+              <strong className="text-[color:var(--fg)]">Ransomware money fell.</strong>{' '}
+              Chainalysis traced $1.25 billion in ransomware payments in 2023 and $813.55 million in 2024, a 35% drop it
+              credits mainly to law enforcement and victims refusing to pay.<Cite ids={['chainalysis-2025']} /> In 2025
+              payments fell about 8% more, to $820 million against a 2024 figure since revised to $892 million, and the
+              share of victims who paid reached a low of about 28%.<Cite ids={['chainalysis-2026']} /> Claimed attacks rose
+              50% that year, so attackers were busier for less money.
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Mandiant does not see AI behind breaches yet.</strong>{' '}
+              Its report on 2025 says it does not consider that the year breaches were the direct result of AI. Exploits
+              of software flaws stayed the top way in, at 32% of intrusions.<Cite ids={['mtrends-2026']} />
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">AI is a small tagged share of losses.</strong>{' '}
+              The FBI tied $893 million of $20.877 billion in 2025 losses to AI, about 4%.<Cite ids={['ic3-2025']} /> Consumer
+              fraud reports to the FTC rose from 2.6 million in 2024 to 3 million in 2025, and reported losses from about $12
+              billion to $15.9 billion.<Cite ids={['ftc-2026']} /> These are reports, not counted incidents, and the FTC
+              testimony does not attribute any of it to AI. Fraud is rising; these numbers cannot say AI is why.
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">The early record found no new capability.</strong>{' '}
+              Through January 2025, the reviews of state-backed misuse found speed-ups to old work and nothing new in
+              kind.<Cite ids={['msft-2024', 'gtig-2025-01']} />
+            </li>
+          </ul>
+          <p>
+            What this leaves standing: the case for a crime wave already caused by AI is weak, and I am not making it. My
+            claims are about who can reach which attacks, and about the race between finding and fixing, where the
+            independent data in the section above points the same way as the developers&rsquo; reports.
+          </p>
+        </Section>
+
+        <Section id="barrier" eyebrow="[ 4 · RATING ]" title="How far the barrier fell">
           <p>
             The original paper scored six attacks from 1 to 10 for how reachable they are to a non-expert, before and
             after AI, and never said how. This version uses a rubric of five yes or no questions you can check. The
@@ -119,10 +197,10 @@ export default function AiCybercrimePaper() {
             The pattern that comes out: attacks whose core work is writing, impersonation or routine code opened up a
             lot. Intrusion and vulnerability work opened up little, so far, because the capable models are gated.
           </p>
-          <RevealOnView><BarrierToEntry figureNumber={2} /></RevealOnView>
+          <RevealOnView><BarrierToEntry figureNumber={FIGURE.barrier} /></RevealOnView>
         </Section>
 
-        <Section id="trend" eyebrow="[ 3 · INFERENCE ]" title="From trend to forecast">
+        <Section id="trend" eyebrow="[ 5 · INFERENCE ]" title="From trend to forecast">
           <p>
             The 2025 paper anchored its stages to a survey of 2,778 AI researchers, which gave a 50% chance of
             human-level machine intelligence by 2047, 13 years earlier than the same survey found in
@@ -132,7 +210,7 @@ export default function AiCybercrimePaper() {
           <p>
             So this version leans on a measurement instead. METR tracks the length of software task, in skilled-human
             time, that an AI agent finishes half the time. Over its whole record that length doubles about every 196
-            days; since 2024, every 89.<Cite ids={['metr-2026-01']} /> Figure 3 projects it forward. The survey stays as a
+            days; since 2024, every 89.<Cite ids={['metr-2026-01']} /> Figure {FIGURE.horizon} projects it forward. The survey stays as a
             cross-check, labelled as one.
           </p>
           <RevealOnView><HorizonExtrapolator /></RevealOnView>
@@ -151,7 +229,7 @@ export default function AiCybercrimePaper() {
           </Supplement>
         </Section>
 
-        <Section id="scenario" eyebrow="[ 4 · SCENARIO ]" title="Four stages, dated">
+        <Section id="scenario" eyebrow="[ 6 · SCENARIO ]" title="Four stages, dated">
           <p>
             The taxonomy from the 2025 paper, rebuilt as a dated scenario. The first three chapters are evidence and
             the last two are forecasts. Each states what would trigger it, what changes on both sides and how sure I
@@ -160,7 +238,7 @@ export default function AiCybercrimePaper() {
           <ScenarioSection />
         </Section>
 
-        <Section id="endings" eyebrow="[ 5 · FORECAST ]" title="Two endings, 2029 to 2030">
+        <Section id="endings" eyebrow="[ 7 · FORECAST ]" title="Two endings, 2029 to 2030">
           <p>
             Both endings assume attackers get the tools. They split on repair, the rate at which found flaws actually
             get fixed, which is the one number from 2026 that looks worst.
@@ -168,7 +246,36 @@ export default function AiCybercrimePaper() {
           <EndingsBranch />
         </Section>
 
-        <Section id="implications" eyebrow="[ 6 ]" title="What follows for policy and defense">
+        <Section id="wrong" eyebrow="[ 8 ]" title="What would prove me wrong">
+          <p>
+            Each row is a reading someone else publishes on a schedule, the latest value, and what would count against
+            me.
+          </p>
+          <div className="text-sm">
+            <div className="hidden grid-cols-[1.1fr_0.8fr_1.5fr] gap-3 border-b border-[color:var(--border-strong)] py-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)] sm:grid">
+              <span>Reading</span>
+              <span>Latest</span>
+              <span>Counts against</span>
+            </div>
+            <ul>
+              {WRONG_ROWS.map((r) => (
+                <li key={r.reading} className="grid gap-1 border-b border-[color:var(--border)] py-3 sm:grid-cols-[1.1fr_0.8fr_1.5fr] sm:gap-3">
+                  <span className="text-[color:var(--fg)]">{r.reading}</span>
+                  <span className="font-mono text-xs text-[color:var(--fg-muted)]">
+                    <span className="text-[color:var(--fg-subtle)] sm:hidden">latest: </span>
+                    {r.latest}
+                  </span>
+                  <span className="text-[color:var(--fg-muted)]">
+                    <span className="font-mono text-xs text-[color:var(--fg-subtle)] sm:hidden">counts against: </span>
+                    {r.against}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Section>
+
+        <Section id="implications" eyebrow="[ 9 ]" title="What follows for policy and defense">
           <p>
             These follow from the evidence. Where they go past it, I say so.
           </p>
@@ -237,6 +344,11 @@ export default function AiCybercrimePaper() {
               own work.
             </li>
             <li>
+              <strong className="text-[color:var(--fg)]">Independent data added.</strong>{' '}
+              Time-to-exploit, vulnerability-database, CISA, maintainer, ransomware-payment and FTC figures from outside
+              the AI companies, a section on what cuts against the thesis, and a list of readings that would prove me wrong.
+            </li>
+            <li>
               <strong className="text-[color:var(--fg)]">Dates moved.</strong>{' '}
               The 2025 version put Stage 3 at 2027 to 2032 and Stage 4 at 2030 to 2047. The record now shows Stage 3
               abilities at the gated frontier in April 2026, so the scenario runs 2023 to 2030.
@@ -298,6 +410,39 @@ export default function AiCybercrimePaper() {
     </div>
   );
 }
+
+const WRONG_ROWS: ReadonlyArray<{ reading: string; latest: ReactNode; against: string }> = [
+  {
+    reading: 'Open-weight lag on cyber benchmarks, and criminal use of downloadable models in threat reports',
+    latest: <>about 4 months, Sep 2026<Cite ids={['caisi-2026-09']} /></>,
+    against: 'The thesis, if the lag reaches about zero by the end of 2027 and reports still find no criminals using those models for exploit work. Then access was not the gate.',
+  },
+  {
+    reading: 'Share of AI-found flaws reported to maintainers that have a patch',
+    latest: <>75 of 530, May 2026<Cite ids={['glasswing-2026-05']} /></>,
+    against: 'Ending A, if it passes one half within a year. Repair would be keeping up.',
+  },
+  {
+    reading: 'Ransomware payments and the share of victims who pay',
+    latest: <>$820M, about 28%, 2025<Cite ids={['chainalysis-2026']} /></>,
+    against: 'Ending A, if both keep falling through 2027 while AI tools spread. Defenses against extortion would be holding.',
+  },
+  {
+    reading: 'Mean time from disclosure to exploitation',
+    latest: <>minus 7 days, 2025<Cite ids={['mtrends-2026']} /></>,
+    against: 'Ending B, if it keeps falling. Repair would be starting later each year, however fast it runs.',
+  },
+  {
+    reading: 'Exploited flaws added to CISA\'s catalog per year',
+    latest: <>245 in 2025; 250 by 4 Oct 2026<Cite ids={['cisa-kev-2026']} /></>,
+    against: 'Ending B, if 2027 adds clearly more than 2026. Exploitation would be outrunning the deadlines.',
+  },
+  {
+    reading: 'AI-tagged share of losses in the FBI\'s annual report',
+    latest: <>about 4%, 2025<Cite ids={['ic3-2025']} /></>,
+    against: `My fraud ratings in Figure ${FIGURE.barrier}, if it stays near 4% as reporting improves. AI would not be what moved fraud.`,
+  },
+];
 
 function KeyItem({ kind, children }: { kind: 'evidence' | 'forecast' | 'rating'; children: ReactNode }) {
   return (

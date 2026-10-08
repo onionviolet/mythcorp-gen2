@@ -14,6 +14,7 @@ import {
   type BacklogRates,
 } from './backlogModel';
 import { useFigureWidth } from './useFigureWidth';
+import { FIGURE } from './figureNumbers';
 
 type Signpost = { watch: string; reading: ReactNode };
 
@@ -71,7 +72,7 @@ const ENDINGS: ReadonlyArray<Ending> = [
         </p>
         <p>
           Fraud still grows. This ending protects software, and impersonation attacks people, so the fraud rows
-          of Figure 2 stay where they are.
+          of Figure {FIGURE.barrier} stay where they are.
         </p>
       </>
     ),
@@ -241,6 +242,12 @@ export function EndingsBranch() {
           <ul className="mt-1 space-y-1">
             <li>Start: {START_BACKLOG} waiting (530 reported minus 75 patched, measured {new Date(MEASURED_AT).toISOString().slice(0, 10)}). Starting rates of about {Math.round(START_FOUND_PER_MONTH)} found and {Math.round(START_FIXED_PER_MONTH)} fixed a month spread those counts over the {MEASURED_DAYS} days since the program launched.</li>
             <li>Both rates grow by a fixed factor each year, set by the sliders. Ending A uses ×4 and ×1.5, Ending B ×2 and ×8. No source measures either growth rate.</li>
+            <li>
+              For scale only, two independent rates from other pipelines: CVE submissions grew about ×1.3 a year from 2020
+              to 2025 (my arithmetic from NIST&rsquo;s 263%),<Cite ids={['nist-nvd-2026']} /> and flaws added to CISA&rsquo;s
+              exploited catalog went from 186 in 2024 to 245 in 2025, also about ×1.3.<Cite ids={['cisa-kev-2026']} /> Neither
+              counts this queue, and I found no source that measures how fast repair grows, so the sliders stay my guesses.
+            </li>
             <li>Scope is one program&rsquo;s open-source queue, not all software. Nothing leaves the queue except a patch, until {new Date(MODEL_END).getUTCFullYear()}.</li>
           </ul>
         </div>
@@ -273,7 +280,7 @@ export function EndingsBranch() {
         </div>
       </div>
       <FigureCaption
-        n={5}
+        n={FIGURE.backlog}
         claim="The queue of unpatched flaws only shrinks once repair catches up with discovery, and in May 2026 only about one in seven reported flaws had a patch. On the Ending A rates, which are my guesses, the model passes a million waiting by the end of 2030; on the Ending B rates it peaks in the low thousands in late 2027 and then clears. The shape matters more than the totals. Both endings are settings of this one model. Fraud sits outside it, because fraud does not need a software flaw."
         source={<>one measured point, Anthropic&rsquo;s Project Glasswing update<Cite ids={['glasswing-2026-05']} />. Everything right of it is my projection.</>}
       />

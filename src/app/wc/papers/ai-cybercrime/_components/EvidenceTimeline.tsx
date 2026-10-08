@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Cite, FigureCaption } from './PaperApparatus';
 import type { PaperSourceId } from './paperSources';
+import { FIGURE } from './figureNumbers';
 
 type Side = 'offense' | 'defense' | 'measure';
 
@@ -233,7 +234,7 @@ export function EvidenceTimeline() {
         </div>
       </div>
       <FigureCaption
-        n={1}
+        n={FIGURE.timeline}
         claim="Through January 2025 the public record describes AI as a speed-up for attackers who already existed. From August 2025 it describes AI carrying out most of an operation, and from April 2026 expert-level vulnerability work, so far behind access controls. Defensive results move on the same calendar."
         source="sixteen dated public reports, each linked from its entry. Reports from AI developers describe their own models and their own detections; nobody outside has audited them."
       />

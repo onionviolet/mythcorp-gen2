@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Cite } from './PaperApparatus';
 import { PatchTally } from './PatchTally';
 import { CENTRAL_DOUBLING_DAYS, horizonLabel, projectedMinutes } from './horizonModel';
+import { FIGURE } from './figureNumbers';
 
 export type IndicatorStatus = 'measured' | 'scenario' | 'not measured';
 
@@ -146,7 +147,7 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
           A month in, partners report over 10,000 high or critical flaws. Of 530 sent to open-source
           maintainers, 75 have patches, and some maintainers ask for slower disclosure.<Cite ids={['glasswing-2026-05']} />
         </p>
-        <PatchTally figureNumber={4} />
+        <PatchTally figureNumber={FIGURE.patchTally} />
         <p>
           In September NIST&rsquo;s CAISI rates the best downloadable model about four months behind the US frontier
           on cyber tasks.<Cite ids={['caisi-2026-09']} />
@@ -227,7 +228,7 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
     body: (
       <>
         <p>
-          Agents finish software tasks that take a skilled person a month (Figure 3). An attacker briefs an
+          Agents finish software tasks that take a skilled person a month (Figure {FIGURE.horizon}). An attacker briefs an
           agent and lets it run a campaign for weeks without stopping at decision points.
         </p>
         <p>
@@ -243,7 +244,7 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
     inference: (
       <>
         <p>
-          Figure 3 puts the work-month crossing between early 2027 and early 2028 on METR&rsquo;s measured
+          Figure {FIGURE.horizon} puts the work-month crossing between early 2027 and early 2028 on METR&rsquo;s measured
           doubling times. The survey gives a 50% chance that AI can autonomously build a payment-processing
           site from scratch by 2028.<Cite ids={['grace-2024']} /> I read that as a multi-week project for a skilled
           person; the survey gives no task length, so that reading is mine.

@@ -1,5 +1,6 @@
 'use client';
 
+import { FIGURE } from './figureNumbers';
 import { useState } from 'react';
 import { useFigureWidth } from './useFigureWidth';
 import { Cite, FigureCaption } from './PaperApparatus';
@@ -156,7 +157,7 @@ export function HorizonExtrapolator() {
         </div>
       </div>
       <FigureCaption
-        n={3}
+        n={FIGURE.horizon}
         claim="If any of METR's measured doubling times holds, AI agents reach software tasks that take a skilled person a work month between early 2027 and early 2028. I tie Stage 4 to that step plus a lag. The tie is my assumption, not METR's or the survey's."
         source={<>METR measured points from three reports<Cite ids={['metr-2025', 'metr-2026-01', 'metr-2026-05']} />, plotted on the date METR published them. The May 2026 point is a floor because the task suite saturated near 16 hours, so the projection starts low. Survey line: Grace et al., 50% chance of an AI autonomously building a payment-processing site by 2028<Cite ids={['grace-2024']} />.</>}
       />
