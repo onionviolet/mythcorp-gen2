@@ -2,73 +2,7 @@
 
 import Link from 'next/link';
 import { SiteHeader } from '../components/SiteHeader';
-
-type Sketch = {
-  href: string;
-  label: string;
-  title: string;
-  blurb: string;
-  status: 'sketch' | 'graduated' | 'parked';
-};
-
-const SKETCHES: ReadonlyArray<Sketch> = [
-  {
-    href: '/og/hero-lab',
-    label: 'HERO LAB',
-    title: 'Title + Model Study',
-    blurb: 'An experimental hero composition with a wavy 3D title and spectre model.',
-    status: 'sketch',
-  },
-
-  {
-    href: '/og/animals',
-    label: 'INTERMISSION',
-    title: 'Animal Break Time',
-    blurb: 'A live GIPHY intermission, pulled back to rebuild with licensed cute anime or animal art instead.',
-    status: 'parked',
-  },
-  {
-    href: '/og/doubt',
-    label: 'DOUBT',
-    title: 'Manufactured Doubt',
-    blurb: 'How doubt gets manufactured to delay action (tobacco to climate), and the one honest reason for optimism it could not stop. Interactive solar + EV curves. Companion to the Calhoun ramble.',
-    status: 'sketch',
-  },
-  {
-    href: '/og/calhoun',
-    label: 'CALHOUN',
-    title: 'The Calhoun Effect',
-    blurb: 'A ramble on Universe 25, what the mouse-utopia experiment is taken to mean vs. what it meant, and the doubt/slogan machinery in between. Links to a behavioral-sink mode in the lab.',
-    status: 'sketch',
-  },
-  {
-    href: '/og/interactive',
-    label: 'INTERACTIVE',
-    title: '"W I P" sideways type',
-    blurb: 'CSS-only isometric 3D type. Placeholder for an actual interactive demo (R3F shader playground? scene picker?).',
-    status: 'sketch',
-  },
-  {
-    href: '/og/chat',
-    label: 'CHAT',
-    title: 'Local-only chat sandbox',
-    blurb: 'A real chat UI with no backend. Useful as a placeholder until a WebSocket layer makes sense.',
-    status: 'sketch',
-  },
-  {
-    href: '/fmhy',
-    label: 'FMHY',
-    title: 'FMHY backup (graduated)',
-    blurb: 'Started here as a placeholder shell. Now a real backup-sites directory at /fmhy: mirrors pulled from the fmhy/edit backups list, for the days fmhy.net is down.',
-    status: 'graduated',
-  },
-];
-
-const STATUS_CLASS: Record<Sketch['status'], string> = {
-  sketch: 'border-[color:var(--border)] bg-[color:var(--bg-overlay)] text-[color:var(--fg-subtle)]',
-  graduated: 'border-[color:var(--accent-soft)]/40 bg-[color:var(--accent-soft)]/10 text-[color:var(--accent-soft)]',
-  parked: 'border-[color:var(--accent-warm)]/40 bg-[color:var(--accent-warm)]/10 text-[color:var(--accent-warm)]',
-};
+import { SKETCHES, STATUS_CLASS } from './sketches';
 
 export default function OgIndex() {
   return (
@@ -85,6 +19,13 @@ export default function OgIndex() {
         <p className="mt-4 max-w-xl text-base leading-relaxed text-[color:var(--fg-muted)] md:text-lg">
           Pages that started as ideas and aren&rsquo;t finished. They live here on purpose,
           so they don&rsquo;t clutter the main map but don&rsquo;t get lost either.
+        </p>
+        <p className="mt-3 text-sm text-[color:var(--fg-muted)]">
+          Prefer to wander?{' '}
+          <Link href="/og/orbit" className="text-[color:var(--accent)] underline underline-offset-4">
+            Browse them as an orbit
+          </Link>
+          .
         </p>
 
         <ul className="mt-10 grid gap-4 sm:grid-cols-2">
