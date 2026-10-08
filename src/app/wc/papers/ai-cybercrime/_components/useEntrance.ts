@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useReducedMotion } from '../../../../components/plain/useReducedMotion';
+import { usePrinting } from './usePrinting';
 
 export function useEntrance<T extends Element>(threshold = 0.35) {
   const ref = useRef<T>(null);
   const reduced = useReducedMotion();
+  const printing = usePrinting();
   const [entered, setEntered] = useState(false);
 
   useEffect(() => {
@@ -25,5 +27,6 @@ export function useEntrance<T extends Element>(threshold = 0.35) {
     return () => io.disconnect();
   }, [reduced, threshold]);
 
-  return { ref, pending: !reduced && !entered, animate: !reduced };
+  const still = reduced || printing;
+  return { ref, pending: !still && !entered, animate: !still };
 }

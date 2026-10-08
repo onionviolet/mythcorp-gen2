@@ -181,7 +181,7 @@ export function EndingsBranch() {
   return (
     <figure className="mt-8">
       <div className="themed-surface p-4 sm:p-5">
-        <div role="radiogroup" aria-label="Ending presets" className="flex flex-wrap gap-2 font-mono text-xs">
+        <div role="radiogroup" aria-label="Ending presets" className="flex flex-wrap gap-2 font-mono text-xs print:hidden">
           {ENDINGS.map((e) => (
             <button
               key={e.key}
@@ -205,7 +205,8 @@ export function EndingsBranch() {
           )}
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <p className="hidden font-mono text-[10px] print:block">Chart shown at the Ending A rates (discovery ×4, repair ×1.5 a year), with Ending B dotted.</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 print:hidden">
           <RateSlider label="Discovery grows" value={rates.discoveryGrowth} min={1} max={8} onChange={(v) => setRates((r) => ({ ...r, discoveryGrowth: v }))} />
           <RateSlider label="Repair grows" value={rates.repairGrowth} min={1} max={10} onChange={(v) => setRates((r) => ({ ...r, repairGrowth: v }))} />
         </div>
@@ -217,7 +218,8 @@ export function EndingsBranch() {
             height={HEIGHT}
             role="img"
             aria-label={`Backlog of unpatched flaws. Measured: ${START_BACKLOG} in May 2026. Projection at discovery times ${rates.discoveryGrowth} and repair times ${rates.repairGrowth} a year ends 2030 at ${fmtCount(last.backlog)}.`}
-            className="block"
+            viewBox={`0 0 ${width} ${HEIGHT}`}
+            className="block max-w-full print:h-auto"
           >
             <defs>
               <clipPath id="backlog-plot">
@@ -293,32 +295,11 @@ export function EndingsBranch() {
           </ul>
         </div>
 
-        <div className="mt-6 space-y-4">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--accent)]">forecast, 2029 to 2030</p>
-          <h3 className="font-serif text-xl text-[color:var(--fg)]">Ending {ending.letter}: {ending.name}</h3>
-          <StoryVignette vignette={ending.vignette} />
-          <div className="space-y-3 text-sm leading-relaxed text-[color:var(--fg-muted)]">{ending.story}</div>
-
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)]">What would lead here</p>
-            <ul className="mt-2 space-y-2 text-sm leading-relaxed text-[color:var(--fg-muted)]">
-              {ending.conditions.map((c, i) => (
-                <li key={i} className="flex gap-2"><span aria-hidden className="text-[color:var(--accent)]">›</span><span>{c}</span></li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)]">Signposts to watch, with the latest reading</p>
-            <ul className="mt-2 divide-y divide-[color:var(--border)] border-y border-[color:var(--border)] text-sm">
-              {ending.signposts.map((s) => (
-                <li key={s.watch} className="grid gap-1 py-2 sm:grid-cols-[1fr_auto] sm:gap-4">
-                  <span className="text-[color:var(--fg)]">{s.watch}</span>
-                  <span className="font-mono text-xs text-[color:var(--fg-muted)] sm:text-right">{s.reading}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="mt-6 print:hidden">
+          <EndingDetail ending={ending} />
+        </div>
+        <div className="mt-6 hidden space-y-8 print:block">
+          {ENDINGS.map((e) => <EndingDetail key={e.key} ending={e} />)}
         </div>
       </div>
       <FigureCaption
@@ -327,5 +308,37 @@ export function EndingsBranch() {
         source={<>one measured point, Anthropic&rsquo;s Project Glasswing update<Cite ids={['glasswing-2026-05']} />. Everything right of it is my projection.</>}
       />
     </figure>
+  );
+}
+
+function EndingDetail({ ending }: { ending: Ending }) {
+  return (
+    <div className="space-y-4">
+    <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--accent)]">forecast, 2029 to 2030</p>
+    <h3 className="font-serif text-xl text-[color:var(--fg)]">Ending {ending.letter}: {ending.name}</h3>
+    <StoryVignette vignette={ending.vignette} />
+    <div className="space-y-3 text-sm leading-relaxed text-[color:var(--fg-muted)]">{ending.story}</div>
+
+    <div>
+      <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)]">What would lead here</p>
+      <ul className="mt-2 space-y-2 text-sm leading-relaxed text-[color:var(--fg-muted)]">
+        {ending.conditions.map((c, i) => (
+          <li key={i} className="flex gap-2"><span aria-hidden className="text-[color:var(--accent)]">›</span><span>{c}</span></li>
+        ))}
+      </ul>
+    </div>
+
+    <div>
+      <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)]">Signposts to watch, with the latest reading</p>
+      <ul className="mt-2 divide-y divide-[color:var(--border)] border-y border-[color:var(--border)] text-sm">
+        {ending.signposts.map((s) => (
+          <li key={s.watch} className="grid gap-1 py-2 sm:grid-cols-[1fr_auto] sm:gap-4">
+            <span className="text-[color:var(--fg)]">{s.watch}</span>
+            <span className="font-mono text-xs text-[color:var(--fg-muted)] sm:text-right">{s.reading}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    </div>
   );
 }

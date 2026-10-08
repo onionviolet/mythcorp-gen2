@@ -84,7 +84,7 @@ export function Term({ k, children }: { k: GlossaryKey; children: ReactNode }) {
         onClick={show}
         onPointerEnter={(e) => { if (e.pointerType === 'mouse') show(); }}
         onPointerLeave={(e) => { if (e.pointerType === 'mouse') setOpen(false); }}
-        className="cursor-help text-inherit underline decoration-[color:var(--fg-subtle)] decoration-dotted underline-offset-4 hover:decoration-[color:var(--accent)] focus-visible:decoration-[color:var(--accent)]"
+        className="cursor-help text-inherit print:no-underline underline decoration-[color:var(--fg-subtle)] decoration-dotted underline-offset-4 hover:decoration-[color:var(--accent)] focus-visible:decoration-[color:var(--accent)]"
       >
         {children}
       </button>

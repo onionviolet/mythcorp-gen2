@@ -198,8 +198,8 @@ export function BarrierToEntry({ figureNumber }: { figureNumber?: number } = {})
                           +{post - pre}
                         </span>
                       </button>
-                      {expanded && (
-                        <div className="space-y-2 pb-3 sm:pl-[13.75rem]">
+                      {
+                        <div className={`space-y-2 pb-3 sm:pl-[13.75rem] ${expanded ? '' : 'hidden print:block'}`}>
                           <p className="font-mono text-[11px] text-[color:var(--fg-muted)]">{pre} → {post}</p>
                           <AnswerStrip answers={r.pre} label="before AI" />
                           <AnswerStrip answers={r.post} label="Oct 2026" />
@@ -208,7 +208,7 @@ export function BarrierToEntry({ figureNumber }: { figureNumber?: number } = {})
                             <Cite ids={r.evidence} />
                           </p>
                         </div>
-                      )}
+                      }
                     </li>
                   );
                 })}
@@ -225,7 +225,7 @@ export function BarrierToEntry({ figureNumber }: { figureNumber?: number } = {})
             ))}
           </ol>
         </details>
-        <p className="mt-2 font-mono text-[10px] text-[color:var(--fg-subtle)]">open a row for its answers, reasons and sources</p>
+        <p className="mt-2 font-mono text-[10px] text-[color:var(--fg-subtle)] print:hidden">open a row for its answers, reasons and sources</p>
       </div>
       <figcaption className="mt-4 space-y-1 text-xs leading-relaxed text-[color:var(--fg-subtle)]">
         <p>

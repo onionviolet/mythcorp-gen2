@@ -125,7 +125,15 @@ export function EvidenceTimeline() {
 
   return (
     <figure className="mt-8">
-      <div className="themed-surface p-4 sm:p-5">
+      <ol className="hidden space-y-1.5 border border-[color:var(--border)] p-4 text-[9pt] leading-snug print:block">
+        {EVIDENCE_EVENTS.map((e) => (
+          <li key={e.date + e.title}>
+            <span className="font-mono">{e.date}</span> ({SIDE_LABEL[e.side]}) <strong>{e.title}.</strong> {e.detail}
+            <Cite ids={e.source} />
+          </li>
+        ))}
+      </ol>
+      <div className="themed-surface p-4 sm:p-5 print:hidden">
         <div role="radiogroup" aria-label="Show events" className="flex flex-wrap gap-2 font-mono text-[11px]">
           {(['all', 'offense', 'defense', 'measure'] as const).map((f) => (
             <button

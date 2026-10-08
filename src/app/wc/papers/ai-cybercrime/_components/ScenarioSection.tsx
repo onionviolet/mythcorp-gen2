@@ -208,14 +208,14 @@ export function ScenarioSection() {
 
   return (
     <div className="relative mt-8 xl:-ml-[16rem] xl:grid xl:grid-cols-[14rem_minmax(0,1fr)] xl:gap-8">
-      <aside aria-label="Scenario readout" className="hidden xl:block">
+      <aside aria-label="Scenario readout" className="hidden xl:block print:hidden">
         <div className="sticky top-24">
           <ScenarioDashboard chapter={chapter} pos={pos} />
         </div>
       </aside>
 
       <div>
-        <div className="sticky top-[70px] z-20 -mx-1 mb-4 sm:top-[82px] xl:hidden" role="region" aria-label="Scenario readout">
+        <div className="sticky top-[70px] z-20 -mx-1 mb-4 sm:top-[82px] xl:hidden print:hidden" role="region" aria-label="Scenario readout">
           <ScenarioStrip chapter={chapter} pos={pos} />
         </div>
         <div className="space-y-16">

@@ -67,7 +67,7 @@ export function HorizonExtrapolator() {
             </p>
             <p className="font-serif text-2xl text-[color:var(--accent)]">{days} days</p>
           </div>
-          <div role="group" aria-label="METR doubling-time estimates" className="flex flex-wrap gap-1.5 font-mono text-[11px]">
+          <div role="group" aria-label="METR doubling-time estimates" className="flex flex-wrap gap-1.5 font-mono text-[11px] print:hidden">
             {DOUBLING_PRESETS.map((p) => (
               <button
                 key={p.days}
@@ -87,7 +87,7 @@ export function HorizonExtrapolator() {
             ))}
           </div>
         </div>
-        <label className="mt-3 block">
+        <label className="mt-3 block print:hidden">
           <span className="sr-only">Doubling time in days</span>
           <input
             type="range"
@@ -101,7 +101,7 @@ export function HorizonExtrapolator() {
         </label>
 
         <div ref={ref} className="mt-3 w-full">
-          <svg width={width} height={HEIGHT} role="img" aria-label={`Agent time horizon, measured points to May 2026, projected to 2029 at a ${days}-day doubling time`} className="block">
+          <svg width={width} height={HEIGHT} viewBox={`0 0 ${width} ${HEIGHT}`} role="img" aria-label={`Agent time horizon, measured points to May 2026, projected to 2029 at a ${days}-day doubling time`} className="block max-w-full print:h-auto">
             {yTicks.map((m) => (
               <g key={m}>
                 <line x1={PAD.l} x2={width - PAD.r} y1={y(m)} y2={y(m)} style={{ stroke: 'var(--border)' }} strokeWidth={1} />

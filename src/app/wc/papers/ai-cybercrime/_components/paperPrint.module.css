@@ -1,0 +1,100 @@
+/* Print and save-as-PDF: a plain academic document, black on white. */
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm 16mm 20mm;
+  }
+
+  :global(html):has(.printRoot),
+  :global(body):has(.printRoot) {
+    background: white !important;
+    transition: none !important;
+  }
+
+  :global(html):has(.printRoot) {
+    font-size: 12.5px;
+  }
+
+  :global(body):has(.printRoot)::before {
+    display: none !important;
+  }
+
+  :global(body):has(.printRoot) * {
+    visibility: hidden;
+  }
+
+  :global(body):has(.printRoot) .printRoot,
+  :global(body):has(.printRoot) .printRoot * {
+    visibility: visible;
+  }
+
+  .printRoot {
+    --bg: white;
+    --bg-elevated: white;
+    --bg-overlay: white;
+    --fg: black;
+    --fg-muted: #222;
+    --fg-subtle: #555;
+    --accent: black;
+    --accent-soft: #444;
+    --accent-warm: black;
+    --accent-glow: transparent;
+    --accent-glow-strong: transparent;
+    --border: #bbb;
+    --border-strong: #222;
+    --surface-bg: white;
+    --surface-border: 1px solid #bbb;
+    --surface-shadow: none;
+    --surface-blur: 0px;
+    --font-display: var(--font-geist-sans);
+    --font-body: var(--font-geist-sans);
+    background: white !important;
+    color: black;
+    font-family: var(--font-geist-sans), sans-serif;
+    min-height: 0 !important;
+  }
+
+  .printRoot * {
+    animation: none !important;
+    transition: none !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .printRoot article {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .printRoot h1 {
+    font-size: 22pt !important;
+    text-transform: none !important;
+  }
+
+  .printRoot h2,
+  .printRoot h3,
+  .printRoot h4 {
+    break-after: avoid;
+    text-transform: none !important;
+  }
+
+  .printRoot figure,
+  .printRoot li,
+  .printRoot dl > div {
+    break-inside: avoid;
+  }
+
+  .printRoot section {
+    margin-top: 14pt !important;
+  }
+
+  .printRoot button {
+    text-decoration: none !important;
+    cursor: default;
+  }
+
+  .printRoot a {
+    color: black !important;
+  }
+}
