@@ -9,7 +9,7 @@ const PAPERS = [
     title: 'The AI-driven democratization of cybercrime',
     status: 'living draft',
     blurb:
-      'Web version of the Pioneer Scholars 2025 paper. Two interactive figures so far (barrier-to-entry comparison, capability ramp). More sections converted as the prose tightens.',
+      'The Pioneer Scholars 2025 paper, revised October 2026: a dated evidence record, a scenario from 2023 to 2030 with a live readout, two endings, and every number sourced or labelled as my estimate.',
     ready: true,
   },
 ];
