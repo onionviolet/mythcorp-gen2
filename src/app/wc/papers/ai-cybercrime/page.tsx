@@ -82,7 +82,7 @@ export default function AiCybercrimePaper() {
             the skill needed for attacks built on writing and impersonation, but crime-as-a-service had already removed the
             skill requirement for some attacks before it. Expert-level vulnerability discovery appeared in 2026 in models
             withheld from public release, and the best downloadable model trailed them by about four
-            months.<Cite ids={['glasswing-2026-04', 'caisi-2026-09']} /> Over the same period the average time from disclosure
+            months.<Cite ids={['glasswing-2026-04', 'caisi-2026-09']} /> Over the same period the average time from patch release
             to first observed exploitation fell from 63 days in 2018 to 2019 to minus 7 days in
             2025,<Cite ids={['gtte-2024', 'mtrends-2026']} /> and only 75 of 530 AI-found flaws reported to open-source maintainers
             had patches in May 2026.<Cite ids={['glasswing-2026-05']} /> Harm data show no measurable AI-driven increase so far.
@@ -114,7 +114,7 @@ export default function AiCybercrimePaper() {
             limited by the people who move the money, which AI does not supply.<Cite ids={['leukfeldt-2017']} /> For
             breaking into systems the shift reached the gated
             frontier in 2026, and <Term k="openWeights">downloadable models</Term> are a few months behind. The time from a
-            flaw going public to its first <Term k="exploit">exploitation</Term> fell from 63 days to 5 before AI agents existed.<Cite ids={['gtte-2024']} /> The harm data
+            patch&rsquo;s release to the first <Term k="exploit">exploitation</Term> of its flaw fell from 63 days to 5 before AI agents existed.<Cite ids={['gtte-2024']} /> The harm data
             so far show no AI-driven crime wave, though official counts catch only a small share of cybercrime, so read
             this as a forecast about capability and access.<Cite ids={['chainalysis-2026', 'ic3-2025', 'vandeweijer-2019']} /> The
             international consensus leaves the biggest question open too: the 2026 International AI Safety Report says it
@@ -205,11 +205,20 @@ export default function AiCybercrimePaper() {
             sources outside the AI companies measure on that side.
           </p>
           <p>
-            The window between a flaw going public and its first exploitation has been closing for years. Mandiant
+            The window between a patch&rsquo;s release and the first exploitation of its flaw has been closing for years. Mandiant
             measured an average of 63 days in 2018 to 2019 and 5 days in 2023.<Cite ids={['gtte-2024']} /> Its report on
-            2025 puts the figure at minus 7 days, meaning exploitation on average began before disclosure.<Cite ids={['mtrends-2026']} /> Most
+            2025 puts the figure at minus 7 days, meaning exploitation on average began before a patch existed.<Cite ids={['mtrends-2026']} /> Only zero-days can push the average below zero, and they were 70% of Mandiant&rsquo;s 2023 set.<Cite ids={['gtte-2024']} /> Most
             of that fall came before AI agents existed, so AI did not start it. What AI can do is push a trend that was
             already running.
+          </p>
+          <p>
+            An older measurement shows what a negative average can hide. On 11 million Windows hosts running
+            Symantec&rsquo;s products from 2008 to 2011, 18 flaws were exploited before they were disclosed, for between 19
+            days and 30 months, with a median of 8 months; the authors call these durations lower bounds. After
+            disclosure, attacks on those flaws rose between 2 and 100,000 times, and exploits for 42% of the flaws used
+            in host-based attacks showed up in the field within 30 days of disclosure.<Cite ids={['bilge-2012']} /> Exploitation
+            before disclosure is not new, and most attacks still came after it. The data cover only customers of one
+            antivirus vendor and miss web-based and highly targeted attacks.
           </p>
           <ExploitWindow />
           <p>
@@ -439,7 +448,13 @@ export default function AiCybercrimePaper() {
             <li>
               <strong className="text-[color:var(--fg)]">Pay for fixing, not only finding.</strong>{' '}
               The measured bottleneck in 2026 is human capacity to triage and patch.<Cite ids={['glasswing-2026-05']} /> Automated
-              patching already works in competition at low cost, and the systems are open source.<Cite ids={['aixcc-2025']} />
+              patching already works in competition at low cost, and the systems are open source.<Cite ids={['aixcc-2025']} /> Pressure
+              has sped fixes before. In data from CERT/CC and SecurityFocus, public disclosure made vendors nearly two and
+              a half times more likely to release a patch at any given moment.<Cite ids={['arora-2010']} /> A model of
+              disclosure policy finds that vendors patch more slowly than is best for society, so the body that sets the
+              deadline should shorten it.<Cite ids={['arora-2008']} /> The cost is the surge of attacks that follows
+              disclosure.<Cite ids={['bilge-2012']} /> Those studies measured companies with paid staff; whether deadlines
+              speed up volunteer maintainers, who wrote the 2026 fixes, is untested.
             </li>
             <li>
               <strong className="text-[color:var(--fg)]">Keep measuring diffusion on a schedule.</strong>{' '}
@@ -562,6 +577,14 @@ export default function AiCybercrimePaper() {
               the AI companies, a section on what cuts against the thesis, and a list of readings that would prove me wrong.
             </li>
             <li>
+              <strong className="text-[color:var(--fg)]">Disclosure studies and a correction (v2.6).</strong>{' '}
+              Added a field study of zero-day attacks and two studies of disclosure and vendor patching; the two
+              disclosure studies were read as abstracts only, because the library does not carry their full text. They
+              added amendment A9. Corrected the Mandiant measure throughout: it counts days from patch release, not from
+              disclosure, and the figure caption no longer says the fall came from zero-days, which Mandiant does not
+              claim.
+            </li>
+            <li>
               <strong className="text-[color:var(--fg)]">Paper and website separated (v2.5).</strong>{' '}
               The text now reads as an academic paper: an abstract, an opening case, numbered parts and sections with
               one-sentence summaries, and lettered appendices. The illustrative scenarios are collapsed by default, and a
@@ -611,7 +634,8 @@ export default function AiCybercrimePaper() {
         <Section id="sources" number="" eyebrow="references" lead={<>All {PAPER_SOURCES.length} sources cited in the paper, numbered by publication date.</>} title="References">
           <p className="text-sm">
             Each source was opened and read for this revision. Entries marked library copy are paywalled journal
-            articles read in full through Washington and Lee University&rsquo;s library; the rest are open copies. Dates
+            articles read in full through Washington and Lee University&rsquo;s library; entries marked abstract only were
+            read as their published abstract, and only claims from the abstract are cited; the rest are open copies. Dates
             are publication dates.
             Entries marked peer-reviewed passed a conference or journal review; preprints have not. Entries marked
             reporting are news accounts of an official statement I could not find in the original.
@@ -704,7 +728,7 @@ const WRONG_ROWS: ReadonlyArray<{ reading: string; latest: ReactNode; against: s
     against: 'Ending A, if both keep falling through 2027 while AI tools spread. Defenses against extortion would be holding.',
   },
   {
-    reading: 'Mean time from disclosure to exploitation',
+    reading: 'Mean time from patch release to exploitation',
     latest: <>minus 7 days, 2025<Cite ids={['mtrends-2026']} /></>,
     against: 'Ending B, if it keeps falling. Repair would be starting later each year, however fast it runs.',
   },

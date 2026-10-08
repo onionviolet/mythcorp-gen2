@@ -10,12 +10,36 @@ export type PaperSource = {
 
 export const PAPER_SOURCES = [
   {
+    id: 'arora-2008',
+    author: 'Arora, Telang and Xu',
+    title: 'Optimal Policy for Software Vulnerability Disclosure, Management Science 54(4), 642-656 (abstract only)',
+    date: '2008-04',
+    url: 'https://doi.org/10.1287/mnsc.1070.0771',
+    kind: 'peer-reviewed',
+  },
+  {
     id: 'herley-2009',
     author: 'Herley and Florêncio',
     title: 'Nobody Sells Gold for the Price of Silver: Dishonesty, Uncertainty and the Underground Economy (Microsoft Research MSR-TR-2009-34; later a Springer chapter)',
     date: '2009-06',
     url: 'https://www.microsoft.com/en-us/research/publication/nobody-sells-gold-for-the-price-of-silver-dishonesty-uncertainty-and-the-underground-economy/',
     kind: 'primary',
+  },
+  {
+    id: 'arora-2010',
+    author: 'Arora, Krishnan, Telang and Yang',
+    title: "An Empirical Analysis of Software Vendors' Patch Release Behavior: Impact of Vulnerability Disclosure, Information Systems Research 21(1), 115-132 (abstract only)",
+    date: '2010-03',
+    url: 'https://doi.org/10.1287/isre.1080.0226',
+    kind: 'peer-reviewed',
+  },
+  {
+    id: 'bilge-2012',
+    author: 'Bilge and Dumitraș',
+    title: 'Before We Knew It: An Empirical Study of Zero-Day Attacks in the Real World (ACM CCS 2012, author copy)',
+    date: '2012-10',
+    url: 'https://users.umiacs.umd.edu/~tdumitra/papers/CCS-2012.pdf',
+    kind: 'peer-reviewed',
   },
   {
     id: 'hutchings-holt-2015',

@@ -14,7 +14,7 @@ export function PaperInSixty() {
         <div>
           <dt className="font-serif text-3xl text-[color:var(--fg)]">63 → &minus;7</dt>
           <dd className="mt-1 text-xs leading-relaxed text-[color:var(--fg-muted)]">
-            average days from a flaw going public to its first observed exploitation, 2018 to 2019 and then 2025, from two
+            average days from a patch&rsquo;s release to the first observed exploitation of its flaw, 2018 to 2019 and then 2025, from two
             Mandiant reports<Cite ids={['gtte-2024', 'mtrends-2026']} />
           </dd>
         </div>

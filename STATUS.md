@@ -1,5 +1,20 @@
 # STATUS
 
+## Paper v2.6: disclosure studies and a Mandiant correction, 2026-10-08
+
+Read Bilge and Dumitraș (2012) in full from the author's open copy, and the
+two Arora et al. disclosure papers as abstracts only: W&L's OpenAthens proxy
+signs in, but INFORMS returns 403 "purchase" for both. Added them to 1.3 and
+3.1 and wrote amendment A9 ("What minus 7 days measures"). While checking,
+found that Mandiant measures time-to-exploit from patch release, not
+disclosure, and never says the fall came from zero-days; the paper said both.
+Fixed in five places and noted in the revision notes. Notes in
+`docs/plans/PAPER_READING_NOTES_2026-10-07.md` sections 9 to 11.
+
+Checks: `npm run check` passed; the paper rendered on the locked dev server
+with v2.6, nine amendments, the three new references and no console errors.
+Not deployed. Still open: the original 2025 PDF, Playwright's Chromium.
+
 ## Front page restored to its spectacle, paper made public, 2026-10-08
 
 Decision: the front page's goal is awe (DESIGN.md, "The front page's job").

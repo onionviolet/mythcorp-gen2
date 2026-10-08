@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Cite } from './PaperApparatus';
 
-export const PAPER_VERSION = { label: 'v2.5', date: '2026-10-08' } as const;
+export const PAPER_VERSION = { label: 'v2.6', date: '2026-10-08' } as const;
 
 type Effect = 'strengthens' | 'narrows' | 'reverses';
 
@@ -25,7 +25,7 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     now: 'AI arrives into a repair window that was already closing. My forecast is about whether AI makes it close faster, and how much repair can speed up in response.',
     evidence: (
       <>
-        Mandiant&rsquo;s average time from disclosure to first exploitation fell from 63 days to 5 between 2018 and 2023,
+        Mandiant&rsquo;s average time from patch release to first exploitation fell from 63 days to 5 between 2018 and 2023,
         before AI agents existed,<Cite ids={['gtte-2024']} /> and sat at minus 7 days for 2025.<Cite ids={['mtrends-2026']} /> Older
         work had already found that attackers watching open-source repositories can get weeks to months of head start
         before disclosure.<Cite ids={['li-2017']} />
@@ -149,6 +149,23 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
         A broad review of open foundation models found current research insufficient to pin down their marginal risk,
         cyberattacks included.<Cite ids={['kapoor-2024']} /> Government measures of the lag itself: about four months from
         CAISI,<Cite ids={['caisi-2026-09']} /> four to eight months in the UK AI Security Institute&rsquo;s report, drawing on outside indexes.<Cite ids={['aisi-2025']} />
+      </>
+    ),
+  },
+  {
+    id: 'am-9',
+    date: '2026-10-08',
+    topic: 'What minus 7 days measures',
+    effect: 'narrows',
+    before: 'The average time from disclosure to first exploitation reached minus 7 days, so repair now starts, on average, after the attack has.',
+    now: 'Mandiant counts from patch release, not disclosure, and only zero-days can push that average below zero. Zero-days already ran for months before disclosure in 2008 to 2011, and in that data most attacks came after a flaw went public. The negative average says more about zero-days than about the typical attack.',
+    evidence: (
+      <>
+        Field data from 11 million hosts found zero-day attacks lasting a median of 8 months before disclosure, and
+        attacks on those flaws rising between 2 and 100,000 times once they were public.<Cite ids={['bilge-2012']} /> Mandiant
+        defines its measure as time to exploitation before or after a patch is released, and zero-days were 70% of its 2023
+        set, up from 62% in 2021 and 2022.<Cite ids={['gtte-2024']} /> Its 2026 report reads minus 7 days as exploitation
+        before a patch exists.<Cite ids={['mtrends-2026']} />
       </>
     ),
   },
