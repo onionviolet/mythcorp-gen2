@@ -62,6 +62,52 @@
     backdrop-filter: none !important;
   }
 
+  .printRoot :global(.uppercase) {
+    font-family: Georgia, 'Times New Roman', serif !important;
+    font-weight: 700;
+    font-variant-caps: small-caps;
+    letter-spacing: normal !important;
+    text-transform: lowercase !important;
+  }
+
+  .printRoot :global(.themed-pill),
+  .printRoot :global(.uppercase)[class*='border'] {
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    color: var(--fg) !important;
+    padding: 0 !important;
+  }
+
+  .printRoot figure > :global(.themed-surface),
+  .printRoot figure > ol {
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    padding-inline: 0 !important;
+  }
+
+  .printRoot details[data-vignette] {
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding-inline: 0 !important;
+    break-inside: auto;
+  }
+
+  .printRoot summary {
+    font-family: Georgia, 'Times New Roman', serif !important;
+    cursor: default;
+    list-style: none;
+  }
+
+  .printRoot summary > [aria-hidden] {
+    display: none !important;
+  }
+
+  .printRoot summary::marker {
+    content: '';
+  }
+
   .printRoot article {
     max-width: none !important;
     padding: 0 !important;

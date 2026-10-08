@@ -137,11 +137,11 @@ export function ClaimTag({ kind }: { kind: ClaimKind }) {
 export function ForecastFrame({ children, label = 'forecast' }: { children: ReactNode; label?: string }) {
   return (
     <div
-      className="relative mt-6 border border-dashed border-[color:var(--accent)] px-4 pb-4 pt-6 sm:px-5"
+      className="relative mt-6 border border-dashed border-[color:var(--accent)] px-4 pb-4 pt-6 sm:px-5 print:border-0 print:px-0 print:pt-0"
       style={{ borderRadius: 'var(--radius)' }}
     >
       <span
-        className="absolute -top-2.5 left-4 bg-[color:var(--bg)] px-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--accent)]"
+        className="absolute -top-2.5 left-4 bg-[color:var(--bg)] px-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--accent)] print:static print:px-0"
       >
         {label}
       </span>

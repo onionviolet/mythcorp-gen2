@@ -1,5 +1,17 @@
 # STATUS
 
+## Paper v2.7: Methods, Limitations and a plain print view, 2026-10-08
+
+Codex (codex exec, workspace-write) added a Methods section before Part I, a
+Limitations section (3.2; falsification is now 3.3), removed citations from
+the abstract, replaced repeated 63-days figures in the thesis and 60-second
+summary with pointers to 1.3, and made print labels and boxes plain. Claude
+reviewed the diff, checked Methods and Limitations against existing text and
+the barrier rubric, and reverted one Codex change that would have printed the
+vignettes (they stay out of print, as in v2.5). Checks: `npm run check`
+passed; a headless Chrome print of the dev server gave a 26-page PDF with the
+new sections and no vignettes. Not deployed.
+
 ## Paper v2.6: disclosure studies and a Mandiant correction, 2026-10-08
 
 Read Bilge and Dumitraș (2012) in full from the author's open copy, and the
