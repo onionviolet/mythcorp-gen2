@@ -1,5 +1,14 @@
 # STATUS
 
+## Paper v2.8 deployed, 2026-10-08
+
+Pushed main to 8acd8c3 and deployed it as Cloudflare version cd4103b1 from a
+clean detached worktree, because the primary checkout held another session's
+uncommitted banner work (LinkedInBanner, PlainHold, MAP, STATUS) that must not
+ship. No Workers Build appeared for the push within a few minutes. Verified on
+mythcorp.org with a cache-busting query: v2.8, "from patch release", A9, 57
+archive links, no grade. The grade was removed from Appendix B in 8acd8c3.
+
 ## Paper v2.8: amendments checked against the 2025 original, archived references, 2026-10-08
 
 Found the 2025 Pioneer paper in Google Drive (account waybao666@gmail.com,
