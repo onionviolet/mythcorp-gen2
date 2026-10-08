@@ -133,7 +133,7 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
       body: (
         <>
           <p>
-            Jun is 19 and spends most nights on game servers. In a forum he scrolls past an ad for an AI tool that
+            Alex is 19 and spends most nights on game servers. In a forum he scrolls past an ad for an AI tool that
             writes malicious code, sold by subscription for less than the old malware kits cost. He does not buy it. He
             is not sure what he would do with it.
           </p>
@@ -200,7 +200,7 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
             down.
           </p>
           <p>
-            Jun reads the same news from the other side. The model everyone is talking about is locked away. The ones
+            Alex reads the same news from the other side. The model everyone is talking about is locked away. The ones
             he could download are a few months behind.
           </p>
         </>
@@ -259,7 +259,7 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
       body: (
         <>
           <p>
-            A downloadable model now does what the locked one did a year ago. In Jun&rsquo;s group chat someone posts a
+            A downloadable model now does what the locked one did a year ago. In Alex&rsquo;s group chat someone posts a
             link. Nobody in the chat has ever written an exploit by hand.
           </p>
           <p>
@@ -319,7 +319,7 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
       body: (
         <>
           <p>
-            Jun could brief an agent on a Friday and let it work for weeks. Skill is no longer what stops him. What
+            Alex could brief an agent on a Friday and let it work for weeks. Skill is no longer what stops him. What
             stops him is that he knows nobody who would move stolen money, and payment services still close the
             accounts of people selling attacks.
           </p>

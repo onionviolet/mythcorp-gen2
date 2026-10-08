@@ -375,7 +375,7 @@ export default function AiCybercrimePaper() {
             am. The readout tracks where you are and marks every number as measured or scenario.
           </p>
           <p>
-            Two made-up people walk through it. Jun is 19, on the attacker side. Ines maintains open-source code in her
+            Two made-up people walk through it. Alex is 19, on the attacker side. Ines maintains open-source code in her
             spare time, on the defender side. Their scenes sit in double-ruled frames marked fiction, and each lists the
             sources it was built from. They show what a stage means for one person. They are not evidence.
           </p>

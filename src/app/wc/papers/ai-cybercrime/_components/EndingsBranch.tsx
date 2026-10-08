@@ -45,7 +45,7 @@ const ENDINGS: ReadonlyArray<Ending> = [
             Ines stopped opening the reports a year ago. The queue grows every quarter, and her library&rsquo;s name turns
             up in other people&rsquo;s incident write-ups.
           </p>
-          <p>Jun never got good at any of it. He never needed to.</p>
+          <p>Alex never got good at any of it. He never needed to.</p>
         </>
       ),
     },
@@ -88,7 +88,7 @@ const ENDINGS: ReadonlyArray<Ending> = [
             doing anything. She reads the reports again.
           </p>
           <p>
-            Jun&rsquo;s friends who tried break-ins found little left that was easy. The ones still making money do it on
+            Alex&rsquo;s friends who tried break-ins found little left that was easy. The ones still making money do it on
             the phone, pretending to be someone&rsquo;s bank.
           </p>
         </>
