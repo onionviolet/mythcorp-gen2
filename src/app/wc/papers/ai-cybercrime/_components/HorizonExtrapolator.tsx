@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { useFigureWidth } from './useFigureWidth';
 import { Cite, FigureCaption } from './PaperApparatus';
 import {
   CENTRAL_DOUBLING_DAYS,
@@ -21,27 +22,14 @@ const SURVEY_TIME = Date.parse('2028-01-01');
 const HEIGHT = 280;
 const PAD = { l: 44, r: 12, t: 14, b: 26 };
 
-function useWidth() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [w, setW] = useState(600);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const ro = new ResizeObserver(([e]) => setW(Math.max(280, Math.round(e.contentRect.width))));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-  return [ref, w] as const;
-}
-
 export function HorizonExtrapolator() {
   const [days, setDays] = useState(CENTRAL_DOUBLING_DAYS);
-  const [ref, width] = useWidth();
+  const [ref, width] = useFigureWidth();
 
   const r2 = (n: number) => Math.round(n * 100) / 100;
   const x = (t: number) => r2(PAD.l + ((t - X0) / (X1 - X0)) * (width - PAD.l - PAD.r));
   const y = (m: number) => {
-    const v = Math.min(Y1, Math.max(Y0, Math.log10(m)));
+    const v = Math.min(Y1 + 1, Math.max(Y0, Math.log10(m)));
     return r2(PAD.t + (1 - (v - Y0) / (Y1 - Y0)) * (HEIGHT - PAD.t - PAD.b));
   };
 
@@ -129,12 +117,22 @@ export function HorizonExtrapolator() {
             ))}
             <line x1={x(SURVEY_TIME)} x2={x(SURVEY_TIME)} y1={PAD.t} y2={HEIGHT - PAD.b} style={{ stroke: 'var(--accent-warm)' }} strokeDasharray="4 3" />
             <text x={x(SURVEY_TIME) - 4} y={PAD.t + 10} textAnchor="end" fontSize={10} style={{ fill: 'var(--accent-warm)', fontFamily: 'var(--font-mono)' }}>survey 2028</text>
-            <path d={band} style={{ fill: 'var(--accent)', opacity: 0.12 }} />
-            <path d={active} fill="none" style={{ stroke: 'var(--accent)' }} strokeWidth={2} strokeDasharray="6 4" />
+            <defs>
+              <clipPath id="horizon-plot">
+                <rect x={PAD.l} y={PAD.t} width={Math.max(0, width - PAD.l - PAD.r)} height={HEIGHT - PAD.t - PAD.b} />
+              </clipPath>
+            </defs>
+            <g clipPath="url(#horizon-plot)">
+              <path d={band} style={{ fill: 'var(--accent)', opacity: 0.12 }} />
+              <path d={active} fill="none" style={{ stroke: 'var(--accent)' }} strokeWidth={2} strokeDasharray="6 4" />
+            </g>
             <path d={measured} fill="none" style={{ stroke: 'var(--fg)' }} strokeWidth={2} />
             {HORIZON_POINTS.map((p) => (
               <g key={p.date}>
                 <circle cx={x(Date.parse(p.date))} cy={y(p.minutes)} r={4} style={{ fill: 'var(--fg)' }} />
+                <text x={x(Date.parse(p.date)) + 6} y={y(p.minutes) + 15} fontSize={10} style={{ fill: 'var(--fg)', fontFamily: 'var(--font-mono)' }}>
+                  {p.short}
+                </text>
                 {p.lowerBound && (
                   <path d={`M${x(Date.parse(p.date))},${y(p.minutes) - 6} l-4,6 m4,-6 l4,6 M${x(Date.parse(p.date))},${y(p.minutes) - 6} v-10`} fill="none" style={{ stroke: 'var(--fg)' }} strokeWidth={1.5} />
                 )}

@@ -81,10 +81,12 @@ evidence, dated scenario, two endings. Everything lives in
 | `paperSources.ts` | **The only source list.** Every citation number on the page resolves here (`sourceNumber`) |
 | `PaperApparatus.tsx` | Citation markers, evidence/forecast/rating tags, expandable supplements |
 | `EvidenceTimeline.tsx` | Figure 1: dated, filterable record of reported AI offense and defense |
-| `BarrierToEntry.tsx` | Figure 2: author's 1 to 10 ratings on a five-question rubric. Also embedded by the front page's Tour room |
+| `BarrierToEntry.tsx` | Figure 2: before and after dumbbells of the author's 0 to 10 ratings on a five-question rubric. Also embedded by the front page's Tour room |
 | `HorizonExtrapolator.tsx` + `horizonModel.ts` | Figure 3: METR task-length trend with a doubling-time slider |
 | `ScenarioSection.tsx` + `scenarioChapters.tsx` | Dated stages and the sticky scenario readout |
-| `EndingsBranch.tsx` | Figure 4: two endings with conditions and signposts |
+| `PatchTally.tsx` | Figure 4: 530 reported flaws, 75 patched, one dated snapshot |
+| `EndingsBranch.tsx` + `backlogModel.ts` | Figure 5: the two endings as presets of one backlog model (discovery vs repair growth), with conditions and signposts |
+| `useFigureWidth.ts` | Shared width hook for Figures 3 and 5 |
 
 ## Canvas bench
 

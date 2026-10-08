@@ -10,10 +10,10 @@ const LOCKED = 'not open yet';
 const ACTS = [
   {
     title: 'A paper on AI and cybercrime',
-    figureLabel: 'Barrier to entry, before and after AI. Toggle between the two.',
+    figureLabel: 'Barrier to entry for each attack, before AI and in October 2026.',
     body: [
       'This is a research paper I wrote in 2025, now being turned into a web page you can poke at.',
-      'The figure is from it. Flip between before AI and October 2026 to compare how reachable each attack is for a non-expert. The 1 to 10 scores are my ratings on a five-question rubric shown with the figure, not measurements.',
+      'The figure is from it. Each line runs from an attack\'s score before AI to its score in October 2026, so you can see which ones opened up for non-experts and which are still gated. The 0 to 10 scores are my ratings on a five-question rubric shown with the figure, not measurements.',
     ],
     figure: <PaperFigure />,
   },

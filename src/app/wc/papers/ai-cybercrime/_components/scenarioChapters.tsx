@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Cite } from './PaperApparatus';
+import { PatchTally } from './PatchTally';
 import { CENTRAL_DOUBLING_DAYS, horizonLabel, projectedMinutes } from './horizonModel';
 
 export type IndicatorStatus = 'measured' | 'scenario' | 'not measured';
@@ -143,8 +144,11 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
         </p>
         <p>
           A month in, partners report over 10,000 high or critical flaws. Of 530 sent to open-source
-          maintainers, 75 have patches, and some maintainers ask for slower disclosure.<Cite ids={['glasswing-2026-05']} /> In
-          September NIST&rsquo;s CAISI rates the best downloadable model about four months behind the US frontier
+          maintainers, 75 have patches, and some maintainers ask for slower disclosure.<Cite ids={['glasswing-2026-05']} />
+        </p>
+        <PatchTally figureNumber={4} />
+        <p>
+          In September NIST&rsquo;s CAISI rates the best downloadable model about four months behind the US frontier
           on cyber tasks.<Cite ids={['caisi-2026-09']} />
         </p>
         <p>

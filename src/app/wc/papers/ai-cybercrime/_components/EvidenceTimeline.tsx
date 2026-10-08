@@ -165,6 +165,17 @@ export function EvidenceTimeline() {
           </div>
           <div className="relative mt-1">
             <div aria-hidden className="absolute left-0 right-0 top-1/2 h-px bg-[color:var(--border)]" />
+            {years.slice(1).map((y) => {
+              const first = EVIDENCE_EVENTS.findIndex((e) => e.date.startsWith(y));
+              return (
+                <div
+                  key={y}
+                  aria-hidden
+                  className="absolute inset-y-1 w-px bg-[color:var(--border-strong)]"
+                  style={{ left: `${(first / EVIDENCE_EVENTS.length) * 100}%` }}
+                />
+              );
+            })}
             <div className="relative flex" role="listbox" aria-label="Evidence events, oldest to newest">
               {EVIDENCE_EVENTS.map((e, i) => (
                 <button

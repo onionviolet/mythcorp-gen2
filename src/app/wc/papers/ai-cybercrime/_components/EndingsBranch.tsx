@@ -2,11 +2,24 @@
 
 import { useState, type ReactNode } from 'react';
 import { Cite, FigureCaption } from './PaperApparatus';
+import {
+  MEASURED_AT,
+  MEASURED_DAYS,
+  MODEL_END,
+  START_BACKLOG,
+  START_FIXED_PER_MONTH,
+  START_FOUND_PER_MONTH,
+  crossoverTime,
+  runBacklog,
+  type BacklogRates,
+} from './backlogModel';
+import { useFigureWidth } from './useFigureWidth';
 
 type Signpost = { watch: string; reading: ReactNode };
 
 type Ending = {
   key: 'outrun' | 'pace';
+  rates: BacklogRates;
   letter: 'A' | 'B';
   name: string;
   story: ReactNode;
@@ -17,6 +30,7 @@ type Ending = {
 const ENDINGS: ReadonlyArray<Ending> = [
   {
     key: 'outrun',
+    rates: { discoveryGrowth: 4, repairGrowth: 1.5 },
     letter: 'A',
     name: 'Discovery outruns repair',
     story: (
@@ -45,6 +59,7 @@ const ENDINGS: ReadonlyArray<Ending> = [
   },
   {
     key: 'pace',
+    rates: { discoveryGrowth: 2, repairGrowth: 8 },
     letter: 'B',
     name: 'Repair keeps pace',
     story: (
@@ -73,73 +88,164 @@ const ENDINGS: ReadonlyArray<Ending> = [
   },
 ];
 
+const HEIGHT = 260;
+const PAD = { l: 52, r: 14, t: 16, b: 26 };
+const X0 = Date.parse('2026-01-01');
+const X1 = Date.parse('2031-01-01');
+const Y_MIN = 10;
+const Y_MAX = 10_000_000;
+const Y_TICKS = [10, 1_000, 100_000, 10_000_000];
+
+const r2 = (n: number) => Math.round(n * 100) / 100;
+const fmtCount = (n: number) => {
+  if (n < 10) return 'under 10';
+  const rounded = Number(n.toPrecision(2));
+  return `about ${rounded.toLocaleString('en-US')}`;
+};
+const monthOf = (t: number) => new Date(t).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+const tickLabel = (n: number) => (n >= 1_000_000 ? `${n / 1_000_000}M` : n >= 1_000 ? `${n / 1_000}k` : `${n}`);
+
+function RateSlider({ label, value, min, max, onChange }: { label: string; value: number; min: number; max: number; onChange: (v: number) => void }) {
+  return (
+    <label className="block">
+      <span className="flex items-baseline justify-between font-mono text-[11px] text-[color:var(--fg-muted)]">
+        {label} <span className="text-[color:var(--accent)]">×{value} a year</span>
+      </span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={0.5}
+        value={value}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="mt-1 w-full accent-[color:var(--accent)]"
+      />
+    </label>
+  );
+}
+
 export function EndingsBranch() {
   const [pick, setPick] = useState<Ending['key']>('outrun');
+  const [rates, setRates] = useState<BacklogRates>(ENDINGS[0].rates);
+  const [ref, width] = useFigureWidth();
   const ending = ENDINGS.find((e) => e.key === pick)!;
+  const isPreset = ENDINGS.find((e) => e.rates.discoveryGrowth === rates.discoveryGrowth && e.rates.repairGrowth === rates.repairGrowth);
 
-  const branch = (e: Ending, d: string, ty: number) => {
-    const on = e.key === pick;
-    return (
-      <g
-        key={e.key}
-        role="radio"
-        aria-checked={on}
-        aria-label={`Ending ${e.letter}: ${e.name}`}
-        tabIndex={on ? 0 : -1}
-        onClick={() => setPick(e.key)}
-        onKeyDown={(k) => {
-          if (k.key === 'Enter' || k.key === ' ') { k.preventDefault(); setPick(e.key); }
-          if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(k.key)) {
-            k.preventDefault();
-            setPick(e.key === 'outrun' ? 'pace' : 'outrun');
-          }
-        }}
-        className="cursor-pointer outline-none"
-      >
-        <path d={d} fill="none" strokeWidth={14} style={{ stroke: 'transparent' }} />
-        <path d={d} fill="none" strokeWidth={on ? 2.5 : 1.5} strokeDasharray="6 4" style={{ stroke: on ? 'var(--accent)' : 'var(--fg-subtle)' }} />
-        <circle cx={300} cy={ty} r={on ? 7 : 5} style={{ fill: on ? 'var(--accent)' : 'var(--bg)', stroke: on ? 'var(--accent)' : 'var(--fg-subtle)' }} strokeWidth={1.5} />
-        <text x={306} y={ty < 70 ? ty - 12 : ty + 20} textAnchor="end" fontSize={12} style={{ fill: on ? 'var(--fg)' : 'var(--fg-muted)', fontFamily: 'var(--font-mono)' }}>
-          {e.letter} · {e.name}
-        </text>
-      </g>
-    );
+  const choose = (e: Ending) => { setPick(e.key); setRates(e.rates); };
+
+  const x = (t: number) => r2(PAD.l + ((t - X0) / (X1 - X0)) * (width - PAD.l - PAD.r));
+  const y = (n: number) => {
+    const v = Math.log10(Math.min(Y_MAX, Math.max(Y_MIN, n)));
+    return r2(PAD.t + (1 - (v - Math.log10(Y_MIN)) / (Math.log10(Y_MAX) - Math.log10(Y_MIN))) * (HEIGHT - PAD.t - PAD.b));
   };
+  const path = (pts: ReturnType<typeof runBacklog>) => `M${pts.map((p) => `${x(p.time)},${y(p.backlog)}`).join(' L')}`;
+
+  const run = runBacklog(rates);
+  const last = run[run.length - 1];
+  const peak = run.reduce((a, p) => (p.backlog > a.backlog ? p : a), run[0]);
+  const cross = crossoverTime(run);
+  const years = [2026, 2027, 2028, 2029, 2030, 2031];
 
   return (
     <figure className="mt-8">
       <div className="themed-surface p-4 sm:p-5">
-        <svg viewBox="0 0 320 140" className="mx-auto block w-full max-w-md" role="radiogroup" aria-label="Choose an ending">
-          <line x1={10} y1={70} x2={90} y2={70} strokeWidth={2} style={{ stroke: 'var(--fg)' }} />
-          <circle cx={10} cy={70} r={4} style={{ fill: 'var(--fg)' }} />
-          <text x={10} y={90} fontSize={10} style={{ fill: 'var(--fg-subtle)', fontFamily: 'var(--font-mono)' }}>2026</text>
-          <circle cx={90} cy={70} r={5} style={{ fill: 'var(--bg)', stroke: 'var(--accent)' }} strokeWidth={1.5} />
-          <text x={90} y={90} fontSize={10} textAnchor="middle" style={{ fill: 'var(--fg-subtle)', fontFamily: 'var(--font-mono)' }}>2028</text>
-          {branch(ENDINGS[0], 'M90,70 C150,70 170,32 300,32', 32)}
-          {branch(ENDINGS[1], 'M90,70 C150,70 170,108 300,108', 108)}
-          <text x={306} y={74} fontSize={10} textAnchor="end" style={{ fill: 'var(--fg-subtle)', fontFamily: 'var(--font-mono)' }}>2030</text>
-        </svg>
-        <div className="mt-3 flex flex-wrap justify-center gap-2 font-mono text-xs">
+        <div role="radiogroup" aria-label="Ending presets" className="flex flex-wrap gap-2 font-mono text-xs">
           {ENDINGS.map((e) => (
             <button
               key={e.key}
               type="button"
-              aria-pressed={pick === e.key}
-              onClick={() => setPick(e.key)}
+              role="radio"
+              aria-checked={pick === e.key}
+              onClick={() => choose(e)}
               className={[
-                'min-h-9 border px-3 transition-colors',
+                'min-h-9 border px-3 text-left transition-colors',
                 pick === e.key
                   ? 'border-[color:var(--accent)] text-[color:var(--accent)]'
                   : 'border-[color:var(--border)] text-[color:var(--fg-muted)] hover:text-[color:var(--fg)]',
               ].join(' ')}
               style={{ borderRadius: 'var(--radius-sm)' }}
             >
-              Ending {e.letter}
+              {e.letter} · {e.name}
             </button>
           ))}
+          {!isPreset && (
+            <span className="flex min-h-9 items-center px-2 text-[color:var(--fg-subtle)]">your own rates</span>
+          )}
         </div>
 
-        <div className="mt-5 space-y-4" aria-live="polite">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <RateSlider label="Discovery grows" value={rates.discoveryGrowth} min={1} max={8} onChange={(v) => setRates((r) => ({ ...r, discoveryGrowth: v }))} />
+          <RateSlider label="Repair grows" value={rates.repairGrowth} min={1} max={10} onChange={(v) => setRates((r) => ({ ...r, repairGrowth: v }))} />
+        </div>
+
+        <p className="mt-4 font-mono text-[10px] text-[color:var(--fg-subtle)]">flaws waiting for a patch, log scale</p>
+        <div ref={ref} className="mt-1 w-full">
+          <svg
+            width={width}
+            height={HEIGHT}
+            role="img"
+            aria-label={`Backlog of unpatched flaws. Measured: ${START_BACKLOG} in May 2026. Projection at discovery times ${rates.discoveryGrowth} and repair times ${rates.repairGrowth} a year ends 2030 at ${fmtCount(last.backlog)}.`}
+            className="block"
+          >
+            <defs>
+              <clipPath id="backlog-plot">
+                <rect x={PAD.l} y={PAD.t} width={Math.max(0, width - PAD.l - PAD.r)} height={HEIGHT - PAD.t - PAD.b} />
+              </clipPath>
+            </defs>
+            {Y_TICKS.map((n) => (
+              <g key={n}>
+                <line x1={PAD.l} x2={width - PAD.r} y1={y(n)} y2={y(n)} style={{ stroke: 'var(--border)' }} />
+                <text x={PAD.l - 6} y={y(n) + 3} textAnchor="end" fontSize={10} style={{ fill: 'var(--fg-subtle)', fontFamily: 'var(--font-mono)' }}>
+                  {n === Y_MIN ? '≤10' : tickLabel(n)}
+                </text>
+              </g>
+            ))}
+            {years.map((yr) => (
+              <text key={yr} x={x(Date.parse(`${yr}-01-01`))} y={HEIGHT - 8} textAnchor={yr === 2031 ? 'end' : 'middle'} fontSize={10} style={{ fill: 'var(--fg-subtle)', fontFamily: 'var(--font-mono)' }}>
+                {yr}
+              </text>
+            ))}
+            <g clipPath="url(#backlog-plot)">
+              {ENDINGS.filter((e) => e.rates !== rates).map((e) => (
+                <g key={e.key}>
+                  <path d={path(runBacklog(e.rates))} fill="none" strokeWidth={1} strokeDasharray="2 4" style={{ stroke: 'var(--fg-subtle)' }} />
+                </g>
+              ))}
+              <path d={path(run)} fill="none" strokeWidth={2} strokeDasharray="6 4" style={{ stroke: 'var(--accent)' }} />
+            </g>
+            {ENDINGS.filter((e) => e.rates !== rates).map((e) => {
+              const end = runBacklog(e.rates).at(-1)!;
+              return (
+                <text key={e.key} x={width - PAD.r - 2} y={y(end.backlog) + (end.backlog < 100 ? -6 : 12)} textAnchor="end" fontSize={10} style={{ fill: 'var(--fg-subtle)', fontFamily: 'var(--font-mono)' }}>
+                  {e.letter}
+                </text>
+              );
+            })}
+            <line x1={x(MEASURED_AT)} x2={x(MEASURED_AT)} y1={PAD.t} y2={HEIGHT - PAD.b} style={{ stroke: 'var(--fg-muted)' }} strokeDasharray="1 3" />
+            <text x={x(MEASURED_AT) + 4} y={PAD.t + 10} fontSize={10} style={{ fill: 'var(--fg-muted)', fontFamily: 'var(--font-mono)' }}>forecast →</text>
+            <circle cx={x(MEASURED_AT)} cy={y(START_BACKLOG)} r={5} style={{ fill: 'var(--fg)' }} />
+            <text x={x(MEASURED_AT) + 8} y={y(START_BACKLOG) + 16} fontSize={10} style={{ fill: 'var(--fg)', fontFamily: 'var(--font-mono)' }}>
+              {START_BACKLOG} measured
+            </text>
+          </svg>
+        </div>
+
+        <dl className="mt-3 grid gap-2 font-mono text-xs sm:grid-cols-3" aria-live="polite">
+          <div><dt className="text-[color:var(--fg-subtle)]">end of 2030</dt><dd className="text-[color:var(--accent)]">{fmtCount(last.backlog)} waiting</dd></div>
+          <div><dt className="text-[color:var(--fg-subtle)]">peak</dt><dd className="text-[color:var(--fg)]">{fmtCount(peak.backlog)}, {monthOf(peak.time)}</dd></div>
+          <div><dt className="text-[color:var(--fg-subtle)]">repair passes discovery</dt><dd className="text-[color:var(--fg)]">{cross ? monthOf(cross) : 'not by 2030'}</dd></div>
+        </dl>
+
+        <div className="mt-4 border-t border-dashed border-[color:var(--accent)] pt-3 text-[11px] leading-relaxed text-[color:var(--fg-muted)]">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--accent)]">assumptions, all mine</p>
+          <ul className="mt-1 space-y-1">
+            <li>Start: {START_BACKLOG} waiting (530 reported minus 75 patched, measured {new Date(MEASURED_AT).toISOString().slice(0, 10)}). Starting rates of about {Math.round(START_FOUND_PER_MONTH)} found and {Math.round(START_FIXED_PER_MONTH)} fixed a month spread those counts over the {MEASURED_DAYS} days since the program launched.</li>
+            <li>Both rates grow by a fixed factor each year, set by the sliders. Ending A uses ×4 and ×1.5, Ending B ×2 and ×8. No source measures either growth rate.</li>
+            <li>Scope is one program&rsquo;s open-source queue, not all software. Nothing leaves the queue except a patch, until {new Date(MODEL_END).getUTCFullYear()}.</li>
+          </ul>
+        </div>
+
+        <div className="mt-6 space-y-4">
           <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--accent)]">forecast, 2029 to 2030</p>
           <h3 className="font-serif text-xl text-[color:var(--fg)]">Ending {ending.letter}: {ending.name}</h3>
           <div className="space-y-3 text-sm leading-relaxed text-[color:var(--fg-muted)]">{ending.story}</div>
@@ -167,9 +273,9 @@ export function EndingsBranch() {
         </div>
       </div>
       <FigureCaption
-        n={4}
-        claim="Both endings share the same capability path. What separates them is whether patching scales as fast as discovery, and in both of them fraud keeps growing because it does not depend on software flaws."
-        source="conditions and latest readings link to their sources. The endings themselves are forecasts."
+        n={5}
+        claim="The queue of unpatched flaws only shrinks once repair catches up with discovery, and in May 2026 only about one in seven reported flaws had a patch. On the Ending A rates, which are my guesses, the model passes a million waiting by the end of 2030; on the Ending B rates it peaks in the low thousands in late 2027 and then clears. The shape matters more than the totals. Both endings are settings of this one model. Fraud sits outside it, because fraud does not need a software flaw."
+        source={<>one measured point, Anthropic&rsquo;s Project Glasswing update<Cite ids={['glasswing-2026-05']} />. Everything right of it is my projection.</>}
       />
     </figure>
   );

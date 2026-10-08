@@ -1,9 +1,9 @@
 export const DAY_MS = 86_400_000;
 
 export const HORIZON_POINTS = [
-  { date: '2025-03-19', minutes: 60, label: 'about 1 hour', lowerBound: false, source: 'metr-2025' },
-  { date: '2026-01-29', minutes: 320, label: '320 minutes', lowerBound: false, source: 'metr-2026-01' },
-  { date: '2026-05-19', minutes: 960, label: 'over 16 hours, benchmark saturated', lowerBound: true, source: 'metr-2026-05' },
+  { date: '2025-03-19', minutes: 60, short: '~1 h', label: 'about 1 hour', lowerBound: false, source: 'metr-2025' },
+  { date: '2026-01-29', minutes: 320, short: '320 min', label: '320 minutes', lowerBound: false, source: 'metr-2026-01' },
+  { date: '2026-05-19', minutes: 960, short: '16 h+', label: 'over 16 hours, benchmark saturated', lowerBound: true, source: 'metr-2026-05' },
 ] as const;
 
 export const DOUBLING_PRESETS = [

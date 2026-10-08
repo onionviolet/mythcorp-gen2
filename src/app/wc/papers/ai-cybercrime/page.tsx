@@ -116,8 +116,8 @@ export default function AiCybercrimePaper() {
             answers are mine. The reasons and sources are one click away on each row.
           </p>
           <p>
-            The pattern that comes out: attacks that are mostly writing or impersonation opened up a lot. Intrusion and
-            vulnerability work opened up little, so far, because the capable models are gated.
+            The pattern that comes out: attacks whose core work is writing, impersonation or routine code opened up a
+            lot. Intrusion and vulnerability work opened up little, so far, because the capable models are gated.
           </p>
           <RevealOnView><BarrierToEntry figureNumber={2} /></RevealOnView>
         </Section>
