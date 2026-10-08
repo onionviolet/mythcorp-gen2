@@ -1,5 +1,72 @@
 # STATUS
 
+## Paper v2.8: amendments checked against the 2025 original, archived references, 2026-10-08
+
+Found the 2025 Pioneer paper in Google Drive (account waybao666@gmail.com,
+Google Doc "The_AI-Driven_Democratization_of_Cybercrime__A_Forecast_of_Emergent_Threats_-_josh_lee",
+id 16RTC1gWjfMliVJdAhpRSYqprSwJdl7TUDP2z36nKc1c; a shorter draft id 1SspgTz8... has the same tables). Read it
+in the browser. Several amendment "claim before" lines described the May 2026
+web version (commit 4eef19f: six barrier rows, a 2027 to 2032 Stage 3 band,
+"orders of magnitude") or earlier drafts of this revision, not the 2025 text.
+The 2025 paper: five capabilities scored 1 to 10 with no rubric, Stage 3 from
+2027 and Stage 4 from late 2027, an attacker pool "nearly infinite", no
+discussion of patching. Each amendment now carries a `from` label and an
+accurate earlier claim. References are numbered alphabetically (ACM style) and
+57 web sources link to Internet Archive snapshots; Hong Kong Free Press blocks
+archiving and Knight Columbia timed out.
+
+Checks: `npm run check` passed; dev server showed v2.8, 69 references, 57
+archive links and both origin labels. Not deployed; live is still v2.5.
+
+## LinkedIn banner preview completed locally, 2026-10-08
+
+`/?banner=linkedin` is a screenshot-focused still of the installation: an
+ascending, folded ASCII ribbon leads from the portrait's upward/rightward gaze
+into particle lettering from the existing WORK IN / PROGRESS message. The
+lower-left area stays quiet for photo overlap. Light and dark use the existing
+plain theme and Geist Mono tokens. No dependency or production lock change.
+
+Fixed the draft's blank canvas: `linkedinBanner.ts` collided with
+`LinkedInBanner.tsx` during extension resolution on this case-insensitive
+filesystem. The renderer now lives at `bannerDrawing.ts`. The header uses Next
+Link. The first pale lettering pass was strengthened after checking it at
+profile size. The canvas is deterministic and its PNG download contains no
+workshop controls or overlap guide.
+
+Observed evidence: `npm run check` passed (lint, text policy, production build,
+TypeScript); `git diff --check` passed. The built app was served locally on
+3012, and the real browser showed both schemes and downloaded both PNGs.
+Each is exactly 1584 x 396, below 8 MB. Default `/` still shows Installation,
+its ASCII spectre, status controls and contact links; its browser error log was
+empty. Both portrait composition previews were inspected in the browser.
+Approximate desktop photo placement clears the message and points toward the
+ribbon; actual LinkedIn/device cropping and human acceptance remain unverified.
+
+Outputs are local in `/Users/weiwei/Downloads/LinkedIn/`: light/dark banner PNGs,
+light/dark profile-composition PNGs, `composition-preview.html`, and page JPG
+screenshots. The portrait and composition HTML are outside the repo. The HTML
+can reopen beside its local assets; a loopback-only preview runs on 3013.
+The original dev server on 3012 was replaced with the built app after checks.
+Source edited and browser checked, not committed, pushed, deployed or uploaded.
+
+## LinkedIn banner draft handed to a separate chat, 2026-10-08
+
+User requested a dedicated webpage to screenshot as a LinkedIn banner, composed
+so the portrait's upward/rightward gaze points toward a feature in the banner.
+Initial local draft adds `/?banner=linkedin` inside the holding screen, with
+light/dark scheme selection, a deterministic 1584-by-396 canvas export, and an
+approximate profile-photo overlap guide. Files: `LinkedInBanner.tsx`, its CSS
+module, `linkedinBanner.ts`, plus `PlainHold.tsx` and MAP.md. This is an unverified
+starting point, not an accepted final design. `git diff --check` passed; lint,
+build and browser/export checks have not run. No commit, push or deployment.
+The follow-up chat owns these paths from here and should adapt to the user's
+latest request for a screenshot-focused page rather than expanding tooling.
+The edited portrait is local at
+`/Users/weiwei/Downloads/LinkedIn/weibao-linkedin-collar-v2.png`; do not commit or
+publish it. Final banner exports should be saved alongside it. The parent
+started a dev process on port 3012; verify its state before reuse.
+
+
 ## Paper v2.7: Methods, Limitations and a plain print view, 2026-10-08
 
 Codex (codex exec, workspace-write) added a Methods section before Part I, a

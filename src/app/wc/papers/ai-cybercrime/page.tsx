@@ -65,7 +65,7 @@ export default function AiCybercrimePaper() {
         <p className="mt-3 font-mono text-xs text-[color:var(--fg-muted)]">
           {PAPER_VERSION.label} · {PAPER_VERSION.date} ·{' '}
           <a href="#amendments" className="text-[color:var(--accent)] underline underline-offset-4">
-            {AMENDMENTS.length} amendments since the 2025 paper
+            {AMENDMENTS.length} amendments
           </a>
           <span className="print:hidden">
             {' '}·{' '}
@@ -598,11 +598,13 @@ export default function AiCybercrimePaper() {
             How the argument has changed, what the original reviewer said, how the page has changed, and where every claim
             comes from.
           </p>
-        <Section id="amendments" number="Appendix A" eyebrow="amendments" lead={<>The argument has changed {AMENDMENTS.length} times since the 2025 paper; each change is listed with the evidence that moved it.</>} title="Amendments log">
+        <Section id="amendments" number="Appendix A" eyebrow="amendments" lead={<>The argument has changed {AMENDMENTS.length} times; each change is listed with where the earlier claim came from and the evidence that moved it.</>} title="Amendments log">
           <p>
-            Where the argument itself changed since the 2025 paper, the change is logged here with its date, what I
-            claimed before, what I claim now and the evidence that moved it. Each entry says whether it strengthens,
-            narrows or reverses the original. Presentation changes are in the revision notes further down.
+            Where the argument itself changed, the change is logged here with its date, what I claimed before, what I
+            claim now and the evidence that moved it. Each earlier claim names its source: the 2025 paper or an earlier
+            draft of this October 2026 revision. Each entry says whether it
+            strengthens, narrows or reverses the earlier claim. Presentation changes are in the revision notes further
+            down.
           </p>
           <AmendmentsLog />
         </Section>
@@ -633,6 +635,14 @@ export default function AiCybercrimePaper() {
         </Section>
         <Section id="revision-notes" number="Appendix C" eyebrow="revisions" lead={<>These notes record changes to presentation; changes to the argument are in Appendix A.</>} title="Revision notes, October 2026">
           <ul className="ml-5 list-disc space-y-2">
+            <li>
+              <strong className="text-[color:var(--fg)]">Amendments checked against the 2025 paper (v2.8).</strong>{' '}
+              I reread the 2025 paper and found that several &ldquo;claim before&rdquo; lines described the first web
+              version or an earlier draft of this revision, not the 2025 text. Each now quotes or closely paraphrases its
+              actual source and names it. Three, on voice impersonation, the open-weight lag and the minus 7 days reading,
+              amend earlier drafts of this revision, not the 2025 paper, and are marked that way. References are now numbered alphabetically, with Internet Archive
+              copies for web sources. No current claim, number or source changed.
+            </li>
             <li>
               <strong className="text-[color:var(--fg)]">Methods, limitations and presentation (v2.7).</strong>{' '}
               Added Methods and Limitations, removed abstract citations and repeated repair-window figures, and made
@@ -704,12 +714,13 @@ export default function AiCybercrimePaper() {
             as they arrive.
           </p>
         </Section>
-        <Section id="sources" number="" eyebrow="references" lead={<>All {PAPER_SOURCES.length} sources cited in the paper, numbered by publication date.</>} title="References">
+        <Section id="sources" number="" eyebrow="references" lead={<>All {PAPER_SOURCES.length} sources cited in the paper, numbered alphabetically by first author.</>} title="References">
           <p className="text-sm">
             Each source was opened and read for this revision. Entries marked library copy are paywalled journal
             articles read in full through Washington and Lee University&rsquo;s library; entries marked abstract only were
             read as their published abstract, and only claims from the abstract are cited; the rest are open copies. Dates
-            are publication dates.
+            are publication dates. Web sources were accessed on 7 or 8 October 2026, and each links to an Internet Archive
+            copy where one exists; journal articles link to their DOI.
             Entries marked peer-reviewed passed a conference or journal review; preprints have not. Entries marked
             reporting are news accounts of an official statement I could not find in the original.
           </p>
@@ -725,7 +736,16 @@ export default function AiCybercrimePaper() {
                   . <span className="font-mono text-xs">{s.date}</span>
                   {s.kind !== 'primary' && <span className="font-mono text-xs"> · {s.kind}</span>}
                   {'library' in s && s.library && <span className="font-mono text-xs"> · library copy</span>}
+                  {'archive' in s && s.archive && (
+                    <>
+                      {' · '}
+                      <a href={s.archive} target="_blank" rel="noreferrer" className="font-mono text-xs underline underline-offset-4 hover:text-[color:var(--accent)]">
+                        archived
+                      </a>
+                    </>
+                  )}
                   <span className="hidden break-all font-mono text-[10px] print:block">{s.url}</span>
+                  {'archive' in s && s.archive && <span className="hidden break-all font-mono text-[10px] print:block">Archived: {s.archive}</span>}
                 </span>
               </li>
             ))}
