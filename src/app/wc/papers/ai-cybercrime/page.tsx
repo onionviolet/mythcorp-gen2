@@ -608,9 +608,9 @@ export default function AiCybercrimePaper() {
           </p>
           <AmendmentsLog />
         </Section>
-        <Section id="reviewer-feedback" number="Appendix B" eyebrow="review" lead={<>The 2025 paper received a B+; this appendix records the reviewer&rsquo;s three critiques and the response to each.</>} title="What the reviewer flagged">
+        <Section id="reviewer-feedback" number="Appendix B" eyebrow="review" lead={<>This appendix records the 2025 reviewer&rsquo;s three critiques and the response to each.</>} title="What the reviewer flagged">
           <p>
-            The original paper was a first-time research project graded B+. The reviewer (Prof. Suleyman Uludag,
+            The original paper was a first-time research project. The reviewer (Prof. Suleyman Uludag,
             U. Michigan-Flint CS) liked the taxonomy and the use of expert-survey grounding, and flagged three
             problems. Here is what I did about each.
           </p>
