@@ -205,17 +205,29 @@ Before a reference-inspired study graduates, ask:
 7. Is any nearby effect now redundant?
 8. Would removing it make the page less meaningful, or merely less busy?
 
-## Front-page rooms, 2026-10-07
+## The front page's job, 2026-10-08
 
-The held front page is now one of four rooms: Installation (the specimen and
-readout), Tour (a scroll through the locked projects, each with a live
-figure), Let go (the words fall and can be thrown) and Console (a lock-aware
-terminal). A first visit opens the Installation; each later load opens the
-next room, and `?room=<id>` pins one. Every room keeps the wordmark, the room
-switch, the scheme picker and the contact links through `HoldRoomFrame`, so no
-room can lose the page's job. A room earns its place only if it shows
-something true about the person or the work. See
-`docs/audits/AI_TELLS_2026-10-07.md` for why.
+The front page exists to awe, not to inform or convert. It is an installation:
+dense, layered and alive, and the owner wants it that way. The ghosted contact
+backdrop, erosion across the readout and contacts, the solid message's passive
+cycle, the Halo and the cursor echo are part of the spectacle and stay. Judge
+front-page effects by whether the layers feel choreographed as one piece, not
+by clarity or minimalism; an audit that measures clarity will call them noise,
+and it is answering the wrong question (see the owner note in
+`docs/audits/AI_TELLS_2026-10-07.md`). The paper link stays a quiet exit in the
+corner, never a banner or call to action. Interior pages and the paper are the
+opposite: calm, legible, and the place where rigor lives.
+
+## Front-page rooms, 2026-10-08
+
+The held front page has four rooms: Installation (the signature room), Tour (a
+scroll through the projects, each with a live figure), Let go (the words fall
+and can be thrown) and Console (a lock-aware terminal). Every load opens the
+Installation, whose four scenes still rotate per load, so a reload always
+looks different without leaving the signature room. The other rooms are one
+click away on the room switch, and `?room=<id>` links straight to one. Every
+room keeps the wordmark, the room switch, the scheme picker and the contact
+links through `HoldRoomFrame`.
 
 ## Current lander defaults, 2026-09-13
 

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { useScramble } from './useScramble';
 import { HoldClickResponse } from './HoldClickResponse';
 import { HoldStatus } from './HoldStatus';
-import { HoldContactLinks } from './HoldContact';
+import { HoldContact, HoldContactLinks } from './HoldContact';
 import { HoldOperator } from './HoldOperator';
 import { HoldMessage } from './HoldMessage';
 import { DisturbedText } from './DisturbedText';
@@ -87,6 +87,7 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
         <HoldOverlay overlay="scan" scheme={scheme} />
         {overlay !== 'scan' && <HoldOverlay overlay={overlay} scheme={scheme} />}
         <HoldMessage style={message} scheme={scheme} />
+        <HoldContact />
       </div>
 
       <div className={`${entrance.identity} relative flex items-start justify-between gap-4 font-mono text-xs`}>
@@ -112,6 +113,7 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
               scene={scene}
               onScene={cycleComposition}
               style={style}
+              scheme={scheme}
               message={message}
               overlay={overlay}
               model={model.label}

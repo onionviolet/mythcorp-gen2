@@ -1,5 +1,19 @@
 # STATUS
 
+## Front page restored to its spectacle, paper made public, 2026-10-08
+
+Decision: the front page's goal is awe (DESIGN.md, "The front page's job").
+The ghosted contact backdrop, erosion on the readout and contact links, the
+solid message's passive cycle and the `scheme` and `halo` rows are back,
+restored from 8493ef4. Every load now opens the Installation; its scenes still
+rotate, and the other rooms sit behind the room switch or `?room=`. The paper
+link stays a quiet line in the corner.
+
+The cybercrime paper is the one public route besides `/` while the site is
+locked (`LOCKED_OPEN_PATHS` in `src/siteLock.ts`); its header drops the menu,
+nav, theme switcher and help button while locked. Deployed to production
+2026-10-08 with paper v2.4.
+
 ## Cybercrime paper revised, 2026-10-07
 
 An Opus agent rebuilt `/wc/papers/ai-cybercrime` as an AI 2027-style piece:

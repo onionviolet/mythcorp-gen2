@@ -7,8 +7,6 @@ export const LANDER_ROOMS = [
 
 export type LanderRoomId = (typeof LANDER_ROOMS)[number]['id'];
 
-const ROOM_KEY = 'mythcorp:lander-room';
-
 export function roomName(id: LanderRoomId): string {
   return LANDER_ROOMS.find(room => room.id === id)?.name ?? id;
 }
@@ -23,34 +21,18 @@ function roomById(id: string | null | undefined): LanderRoomId | undefined {
   return LANDER_ROOMS.find(room => room.id === wanted)?.id;
 }
 
-/** First visit opens the Installation. Each later load opens the next room,
- *  so a reload always lands somewhere new. `?room=console` pins one for
- *  sharing or tests and leaves the rotation alone. Picked once per page load
- *  for the same reasons as the scene rotation in holdCompositions.ts. */
+/** Every load opens the Installation, the signature room; its scenes still
+ *  rotate per load (holdCompositions.ts). The other rooms are one click away
+ *  on the switch, and `?room=console` links straight to one. Picked once per
+ *  page load so a re-run effect cannot change it. */
 let roomPick: LanderRoomId | undefined;
 
 export function takeLanderRoom(): LanderRoomId {
-  roomPick ??= pickRoom();
+  roomPick ??= roomById(new URLSearchParams(window.location.search).get('room')) ?? LANDER_ROOMS[0].id;
   return roomPick;
 }
 
-/** A visitor's explicit switch counts as the room they last saw. */
+/** A visitor's explicit switch becomes this load's room. */
 export function rememberRoom(id: LanderRoomId) {
   roomPick = id;
-  try {
-    window.localStorage.setItem(ROOM_KEY, id);
-  } catch {}
-}
-
-function pickRoom(): LanderRoomId {
-  const pinned = roomById(new URLSearchParams(window.location.search).get('room'));
-  if (pinned) return pinned;
-  try {
-    const last = roomById(window.localStorage.getItem(ROOM_KEY));
-    const room = last ? nextRoom(last) : LANDER_ROOMS[0].id;
-    window.localStorage.setItem(ROOM_KEY, room);
-    return room;
-  } catch {
-    return LANDER_ROOMS[0].id;
-  }
 }

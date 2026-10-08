@@ -79,7 +79,7 @@ test('Halo stays active behind the authored scene rotation', async ({ page }) =>
   const scene = () => page.getByRole('button', { name: /^scene,/ });
   const halo = page.locator('[data-hold-overlay="scan"]');
   await expect(scene()).toHaveAccessibleName('scene, Signal, activate to change');
-  await expect(page.locator('dt').filter({ hasText: /^(halo|scheme)$/i })).toHaveCount(0);
+  await expect(page.locator('dt').filter({ hasText: /halo/i })).toBeVisible();
   await expect(halo).toHaveCount(1);
 
   for (const expected of ['Suspension', 'Drift', 'Surface', 'Signal']) {
@@ -358,25 +358,29 @@ test('LinkedIn glow rises continuously as the pointer approaches', async ({ page
   expect(readings.near.ring).toBeGreaterThan(readings.middle.ring);
 });
 
-test('solid message holds a fixed weight with no passive animation', async ({ page }) => {
-  await page.goto('/?room=installation');
+test('solid message cycles passively and becomes static for reduced motion', async ({ page }) => {
+  await page.goto('/');
   await page.getByRole('button', { name: 'words, dust, activate to change' }).click();
   await page.getByRole('button', { name: 'words, field, activate to change' }).click();
 
-  const solid = page.locator('[class*="solidLine"]');
+  const solid = page.locator('[data-solid-label]');
   await expect(solid).toHaveCount(2);
-  await expect(solid.first()).toHaveCSS('animation-name', 'none');
-  await expect(solid.first()).toHaveCSS('font-weight', '700');
+  await expect.poll(() => solid.first().evaluate(element => getComputedStyle(element).animationName))
+    .not.toBe('none');
   await expect(page.getByRole('heading', { name: /Mythcorp, work in progress/i })).toBeVisible();
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect.poll(() => solid.first().evaluate(element => getComputedStyle(element).animationName))
+    .toBe('none');
 });
 
-test('rooms rotate per load and ?room pins one', async ({ page }) => {
+test('every load opens the Installation and ?room pins one', async ({ page }) => {
   const room = page.locator('[data-lander-room]');
   await page.goto('/');
   await expect(room).toHaveAttribute('data-lander-room', 'installation');
 
   await page.reload();
-  await expect(room).toHaveAttribute('data-lander-room', 'tour');
+  await expect(room).toHaveAttribute('data-lander-room', 'installation');
 
   await page.goto('/?room=console');
   await expect(room).toHaveAttribute('data-lander-room', 'console');
