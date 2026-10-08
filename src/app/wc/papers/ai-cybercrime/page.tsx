@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { SiteHeader } from '../../../components/SiteHeader';
+import { SITE_LOCKED } from '../../../../siteLock';
 import { BarrierToEntry } from './_components/BarrierToEntry';
 import { EndingsBranch } from './_components/EndingsBranch';
 import { EvidenceTimeline } from './_components/EvidenceTimeline';
@@ -487,7 +488,11 @@ export default function AiCybercrimePaper() {
         </Section>
 
         <div className="mt-16 border-t border-[color:var(--border)] pt-6 text-xs text-[color:var(--fg-subtle)]">
-          ← Back to <Link href="/wc/papers" className="text-[color:var(--accent)] underline underline-offset-4">/wc/papers</Link>
+          {SITE_LOCKED ? (
+            <>← Back to <Link href="/" className="text-[color:var(--accent)] underline underline-offset-4">the front page</Link></>
+          ) : (
+            <>← Back to <Link href="/wc/papers" className="text-[color:var(--accent)] underline underline-offset-4">/wc/papers</Link></>
+          )}
         </div>
       </article>
     </div>

@@ -65,6 +65,7 @@ export function ConsoleRoom(props: HoldRoomProps) {
     }
     if (result.action === 'linkedin') window.open(CONTACT.linkedin, '_blank', 'noopener,noreferrer');
     if (result.action === 'room' && result.room) props.onRoom(result.room);
+    if (result.action === 'navigate' && result.href) window.location.assign(result.href);
     setValue('');
   };
 

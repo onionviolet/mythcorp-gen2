@@ -3,7 +3,7 @@ import { CONTACT } from '../../HoldContact';
 import { LANDER_ROOMS, nextRoom, roomName, type LanderRoomId } from '../../landerRooms';
 
 
-type Entry = { name: string; line: string };
+type Entry = { name: string; line: string; href?: string };
 
 const OVERRIDES: Record<string, string> = {
   fmhy: 'A directory of backup sites for the days fmhy.net is down.',
@@ -18,7 +18,7 @@ const ENTRIES: Entry[] = [
     const name = s.href.split('/').pop() ?? s.label.toLowerCase();
     return { name, line: OVERRIDES[name] ?? firstSentence(s.blurb) };
   }),
-  { name: 'ai-cybercrime', line: 'A paper on how AI lowers the barrier to cybercrime. Living draft.' },
+  { name: 'ai-cybercrime', line: 'A paper on how AI lowers the barrier to cybercrime. Revised October 2026, and open.', href: '/wc/papers/ai-cybercrime' },
 ];
 
 export const NAMES = ENTRIES.map(e => e.name);
@@ -27,7 +27,7 @@ export const COMMANDS = [
 ];
 export const CHIPS = ['help', 'whoami', 'contact', 'ls', 'rooms', 'linkedin', 'clear'];
 
-export type Result = { lines: string[]; action?: 'clear' | 'linkedin' | 'room'; room?: LanderRoomId };
+export type Result = { lines: string[]; action?: 'clear' | 'linkedin' | 'room' | 'navigate'; room?: LanderRoomId; href?: string };
 
 export function run(input: string, current: LanderRoomId): Result {
   const [cmd = '', ...rest] = input.trim().split(/\s+/);
@@ -56,8 +56,8 @@ export function run(input: string, current: LanderRoomId): Result {
       return { lines: ['Opening LinkedIn in a new tab.'], action: 'linkedin' };
     case 'ls':
       return { lines: [
-        'Back rooms. All locked while the site is being built.',
-        ...NAMES.map(n => `${n.padEnd(16)}locked`),
+        'Back rooms. One is open; the rest stay locked while the site is being built.',
+        ...ENTRIES.map(e => `${e.name.padEnd(16)}${e.href ? 'open' : 'locked'}`),
       ] };
     case 'cat': {
       if (!arg) return { lines: ['cat what? Try ls to see the names.'] };
@@ -67,6 +67,7 @@ export function run(input: string, current: LanderRoomId): Result {
     case 'open': {
       if (!arg) return { lines: ['open what? Try ls to see the names.'] };
       const hit = ENTRIES.find(e => e.name === arg);
+      if (hit?.href) return { lines: [`Opening ${hit.name}.`], action: 'navigate', href: hit.href };
       return { lines: [hit
         ? `${hit.name} is locked. The door stays shut while the site is being built.`
         : `No room called "${arg}". ls lists them.`] };

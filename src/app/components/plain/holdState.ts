@@ -1,4 +1,4 @@
-import { SITE_LOCKED } from '../../../siteLock';
+import { SITE_LOCKED, isLockedOpenPath } from '../../../siteLock';
 
 /**
  * Plain mode doubles as the site's holding mode: every route collapses to a
@@ -24,7 +24,7 @@ export function isOpenRoute(pathname: string): boolean {
 }
 
 export function isHeld(theme: string | undefined, pathname: string): boolean {
-  if (SITE_LOCKED) return true;
+  if (SITE_LOCKED) return !isLockedOpenPath(pathname);
   if (theme !== 'plain') return false;
   return !isOpenRoute(pathname);
 }

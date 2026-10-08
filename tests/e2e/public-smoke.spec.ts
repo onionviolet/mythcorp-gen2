@@ -43,7 +43,21 @@ for (const context of [
   });
 }
 
-for (const path of ['/about', '/experience', '/wc', '/og', '/contact']) {
+test('the cybercrime paper stays public while the site is locked', async ({ page }) => {
+  const errors = captureRuntimeErrors(page);
+  await startWithTheme(page, 'paper');
+
+  await page.goto('/wc/papers/ai-cybercrime');
+
+  await expect(page).toHaveURL(url => url.pathname === '/wc/papers/ai-cybercrime');
+  await expect(page.locator('html')).not.toHaveAttribute('data-hold', 'on');
+  await expect(page.getByRole('heading', { level: 1, name: /democratization of cybercrime/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'the front page' })).toHaveAttribute('href', '/');
+  await expect(page.getByRole('button', { name: 'Open menu' })).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+for (const path of ['/wc/papers', '/about', '/experience', '/wc', '/og', '/contact']) {
   test(`${path} redirects to the holding page`, async ({ page }) => {
     const errors = captureRuntimeErrors(page);
     await startWithTheme(page, 'paper');

@@ -2,6 +2,7 @@
 
 // Walkthrough: /wc/learn/plain-mode
 
+import Link from 'next/link';
 import { LinkedInInvite } from './LinkedInInvite';
 
 /** The one place the contact details live. The console room prints them too. */
@@ -32,6 +33,9 @@ export function HoldContactLinks() {
         {CONTACT.phone}
       </a>
       <span>{CONTACT.place}</span>
+      <Link href="/wc/papers/ai-cybercrime" className="w-fit text-[color:var(--fg)] transition-colors hover:text-[color:var(--accent)]">
+        Read the paper →
+      </Link>
     </address>
   );
 }

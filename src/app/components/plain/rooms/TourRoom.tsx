@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { HoldRoomFrame, type HoldRoomProps } from '../HoldRoomFrame';
 import { TourAct, scrollParent } from './tour/TourAct';
@@ -10,9 +11,10 @@ const LOCKED = 'not open yet';
 const ACTS = [
   {
     title: 'A paper on AI and cybercrime',
+    href: '/wc/papers/ai-cybercrime',
     figureLabel: 'Barrier to entry for each attack, before AI and in October 2026.',
     body: [
-      'This is a research paper I wrote in 2025, now being turned into a web page you can poke at.',
+      'This is a research paper I wrote in 2025, now revised into a web page you can read and poke at. It is the one door that is open.',
       'The figure is from it. Each line runs from an attack\'s score before AI to its score in October 2026, so you can see which ones opened up for non-experts and which are still gated. The 0 to 10 scores are my ratings on a five-question rubric shown with the figure, not measurements.',
     ],
     figure: <PaperFigure />,
@@ -79,8 +81,15 @@ export function TourRoom(props: HoldRoomProps) {
           The rest of this site is closed while I finish it. Here is what is behind the door. Scroll.
         </p>
         {ACTS.map((act, i) => (
-          <TourAct key={act.title} n={i + 1} total={TOTAL} title={act.title} status={LOCKED} figure={act.figure} figureLabel={act.figureLabel}>
+          <TourAct key={act.title} n={i + 1} total={TOTAL} title={act.title} status={'href' in act ? 'open now' : LOCKED} figure={act.figure} figureLabel={act.figureLabel}>
             {act.body.map(line => <p key={line}>{line}</p>)}
+            {'href' in act && (
+              <p>
+                <Link href={act.href} className="text-[color:var(--fg)] underline underline-offset-4 hover:text-[color:var(--accent)]">
+                  Read the paper →
+                </Link>
+              </p>
+            )}
           </TourAct>
         ))}
         <section

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { ThemeSwitcher } from './ThemeSwitcher';
+import { SITE_LOCKED } from '../../siteLock';
 
 type NavItem = { href: string; label: string };
 
@@ -73,6 +74,7 @@ export function SiteHeader({
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 py-3 sm:px-6 sm:py-4">
         {/* Left: real hamburger menu (now a working dropdown) */}
         <div ref={menuRef} className="relative">
+          {!SITE_LOCKED && (<>
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
@@ -133,6 +135,7 @@ export function SiteHeader({
               </ul>
             </div>
           )}
+          </>)}
         </div>
 
         {/* Center: logo */}
@@ -160,7 +163,7 @@ export function SiteHeader({
         {/* Right: nav links + theme switcher */}
         <nav className="flex items-center justify-self-end gap-2 sm:gap-4">
           <ul className="hidden items-center gap-4 sm:flex">
-            {nav.map((item) => {
+            {(SITE_LOCKED ? [] : nav).map((item) => {
               const active = pathname === item.href || pathname?.startsWith(item.href + '/');
               return (
                 <li key={item.href}>
@@ -179,7 +182,7 @@ export function SiteHeader({
               );
             })}
           </ul>
-          <ThemeSwitcher compact />
+          {!SITE_LOCKED && <ThemeSwitcher compact />}
         </nav>
       </div>
     </header>
