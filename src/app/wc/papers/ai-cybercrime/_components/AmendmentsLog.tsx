@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Cite } from './PaperApparatus';
 
-export const PAPER_VERSION = { label: 'v2.3', date: '2026-10-08' } as const;
+export const PAPER_VERSION = { label: 'v2.4', date: '2026-10-08' } as const;
 
 type Effect = 'strengthens' | 'narrows' | 'reverses';
 

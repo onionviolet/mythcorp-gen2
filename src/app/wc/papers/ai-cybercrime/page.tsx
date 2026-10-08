@@ -16,25 +16,19 @@ import { PAPER_SOURCES, type PaperSourceId } from './_components/paperSources';
 import { ScenarioSection } from './_components/ScenarioSection';
 import { ReadingProgressBar } from '../_components/ReadingProgressBar';
 import { SectionNav } from '../_components/SectionNav';
-import { RevealOnView } from '../_components/RevealOnView';
+import { Term } from './_components/GlossaryTerm';
+import { PaperAct } from './_components/PaperAct';
+import { PaperInSixty } from './_components/PaperInSixty';
+import styles from './_components/paperMotion.module.css';
 
 // Source: Pioneer Scholars 2025 final paper by Weibao Chen, revised October 2026.
 // Original PDF and reviewer evaluation are kept locally; do not include verbatim text from either.
 
 const SECTIONS = [
-  { id: 'record', eyebrow: '[ 1 · EVIDENCE ]', title: 'What the record shows' },
-  { id: 'repair', eyebrow: '[ 2 · EVIDENCE ]', title: 'The repair side' },
-  { id: 'against', eyebrow: '[ 3 · EVIDENCE ]', title: 'What cuts against this' },
-  { id: 'barrier', eyebrow: '[ 4 · RATING ]', title: 'How far the barrier fell' },
-  { id: 'trend', eyebrow: '[ 5 · INFERENCE ]', title: 'From trend to forecast' },
-  { id: 'scenario', eyebrow: '[ 6 · SCENARIO ]', title: 'Four stages, dated' },
-  { id: 'endings', eyebrow: '[ 7 · FORECAST ]', title: 'Two endings' },
-  { id: 'wrong', eyebrow: '[ 8 ]', title: 'What would prove me wrong' },
-  { id: 'implications', eyebrow: '[ 9 ]', title: 'What follows' },
-  { id: 'amendments', eyebrow: '[ AMENDMENTS ]', title: 'Amendments log' },
-  { id: 'reviewer-feedback', eyebrow: '[ HONEST NOTE ]', title: 'What the reviewer flagged' },
-  { id: 'revision-notes', eyebrow: '[ REVISION ]', title: 'Revision notes' },
-  { id: 'sources', eyebrow: '[ SOURCES ]', title: 'Sources' },
+  { id: 'act-1', eyebrow: 'Act I', title: 'I. What changed' },
+  { id: 'act-2', eyebrow: 'Act II', title: 'II. What comes next' },
+  { id: 'act-3', eyebrow: 'Act III', title: 'III. What to do' },
+  { id: 'back-matter', eyebrow: 'Back matter', title: 'Back matter' },
 ];
 
 export default function AiCybercrimePaper() {
@@ -48,7 +42,7 @@ export default function AiCybercrimePaper() {
         <p className="font-mono text-xs uppercase tracking-[0.4em] text-[color:var(--accent)]">
           [ /wc/papers/ai-cybercrime ]
         </p>
-        <h1 className="themed-heading mt-3 text-3xl font-bold leading-[1.05] sm:text-5xl">
+        <h1 className={`themed-heading mt-3 text-3xl font-bold leading-[1.05] sm:text-5xl ${styles.titleReveal}`}>
           The AI-driven democratization of cybercrime
         </h1>
         <p className="mt-3 text-base text-[color:var(--fg-muted)] sm:text-lg">
@@ -67,6 +61,24 @@ export default function AiCybercrimePaper() {
           </a>
         </p>
 
+        <div className="mt-12 max-w-2xl">
+          <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-[color:var(--fg-subtle)]">Hong Kong, early 2024</p>
+          <div className="mt-3 space-y-3 font-serif text-lg leading-relaxed text-[color:var(--fg)] sm:text-xl">
+            <p>
+              A finance employee at a multinational joins a video call. On screen are the company&rsquo;s UK-based chief
+              financial officer and other senior staff.
+            </p>
+            <p>
+              None of them is real. Every face and voice except the employee&rsquo;s is a deepfake, pre-recorded and built
+              from video and audio of the real people posted on YouTube.
+            </p>
+            <p>
+              Following the instructions, the employee makes 15 transfers. By the time police receive a report, on 29
+              January, HK$200 million, about US$26 million, is gone.<Cite ids={['hk-2024']} />
+            </p>
+          </div>
+        </div>
+
         <div className="mt-10 border-y border-[color:var(--border)] py-6">
           <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-[color:var(--accent)]">thesis</p>
           <p className="mt-3 font-serif text-xl leading-snug text-[color:var(--fg)] sm:text-2xl">
@@ -78,8 +90,8 @@ export default function AiCybercrimePaper() {
             For fraud the shift is visible in lures and fake voices, though the networks studied most closely were
             limited by the people who move the money, which AI does not supply.<Cite ids={['leukfeldt-2017']} /> For
             breaking into systems the shift reached the gated
-            frontier in 2026, and downloadable models are a few months behind. The time from a flaw going public to its
-            first exploitation fell from 63 days to 5 before AI agents existed.<Cite ids={['gtte-2024']} /> The harm data
+            frontier in 2026, and <Term k="openWeights">downloadable models</Term> are a few months behind. The time from a
+            flaw going public to its first <Term k="exploit">exploitation</Term> fell from 63 days to 5 before AI agents existed.<Cite ids={['gtte-2024']} /> The harm data
             so far show no AI-driven crime wave, though official counts catch only a small share of cybercrime, so read
             this as a forecast about capability and access.<Cite ids={['chainalysis-2026', 'ic3-2025', 'vandeweijer-2019']} /> The
             international consensus leaves the biggest question open too: the 2026 International AI Safety Report says it
@@ -87,16 +99,25 @@ export default function AiCybercrimePaper() {
           </p>
         </div>
 
+        <PaperInSixty />
+
         <div className="mt-8">
           <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-[color:var(--fg-subtle)]">how to read this page</p>
-          <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
+          <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
             <KeyItem kind="evidence">A dated public report says it. Click the bracketed number for the source.</KeyItem>
             <KeyItem kind="forecast">My projection, in a dashed frame, with a confidence level and the inference shown.</KeyItem>
             <KeyItem kind="rating">A judgment of mine on a stated rubric, with my reasoning next to it.</KeyItem>
+            <KeyItem kind="fiction">A made-up scene in a double-ruled frame, built only from cited facts. Never evidence.</KeyItem>
           </dl>
         </div>
 
-        <Section id="record" eyebrow="[ 1 · EVIDENCE ]" title="What the record shows, 2024 to 2026">
+        <PaperAct
+          id="act-1"
+          numeral="I"
+          title="What changed"
+          takeaway="The tools moved into more hands, and the window for fixing flaws was already closing before they did."
+        >
+        <Section id="record" eyebrow="[ I.1 · EVIDENCE ]" lead={<>AI went from speeding up attackers in 2024 to carrying out most of an operation by late 2025, and expert-level flaw finding appeared behind a gate in 2026.</>} title="What the record shows, 2024 to 2026">
           <p>
             Three years of public reporting tell a fairly clear story. Up to early 2025, AI made existing attackers
             faster. Microsoft and OpenAI, then Google, reviewed state-backed misuse of their models and found speed-ups
@@ -113,7 +134,7 @@ export default function AiCybercrimePaper() {
             vulnerability was a defensive result,<Cite ids={['bigsleep-2024']} /> and DARPA&rsquo;s 2025 challenge found and
             patched flaws for about $152 a task.<Cite ids={['aixcc-2025']} /> The figure lets you walk the record.
           </p>
-          <RevealOnView><EvidenceTimeline /></RevealOnView>
+          <EvidenceTimeline />
           <Supplement title="How much to trust these reports">
             <p>
               Most of the 2025 and 2026 evidence comes from AI developers describing misuse of their own models and
@@ -145,8 +166,15 @@ export default function AiCybercrimePaper() {
             ))}
           </ul>
         </Section>
-
-        <Section id="repair" eyebrow="[ 2 · EVIDENCE ]" title="The repair side">
+        <Section id="barrier" eyebrow="[ I.2 · RATING ]" lead={<>Attacks whose core work is writing, impersonation or routine code opened up a lot for non-experts; intrusion and vulnerability work opened up little, so far, because the capable models are gated.</>} title="How far the barrier fell">
+          <p>
+            The original paper scored six attacks from 1 to 10 for how reachable they are to a non-expert, before and
+            after AI, and never said how. This version uses a rubric of five yes or no questions you can check. The
+            answers are mine. The reasons and sources are one click away on each row.
+          </p>
+          <BarrierToEntry figureNumber={FIGURE.barrier} />
+        </Section>
+        <Section id="repair" eyebrow="[ I.3 · EVIDENCE ]" lead={<>Defenders were already losing the race to fix flaws before AI arrived, and the measures of repair are getting worse.</>} title="The repair side">
           <p>
             Everything above is about finding flaws and attacking. The thesis turns on fixing them, so here is what
             sources outside the AI companies measure on that side.
@@ -158,9 +186,9 @@ export default function AiCybercrimePaper() {
             of that fall came before AI agents existed, so AI did not start it. What AI can do is push a trend that was
             already running.
           </p>
-          <RevealOnView><ExploitWindow /></RevealOnView>
+          <ExploitWindow />
           <p>
-            The systems that turn a found flaw into a fix are strained. CVE submissions to NIST&rsquo;s National
+            The systems that turn a found flaw into a fix are strained. <Term k="cve">CVE</Term> submissions to NIST&rsquo;s National
             Vulnerability Database grew 263% from 2020 to 2025. NIST enriched nearly 42,000 in 2025, 45% more than in any
             earlier year. In April 2026 it switched to analyzing the highest-priority entries first, and moved unenriched
             entries published before March 2026 to &ldquo;Not Scheduled&rdquo;.<Cite ids={['nist-nvd-2026']} />
@@ -168,7 +196,7 @@ export default function AiCybercrimePaper() {
           <p>
             Deadlines are getting shorter. In June 2026 CISA ordered federal agencies to patch the highest-risk flaws
             within three days, and said attackers&rsquo; use of AI may narrow the time defenders have to
-            react.<Cite ids={['cisa-bod-2026', 'cisa-patch-2026']} /> Its catalog of flaws exploited in the wild grew from 186
+            react.<Cite ids={['cisa-bod-2026', 'cisa-patch-2026']} /> Its <Term k="kev">catalog of flaws exploited in the wild</Term> grew from 186
             additions in 2024 to 245 in 2025, and 2026 passed that total by 4 October. Of the 2025 additions, 226 carried
             a 21-day federal deadline; of 250 added in 2026, 125 carry 3 days.<Cite ids={['cisa-kev-2026']} /> Those counts
             are mine, from CISA&rsquo;s feed.
@@ -188,7 +216,7 @@ export default function AiCybercrimePaper() {
             mid-2016 and mid-2018, 921, or 3.7%, were seen exploited within a year. That counts only what commercial
             intrusion-detection sensors caught, so it is a floor. Patching every flaw rated 7 or higher on the standard
             severity scale had an efficiency of 6.2%, meaning most of that work went to flaws never seen exploited; the
-            EPSS prediction model reached the same coverage with 29% to 86% less work. Across about 300 companies, the
+            <Term k="epss">EPSS</Term> prediction model reached the same coverage with 29% to 86% less work. Across about 300 companies, the
             median flaw took 100 days to fix.<Cite ids={['epss-2021']} /> A later preprint by several of the same authors cites
             industry data that companies close a median 15.5% of their open flaws a month.<Cite ids={['jacobs-2023']} /> If AI
             multiplies the flaws found, telling which few matter becomes worth more.
@@ -209,12 +237,7 @@ export default function AiCybercrimePaper() {
             than the exact values.
           </p>
         </Section>
-
-        <Section id="against" eyebrow="[ 3 · EVIDENCE ]" title="What cuts against this">
-          <p>
-            Some of the best independent data does not fit a story of AI making cybercrime worse. Here it is in one
-            place.
-          </p>
+        <Section id="against" eyebrow="[ I.4 · EVIDENCE ]" lead={<>The harm data show no AI-driven crime wave yet, and serious researchers argue that defense may gain more than offense.</>} title="What cuts against this">
           <ul className="ml-5 list-disc space-y-3">
             <li>
               <strong className="text-[color:var(--fg)]">Ransomware money fell.</strong>{' '}
@@ -263,8 +286,8 @@ export default function AiCybercrimePaper() {
               Narayanan and Kapoor argue that giving defenders strong AI tools often shifts the balance their
               way,<Cite ids={['narayanan-2025']} /> and Schneier argued in 2018 that AI could tip the scales toward defense by
               doing at machine speed the analysis humans do poorly.<Cite ids={['schneier-2018']} /> My reply, which is mine and not
-              theirs: finding flaws faster helps defense only if fixing and installing keep up, and section 2 shows both
-              lagging.
+              theirs: finding flaws faster helps defense only if fixing and installing keep up, and the repair section above shows
+              both lagging.
             </li>
             <li>
               <strong className="text-[color:var(--fg)]">Open models have not been shown to add risk.</strong>{' '}
@@ -302,21 +325,15 @@ export default function AiCybercrimePaper() {
             independent data in the section above points the same way as the developers&rsquo; reports.
           </p>
         </Section>
+        </PaperAct>
 
-        <Section id="barrier" eyebrow="[ 4 · RATING ]" title="How far the barrier fell">
-          <p>
-            The original paper scored six attacks from 1 to 10 for how reachable they are to a non-expert, before and
-            after AI, and never said how. This version uses a rubric of five yes or no questions you can check. The
-            answers are mine. The reasons and sources are one click away on each row.
-          </p>
-          <p>
-            The pattern that comes out: attacks whose core work is writing, impersonation or routine code opened up a
-            lot. Intrusion and vulnerability work opened up little, so far, because the capable models are gated.
-          </p>
-          <RevealOnView><BarrierToEntry figureNumber={FIGURE.barrier} /></RevealOnView>
-        </Section>
-
-        <Section id="trend" eyebrow="[ 5 · INFERENCE ]" title="From trend to forecast">
+        <PaperAct
+          id="act-2"
+          numeral="II"
+          title="What comes next"
+          takeaway="If the trends hold, expert-level attack tools reach anyone with a download around 2027. After that, it depends on repair."
+        >
+        <Section id="trend" eyebrow="[ II.1 · INFERENCE ]" lead={<>The dates in this forecast come from a measured trend in how long AI agents can work alone, with a survey kept only as a cross-check.</>} title="From trend to forecast">
           <p>
             The 2025 paper anchored its stages to a survey of 2,778 AI researchers, which gave a 50% chance of
             human-level machine intelligence by 2047, 13 years earlier than the same survey found in
@@ -324,8 +341,8 @@ export default function AiCybercrimePaper() {
             them is a cyberattack.
           </p>
           <p>
-            So this version leans on a measurement instead. METR tracks the length of software task, in skilled-human
-            time, that an AI agent finishes half the time. Over its whole record that length doubles about every 196
+            So this version leans on a measurement instead. METR tracks an agent&rsquo;s <Term k="timeHorizon">time horizon</Term>: the length of
+            software task, in skilled-human time, that it finishes half the time. Over its whole record that length doubles about every 196
             days; since 2024, every 89.<Cite ids={['metr-2026-01']} /> Figure {FIGURE.horizon} projects it forward. The survey stays as a
             cross-check, labelled as one.
           </p>
@@ -336,7 +353,7 @@ export default function AiCybercrimePaper() {
             finish alone doubles roughly every eight months, which it gives as an upper bound.<Cite ids={['aisi-2025']} /> That is
             slower than METR&rsquo;s recent software rate and somewhat slower than its whole-record one.
           </p>
-          <RevealOnView><HorizonExtrapolator /></RevealOnView>
+          <HorizonExtrapolator />
           <Supplement title="Why a software benchmark is a fair proxy, and where it breaks">
             <p>
               Attack campaigns are long software tasks with an adversary. An agent that cannot finish a day of
@@ -351,17 +368,20 @@ export default function AiCybercrimePaper() {
             </p>
           </Supplement>
         </Section>
-
-        <Section id="scenario" eyebrow="[ 6 · SCENARIO ]" title="Four stages, dated">
+        <Section id="scenario" eyebrow="[ II.2 · SCENARIO ]" lead={<>Here is the forecast as a story, one stage at a time, with the evidence for each stage right under it.</>} title="Four stages, dated">
           <p>
             The taxonomy from the 2025 paper, rebuilt as a dated scenario. The first three chapters are evidence and
             the last two are forecasts. Each states what would trigger it, what changes on both sides and how sure I
             am. The readout tracks where you are and marks every number as measured or scenario.
           </p>
+          <p>
+            Two made-up people walk through it. Jun is 19, on the attacker side. Ines maintains open-source code in her
+            spare time, on the defender side. Their scenes sit in double-ruled frames marked fiction, and each lists the
+            sources it was built from. They show what a stage means for one person. They are not evidence.
+          </p>
           <ScenarioSection />
         </Section>
-
-        <Section id="endings" eyebrow="[ 7 · FORECAST ]" title="Two endings, 2029 to 2030">
+        <Section id="endings" eyebrow="[ II.3 · FORECAST ]" lead={<>Everything turns on whether fixing keeps up with finding.</>} title="Two endings, 2029 to 2030">
           <p>
             Both endings assume attackers get the tools. They split on repair, the rate at which found flaws actually
             get fixed, which is the one number from 2026 that looks worst.
@@ -377,37 +397,15 @@ export default function AiCybercrimePaper() {
             </p>
           </div>
         </Section>
+        </PaperAct>
 
-        <Section id="wrong" eyebrow="[ 8 ]" title="What would prove me wrong">
-          <p>
-            Each row is a reading someone else publishes on a schedule, the latest value, and what would count against
-            me.
-          </p>
-          <div className="text-sm">
-            <div className="hidden grid-cols-[1.1fr_0.8fr_1.5fr] gap-3 border-b border-[color:var(--border-strong)] py-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)] sm:grid">
-              <span>Reading</span>
-              <span>Latest</span>
-              <span>Counts against</span>
-            </div>
-            <ul>
-              {WRONG_ROWS.map((r) => (
-                <li key={r.reading} className="grid gap-1 border-b border-[color:var(--border)] py-3 sm:grid-cols-[1.1fr_0.8fr_1.5fr] sm:gap-3">
-                  <span className="text-[color:var(--fg)]">{r.reading}</span>
-                  <span className="font-mono text-xs text-[color:var(--fg-muted)]">
-                    <span className="text-[color:var(--fg-subtle)] sm:hidden">latest: </span>
-                    {r.latest}
-                  </span>
-                  <span className="text-[color:var(--fg-muted)]">
-                    <span className="font-mono text-xs text-[color:var(--fg-subtle)] sm:hidden">counts against: </span>
-                    {r.against}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Section>
-
-        <Section id="implications" eyebrow="[ 9 ]" title="What follows for policy and defense">
+        <PaperAct
+          id="act-3"
+          numeral="III"
+          title="What to do"
+          takeaway="Spend on fixing and installing, press on chokepoints, and watch six numbers that would prove me wrong."
+        >
+        <Section id="implications" eyebrow="[ III.1 ]" lead={<>The money should go to fixing and installing, and the pressure to chokepoints more than to individuals.</>} title="What follows for policy and defense">
           <p>
             These follow from the evidence. Where they go past it, I say so.
           </p>
@@ -455,8 +453,42 @@ export default function AiCybercrimePaper() {
             </p>
           </ForecastFrame>
         </Section>
+        <Section id="wrong" eyebrow="[ III.2 ]" lead={<>Six published numbers, checked as they come out, would tell me I am wrong.</>} title="What would prove me wrong">
+          <p>
+            Each row is a reading someone else publishes on a schedule, the latest value, and what would count against
+            me.
+          </p>
+          <div className="text-sm">
+            <div className="hidden grid-cols-[1.1fr_0.8fr_1.5fr] gap-3 border-b border-[color:var(--border-strong)] py-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)] sm:grid">
+              <span>Reading</span>
+              <span>Latest</span>
+              <span>Counts against</span>
+            </div>
+            <ul>
+              {WRONG_ROWS.map((r) => (
+                <li key={r.reading} className="grid gap-1 border-b border-[color:var(--border)] py-3 sm:grid-cols-[1.1fr_0.8fr_1.5fr] sm:gap-3">
+                  <span className="text-[color:var(--fg)]">{r.reading}</span>
+                  <span className="font-mono text-xs text-[color:var(--fg-muted)]">
+                    <span className="text-[color:var(--fg-subtle)] sm:hidden">latest: </span>
+                    {r.latest}
+                  </span>
+                  <span className="text-[color:var(--fg-muted)]">
+                    <span className="font-mono text-xs text-[color:var(--fg-subtle)] sm:hidden">counts against: </span>
+                    {r.against}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Section>
+        </PaperAct>
 
-        <Section id="amendments" eyebrow="[ AMENDMENTS ]" title="Amendments log">
+        <section id="back-matter" aria-labelledby="back-matter-title" className="mt-24 scroll-mt-24 border-t border-dashed border-[color:var(--border-strong)] pt-6">
+          <p id="back-matter-title" className="font-mono text-xs uppercase tracking-[0.4em] text-[color:var(--fg-subtle)]">Back matter</p>
+          <p className="mt-2 text-sm text-[color:var(--fg-muted)]">
+            How this paper has changed, what the original reviewer said, and where every claim comes from.
+          </p>
+        <Section id="amendments" eyebrow="[ BACK MATTER ]" lead={<>The argument has changed {AMENDMENTS.length} times since 2025, and each change is logged here with its evidence.</>} title="Amendments log">
           <p>
             Where the argument itself changed since the 2025 paper, the change is logged here with its date, what I
             claimed before, what I claim now and the evidence that moved it. Each entry says whether it strengthens,
@@ -464,8 +496,7 @@ export default function AiCybercrimePaper() {
           </p>
           <AmendmentsLog />
         </Section>
-
-        <Section id="reviewer-feedback" eyebrow="[ HONEST NOTE ]" title="What the reviewer flagged">
+        <Section id="reviewer-feedback" eyebrow="[ BACK MATTER ]" lead={<>The 2025 paper got a B+, and the reviewer&rsquo;s three critiques shaped this revision.</>} title="What the reviewer flagged">
           <p>
             The original paper was a first-time research project graded B+. The reviewer (Prof. Suleyman Uludag,
             U. Michigan-Flint CS) liked the taxonomy and the use of expert-survey grounding, and flagged three
@@ -490,8 +521,7 @@ export default function AiCybercrimePaper() {
             </li>
           </ul>
         </Section>
-
-        <Section id="revision-notes" eyebrow="[ REVISION ]" title="Revision notes, October 2026">
+        <Section id="revision-notes" eyebrow="[ BACK MATTER ]" lead={<>These notes cover how the page changed; changes to the argument are in the amendments log.</>} title="Revision notes, October 2026">
           <ul className="ml-5 list-disc space-y-2">
             <li>
               <strong className="text-[color:var(--fg)]">Written with AI help.</strong>{' '}
@@ -503,6 +533,12 @@ export default function AiCybercrimePaper() {
               <strong className="text-[color:var(--fg)]">Independent data added.</strong>{' '}
               Time-to-exploit, vulnerability-database, CISA, maintainer, ransomware-payment and FTC figures from outside
               the AI companies, a section on what cuts against the thesis, and a list of readings that would prove me wrong.
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Rebuilt as a story (v2.4).</strong>{' '}
+              A cold open, a 60-second summary, three acts with back matter, a one-line point at the top of every
+              section, tap-to-define terms, two fictional characters in marked frames, and figures that animate once
+              when they enter. No claim, number or source changed.
             </li>
             <li>
               <strong className="text-[color:var(--fg)]">Literature sweep added (v2.3).</strong>{' '}
@@ -539,8 +575,7 @@ export default function AiCybercrimePaper() {
             as they arrive.
           </p>
         </Section>
-
-        <Section id="sources" eyebrow="[ SOURCES ]" title="Sources">
+        <Section id="sources" eyebrow="[ BACK MATTER ]" lead={<>Every claim on this page traces to one of these {PAPER_SOURCES.length} sources.</>} title="Sources">
           <p className="text-sm">
             Each source was opened and read for this revision. Entries marked library copy are paywalled journal
             articles read in full through Washington and Lee University&rsquo;s library; the rest are open copies. Dates
@@ -565,6 +600,7 @@ export default function AiCybercrimePaper() {
             ))}
           </ol>
         </Section>
+        </section>
 
         <div className="mt-16 border-t border-[color:var(--border)] pt-6 text-xs text-[color:var(--fg-subtle)]">
           {SITE_LOCKED ? (
@@ -650,7 +686,7 @@ const WRONG_ROWS: ReadonlyArray<{ reading: string; latest: ReactNode; against: s
   },
 ];
 
-function KeyItem({ kind, children }: { kind: 'evidence' | 'forecast' | 'rating'; children: ReactNode }) {
+function KeyItem({ kind, children }: { kind: 'evidence' | 'forecast' | 'rating' | 'fiction'; children: ReactNode }) {
   return (
     <div>
       <dt><ClaimTag kind={kind} /></dt>
@@ -663,11 +699,13 @@ function Section({
   id,
   eyebrow,
   title,
+  lead,
   children,
 }: {
   id: string;
   eyebrow: string;
   title: string;
+  lead: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -675,10 +713,11 @@ function Section({
       <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-[color:var(--accent)]">
         {eyebrow}
       </p>
-      <h2 className="themed-heading mt-2 text-2xl font-semibold sm:text-3xl">
+      <h3 className="themed-heading mt-2 text-2xl font-semibold sm:text-3xl">
         {title}
-      </h2>
+      </h3>
       <div className="mt-5 space-y-4 text-base leading-relaxed text-[color:var(--fg-muted)]">
+        <p className="text-lg leading-snug text-[color:var(--fg)]">{lead}</p>
         {children}
       </div>
     </section>

@@ -1,0 +1,24 @@
+.titleReveal {
+  animation: paperTitleIn 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.tick {
+  animation: paperTick 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes paperTitleIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes paperTick {
+  from { opacity: 0.2; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .titleReveal,
+  .tick {
+    animation: none;
+  }
+}

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Cite } from './PaperApparatus';
 import { PatchTally } from './PatchTally';
+import type { Vignette } from './StoryVignette';
 import { CENTRAL_DOUBLING_DAYS, horizonLabel, projectedMinutes } from './horizonModel';
 import { FIGURE } from './figureNumbers';
 
@@ -41,6 +42,8 @@ export type ScenarioChapter = {
   defenders: ReactNode;
   inference: ReactNode;
   readings: Record<IndicatorKey, IndicatorReading>;
+  year: number;
+  vignette?: Vignette;
 };
 
 const projected = (iso: string) =>
@@ -80,6 +83,7 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
         questions. Every report from this period describes speed-ups to existing work.
       </p>
     ),
+    year: 2024,
     readings: {
       horizon: { value: 'about 1 h by Mar 2025', status: 'measured' },
       lag: { value: 'no measure yet', status: 'not measured' },
@@ -122,6 +126,24 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
         carry a campaign between human check-ins, which is the pattern the November report describes.
       </p>
     ),
+    year: 2025,
+    vignette: {
+      when: '2025',
+      builtFrom: ['gtig-2025-11', 'malla-2024', 'tidelift-2024', 'xbow-2025'],
+      body: (
+        <>
+          <p>
+            Jun is 19 and spends most nights on game servers. In a forum he scrolls past an ad for an AI tool that
+            writes malicious code, sold by subscription for less than the old malware kits cost. He does not buy it. He
+            is not sure what he would do with it.
+          </p>
+          <p>
+            Ines maintains a small open-source library after work, unpaid. A bug report arrives from an automated
+            tester, polite and correct. She fixes it on a Sunday.
+          </p>
+        </>
+      ),
+    },
     readings: {
       horizon: { value: '320 min, top model', status: 'measured' },
       lag: { value: 'no measure yet', status: 'not measured' },
@@ -166,6 +188,24 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
         is the only outside check on the frontier numbers, and it is a sample.
       </p>
     ),
+    year: 2026,
+    vignette: {
+      when: '2026',
+      builtFrom: ['glasswing-2026-04', 'glasswing-2026-05', 'caisi-2026-09'],
+      body: (
+        <>
+          <p>
+            In April Ines reads that the strongest bug-finding model will go only to defenders. By May her inbox holds
+            more serious reports than she can read in a month of weekends. Her co-maintainer asks the finders to slow
+            down.
+          </p>
+          <p>
+            Jun reads the same news from the other side. The model everyone is talking about is locked away. The ones
+            he could download are a few months behind.
+          </p>
+        </>
+      ),
+    },
     readings: {
       horizon: { value: 'over 16 h (floor)', status: 'measured' },
       lag: { value: 'about 4 months', status: 'measured' },
@@ -212,6 +252,23 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
         </p>
       </>
     ),
+    year: 2027,
+    vignette: {
+      when: 'late 2026 to 2027, forecast',
+      builtFrom: ['anthropic-2026-09', 'glasswing-2026-06', 'glasswing-2026-05', 'dbir-2026'],
+      body: (
+        <>
+          <p>
+            A downloadable model now does what the locked one did a year ago. In Jun&rsquo;s group chat someone posts a
+            link. Nobody in the chat has ever written an exploit by hand.
+          </p>
+          <p>
+            Ines&rsquo;s queue still holds the reports she has not reached. Those are the flaws that start turning up in
+            attacks, because they were found and never fixed.
+          </p>
+        </>
+      ),
+    },
     readings: {
       horizon: { value: `${projected('2027-06-30')} by mid 2027`, status: 'scenario' },
       lag: { value: '4 months or less', status: 'scenario' },
@@ -255,6 +312,24 @@ export const SCENARIO_CHAPTERS: ReadonlyArray<ScenarioChapter> = [
         </p>
       </>
     ),
+    year: 2028,
+    vignette: {
+      when: '2028, forecast',
+      builtFrom: ['metr-2026-01', 'leukfeldt-2017', 'hutchings-clayton-2016', 'aixcc-2025', 'lohn-2022'],
+      body: (
+        <>
+          <p>
+            Jun could brief an agent on a Friday and let it work for weeks. Skill is no longer what stops him. What
+            stops him is that he knows nobody who would move stolen money, and payment services still close the
+            accounts of people selling attacks.
+          </p>
+          <p>
+            Ines&rsquo;s project now has an AI patcher, paid for by a grant. It writes fixes faster than she can review
+            them. Whether anyone installs them is out of her hands.
+          </p>
+        </>
+      ),
+    },
     readings: {
       horizon: { value: `${projected('2028-06-30')} by mid 2028`, status: 'scenario' },
       lag: { value: 'assumed under 4 months', status: 'scenario' },

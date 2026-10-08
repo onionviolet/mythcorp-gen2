@@ -14,6 +14,7 @@ import {
   type BacklogRates,
 } from './backlogModel';
 import { useFigureWidth } from './useFigureWidth';
+import { StoryVignette, type Vignette } from './StoryVignette';
 import { FIGURE } from './figureNumbers';
 
 type Signpost = { watch: string; reading: ReactNode };
@@ -24,6 +25,7 @@ type Ending = {
   letter: 'A' | 'B';
   name: string;
   story: ReactNode;
+  vignette: Vignette;
   conditions: ReactNode[];
   signposts: Signpost[];
 };
@@ -34,6 +36,19 @@ const ENDINGS: ReadonlyArray<Ending> = [
     rates: { discoveryGrowth: 4, repairGrowth: 1.5 },
     letter: 'A',
     name: 'Discovery outruns repair',
+    vignette: {
+      when: '2030, ending A, forecast',
+      builtFrom: ['glasswing-2026-05', 'dbir-2026', 'collier-2021'],
+      body: (
+        <>
+          <p>
+            Ines stopped opening the reports a year ago. The queue grows every quarter, and her library&rsquo;s name turns
+            up in other people&rsquo;s incident write-ups.
+          </p>
+          <p>Jun never got good at any of it. He never needed to.</p>
+        </>
+      ),
+    },
     story: (
       <>
         <p>
@@ -63,6 +78,22 @@ const ENDINGS: ReadonlyArray<Ending> = [
     rates: { discoveryGrowth: 2, repairGrowth: 8 },
     letter: 'B',
     name: 'Repair keeps pace',
+    vignette: {
+      when: '2030, ending B, forecast',
+      builtFrom: ['aixcc-2025', 'lohn-2022', 'leukfeldt-2017', 'ic3-2025'],
+      body: (
+        <>
+          <p>
+            The patcher worked through Ines&rsquo;s backlog in a season, and most of her users now get fixes without
+            doing anything. She reads the reports again.
+          </p>
+          <p>
+            Jun&rsquo;s friends who tried break-ins found little left that was easy. The ones still making money do it on
+            the phone, pretending to be someone&rsquo;s bank.
+          </p>
+        </>
+      ),
+    },
     story: (
       <>
         <p>
@@ -265,6 +296,7 @@ export function EndingsBranch() {
         <div className="mt-6 space-y-4">
           <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--accent)]">forecast, 2029 to 2030</p>
           <h3 className="font-serif text-xl text-[color:var(--fg)]">Ending {ending.letter}: {ending.name}</h3>
+          <StoryVignette vignette={ending.vignette} />
           <div className="space-y-3 text-sm leading-relaxed text-[color:var(--fg-muted)]">{ending.story}</div>
 
           <div>

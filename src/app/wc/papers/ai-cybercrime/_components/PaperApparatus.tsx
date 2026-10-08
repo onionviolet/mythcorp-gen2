@@ -108,12 +108,13 @@ export function Supplement({ title, children }: { title: string; children: React
   );
 }
 
-export type ClaimKind = 'evidence' | 'forecast' | 'rating';
+export type ClaimKind = 'evidence' | 'forecast' | 'rating' | 'fiction';
 
 export const CLAIM_LABEL: Record<ClaimKind, string> = {
   evidence: 'evidence',
   forecast: 'forecast',
   rating: 'my rating',
+  fiction: 'fiction',
 };
 
 export function ClaimTag({ kind }: { kind: ClaimKind }) {
@@ -124,6 +125,7 @@ export function ClaimTag({ kind }: { kind: ClaimKind }) {
         kind === 'evidence' && 'border border-[color:var(--fg-muted)] text-[color:var(--fg)]',
         kind === 'forecast' && 'border border-dashed border-[color:var(--accent)] text-[color:var(--accent)]',
         kind === 'rating' && 'border border-dotted border-[color:var(--accent-warm)] text-[color:var(--accent-warm)]',
+        kind === 'fiction' && 'border-[3px] border-double border-[color:var(--fg-muted)] text-[color:var(--fg-muted)]',
       ].filter(Boolean).join(' ')}
       style={{ borderRadius: 'var(--radius-sm)' }}
     >

@@ -3,6 +3,8 @@
 import { FIGURE } from './figureNumbers';
 import { useEffect, useRef, useState } from 'react';
 import { ClaimTag, ForecastFrame, Supplement } from './PaperApparatus';
+import { StoryVignette } from './StoryVignette';
+import styles from './paperMotion.module.css';
 import {
   INDICATORS,
   SCENARIO_CHAPTERS,
@@ -24,27 +26,52 @@ function StatusMark({ status }: { status: IndicatorStatus }) {
   );
 }
 
-function ScenarioDashboard({ chapter, index }: { chapter: ScenarioChapter; index: number }) {
+const RIBBON_START = 2025;
+const RIBBON_END = 2030;
+const NOW_YEAR = 2026 + 9 / 12;
+const AFTER_LAST_CHAPTER = 2030;
+
+function YearRibbon({ pos }: { pos: number }) {
+  const pct = (y: number) => Math.min(100, Math.max(0, ((y - RIBBON_START) / (RIBBON_END - RIBBON_START)) * 100));
+  const solid = pct(Math.min(pos, NOW_YEAR));
+  const dashed = pct(pos);
+  return (
+    <div aria-hidden className="mt-3">
+      <div className="relative h-1.5 bg-[color:var(--border)]" style={{ borderRadius: 'var(--radius-sm)' }}>
+        <span className="absolute inset-y-0 left-0 block bg-[color:var(--accent)]" style={{ width: `${solid}%` }} />
+        {dashed > solid && (
+          <span
+            className="absolute inset-y-0 block border-y border-dashed border-[color:var(--accent)]"
+            style={{ left: `${solid}%`, width: `${dashed - solid}%` }}
+          />
+        )}
+        <span className="absolute -top-1 block h-3.5 w-px bg-[color:var(--fg)]" style={{ left: `${pct(NOW_YEAR)}%` }} />
+      </div>
+      <div className="relative mt-1 h-3 font-mono text-[9px] text-[color:var(--fg-subtle)]">
+        {[2025, 2026, 2027, 2028, 2029, 2030].map((y) => (
+          <span key={y} className="absolute -translate-x-1/2" style={{ left: `${pct(y)}%` }}>{String(y).slice(2)}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ScenarioDashboard({ chapter, pos }: { chapter: ScenarioChapter; pos: number }) {
   return (
     <div className="themed-surface p-4" style={{ background: 'var(--bg-elevated)' }}>
       <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[color:var(--fg-subtle)]">scenario readout</p>
-      <p className="mt-2 font-serif text-2xl leading-tight text-[color:var(--fg)]">{chapter.when}</p>
-      <p className="mt-1 text-sm text-[color:var(--fg-muted)]">
-        Stage {chapter.stage}: {chapter.stageName}
-      </p>
+      <div key={chapter.id} className={styles.tick}>
+        <p className="mt-2 font-serif text-2xl leading-tight text-[color:var(--fg)]">{chapter.when}</p>
+        <p className="mt-1 text-sm text-[color:var(--fg-muted)]">
+          Stage {chapter.stage}: {chapter.stageName}
+        </p>
+      </div>
       <div className="mt-2 flex items-center gap-2">
         <ClaimTag kind={chapter.kind} />
         <span className="font-mono text-[10px] text-[color:var(--fg-subtle)]">confidence: {chapter.confidence}</span>
       </div>
-      <div aria-hidden className="mt-3 flex gap-1">
-        {SCENARIO_CHAPTERS.map((c, i) => (
-          <span
-            key={c.id}
-            className={`h-1 flex-1 ${i <= index ? 'bg-[color:var(--accent)]' : 'bg-[color:var(--border)]'}`}
-            style={c.kind === 'forecast' && i <= index ? { opacity: 0.55 } : undefined}
-          />
-        ))}
-      </div>
+      <YearRibbon pos={pos} />
+      <p className="font-mono text-[9px] text-[color:var(--fg-subtle)]">solid to now (Oct 2026), dashed after</p>
       <dl className="mt-4 space-y-3">
         {INDICATORS.map((ind) => {
           const r = chapter.readings[ind.key];
@@ -71,17 +98,18 @@ function ScenarioDashboard({ chapter, index }: { chapter: ScenarioChapter; index
   );
 }
 
-function ScenarioStrip({ chapter }: { chapter: ScenarioChapter }) {
+function ScenarioStrip({ chapter, pos }: { chapter: ScenarioChapter; pos: number }) {
   return (
     <div
       className="border-b border-[color:var(--border)] px-1 py-2 backdrop-blur"
       style={{ background: 'color-mix(in oklab, var(--bg) 88%, transparent)' }}
     >
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+      <div key={chapter.id} className={`flex flex-wrap items-center gap-x-2 gap-y-1 ${styles.tick}`}>
         <span className="font-mono text-xs text-[color:var(--fg)]">{chapter.when}</span>
         <span className="text-xs text-[color:var(--fg-muted)]">S{chapter.stage} {chapter.stageName}</span>
         <ClaimTag kind={chapter.kind} />
       </div>
+      <YearRibbon pos={pos} />
       <div className="mt-1 grid grid-cols-3 gap-2 font-mono text-[10px] leading-tight text-[color:var(--fg-subtle)]">
         {INDICATORS.map((ind) => {
           const r = chapter.readings[ind.key];
@@ -118,17 +146,22 @@ function ChapterBody({ chapter }: { chapter: ScenarioChapter }) {
       {chapter.inference}
     </Supplement>
   );
+  const vignette = chapter.vignette ? <div className="mb-6 mt-4"><StoryVignette vignette={chapter.vignette} /></div> : null;
   if (chapter.kind === 'forecast') {
     return (
+      <>
+      {vignette}
       <ForecastFrame label={`forecast, confidence ${chapter.confidence}`}>
         {chapter.body}
         <div className="pt-2">{facts}</div>
         {inference}
       </ForecastFrame>
+      </>
     );
   }
   return (
     <div className="mt-4 space-y-4">
+      {vignette}
       {chapter.body}
       <div className="pt-2">{facts}</div>
       {inference}
@@ -138,22 +171,37 @@ function ChapterBody({ chapter }: { chapter: ScenarioChapter }) {
 
 export function ScenarioSection() {
   const [active, setActive] = useState(0);
+  const [pos, setPos] = useState(SCENARIO_CHAPTERS[0].year);
   const refs = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
-    const els = refs.current.filter((e): e is HTMLElement => e !== null);
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const hit = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (hit) {
-          const i = els.indexOf(hit.target as HTMLElement);
-          if (i >= 0) setActive(i);
-        }
-      },
-      { rootMargin: '-35% 0% -55% 0%', threshold: [0, 0.01] },
-    );
-    for (const el of els) observer.observe(el);
-    return () => observer.disconnect();
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const line = window.innerHeight * 0.45;
+      const els = refs.current;
+      let i = 0;
+      for (let k = 0; k < els.length; k++) {
+        const el = els[k];
+        if (el && el.getBoundingClientRect().top <= line) i = k;
+      }
+      const el = els[i];
+      const r = el?.getBoundingClientRect();
+      const frac = r ? Math.min(1, Math.max(0, (line - r.top) / Math.max(1, r.height))) : 0;
+      const from = SCENARIO_CHAPTERS[i].year;
+      const to = SCENARIO_CHAPTERS[i + 1]?.year ?? AFTER_LAST_CHAPTER;
+      setActive(i);
+      setPos(from + frac * (to - from));
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(measure); };
+    measure();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   const chapter = SCENARIO_CHAPTERS[active];
@@ -162,13 +210,13 @@ export function ScenarioSection() {
     <div className="relative mt-8 xl:-ml-[16rem] xl:grid xl:grid-cols-[14rem_minmax(0,1fr)] xl:gap-8">
       <aside aria-label="Scenario readout" className="hidden xl:block">
         <div className="sticky top-24">
-          <ScenarioDashboard chapter={chapter} index={active} />
+          <ScenarioDashboard chapter={chapter} pos={pos} />
         </div>
       </aside>
 
       <div>
         <div className="sticky top-[70px] z-20 -mx-1 mb-4 sm:top-[82px] xl:hidden" role="region" aria-label="Scenario readout">
-          <ScenarioStrip chapter={chapter} />
+          <ScenarioStrip chapter={chapter} pos={pos} />
         </div>
         <div className="space-y-16">
           {SCENARIO_CHAPTERS.map((c, i) => (
@@ -180,9 +228,9 @@ export function ScenarioSection() {
               className="scroll-mt-32"
             >
               <p className="font-mono text-xs text-[color:var(--accent)]">{c.when}</p>
-              <h3 id={`${c.id}-title`} className="mt-1 font-serif text-2xl font-semibold text-[color:var(--fg)]">
+              <h4 id={`${c.id}-title`} className="mt-1 font-serif text-2xl font-semibold text-[color:var(--fg)]">
                 Stage {c.stage}: {c.stageName}
-              </h3>
+              </h4>
               <ChapterBody chapter={c} />
             </article>
           ))}

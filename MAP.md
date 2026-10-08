@@ -86,6 +86,9 @@ evidence, dated scenario, two endings. Everything lives in
 | `ScenarioSection.tsx` + `scenarioChapters.tsx` | Dated stages and the sticky scenario readout |
 | `ExploitWindow.tsx` | Time from disclosure to exploitation, 2018 to 2025 (Mandiant) |
 | `figureNumbers.ts` | The only place figure numbers are assigned |
+| `PaperAct.tsx`, `PaperInSixty.tsx`, `StoryVignette.tsx` | Act wrapper with its takeaway opener, the 60-second summary box, and the labelled Fiction frame for vignettes |
+| `GlossaryTerm.tsx` | First-use hover, tap and keyboard definitions |
+| `useEntrance.ts` + `paperMotion.module.css` | Run-once scroll-entry animations; reduced motion shows the final state |
 | `AmendmentsLog.tsx` | Dated amendments: claim before, claim now, evidence, and whether it strengthens, narrows or reverses |
 | `PatchTally.tsx` | 530 reported flaws, 75 patched, one dated snapshot |
 | `EndingsBranch.tsx` + `backlogModel.ts` | The two endings as presets of one backlog model (discovery vs repair growth), with conditions and signposts |

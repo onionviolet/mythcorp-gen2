@@ -3,6 +3,7 @@
 import { FIGURE } from './figureNumbers';
 import { useState } from 'react';
 import { useFigureWidth } from './useFigureWidth';
+import { useEntrance } from './useEntrance';
 import { Cite, FigureCaption } from './PaperApparatus';
 import {
   CENTRAL_DOUBLING_DAYS,
@@ -26,6 +27,9 @@ const PAD = { l: 44, r: 12, t: 14, b: 26 };
 export function HorizonExtrapolator() {
   const [days, setDays] = useState(CENTRAL_DOUBLING_DAYS);
   const [ref, width] = useFigureWidth();
+  const entrance = useEntrance<HTMLElement>(0.4);
+  const draw = entrance.animate;
+  const hidden = entrance.pending;
 
   const r2 = (n: number) => Math.round(n * 100) / 100;
   const x = (t: number) => r2(PAD.l + ((t - X0) / (X1 - X0)) * (width - PAD.l - PAD.r));
@@ -54,7 +58,7 @@ export function HorizonExtrapolator() {
   const years = [2025, 2026, 2027, 2028, 2029];
 
   return (
-    <figure className="mt-8">
+    <figure ref={entrance.ref} className="mt-8">
       <div className="themed-surface p-4 sm:p-5">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -123,13 +127,30 @@ export function HorizonExtrapolator() {
                 <rect x={PAD.l} y={PAD.t} width={Math.max(0, width - PAD.l - PAD.r)} height={HEIGHT - PAD.t - PAD.b} />
               </clipPath>
             </defs>
-            <g clipPath="url(#horizon-plot)">
+            <g
+              clipPath="url(#horizon-plot)"
+              style={{ opacity: hidden ? 0 : 1, transition: draw ? 'opacity 400ms linear 650ms' : undefined }}
+            >
               <path d={band} style={{ fill: 'var(--accent)', opacity: 0.12 }} />
               <path d={active} fill="none" style={{ stroke: 'var(--accent)' }} strokeWidth={2} strokeDasharray="6 4" />
             </g>
-            <path d={measured} fill="none" style={{ stroke: 'var(--fg)' }} strokeWidth={2} />
-            {HORIZON_POINTS.map((p) => (
-              <g key={p.date}>
+            <path
+              d={measured}
+              fill="none"
+              pathLength={1}
+              strokeDasharray={1}
+              style={{
+                stroke: 'var(--fg)',
+                strokeDashoffset: hidden ? 1 : 0,
+                transition: draw ? 'stroke-dashoffset 600ms var(--motion-ease)' : undefined,
+              }}
+              strokeWidth={2}
+            />
+            {HORIZON_POINTS.map((p, i) => (
+              <g
+                key={p.date}
+                style={{ opacity: hidden ? 0 : 1, transition: draw ? `opacity 150ms linear ${i * 250}ms` : undefined }}
+              >
                 <circle cx={x(Date.parse(p.date))} cy={y(p.minutes)} r={4} style={{ fill: 'var(--fg)' }} />
                 <text x={x(Date.parse(p.date)) + 6} y={y(p.minutes) + 15} fontSize={10} style={{ fill: 'var(--fg)', fontFamily: 'var(--font-mono)' }}>
                   {p.short}

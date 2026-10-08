@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Cite } from './PaperApparatus';
+import { useEntrance } from './useEntrance';
 import type { PaperSourceId } from './paperSources';
 
 export const BARRIER_RUBRIC = [
@@ -102,7 +103,11 @@ function AnswerStrip({ answers, label }: { answers: Answers; label: string }) {
   );
 }
 
-function Dumbbell({ pre, post }: { pre: number; post: number }) {
+type Slide = { pending: boolean; animate: boolean; delay: number };
+
+function Dumbbell({ pre, post, slide }: { pre: number; post: number; slide: Slide }) {
+  const at = slide.pending ? pre : post;
+  const motion = slide.animate ? `${600}ms var(--motion-ease) ${slide.delay}ms` : '';
   return (
     <span aria-hidden className="relative block h-5">
       <span className="absolute inset-x-0 top-1/2 h-px bg-[color:var(--border)]" />
@@ -111,7 +116,7 @@ function Dumbbell({ pre, post }: { pre: number; post: number }) {
       ))}
       <span
         className="absolute top-1/2 h-0.5 -translate-y-1/2 bg-[color:var(--accent)]"
-        style={{ left: `${pre * 10}%`, width: `${(post - pre) * 10}%`, opacity: 0.6 }}
+        style={{ left: `${pre * 10}%`, width: `${(at - pre) * 10}%`, opacity: 0.6, transition: motion ? `width ${motion}` : undefined }}
       />
       <span
         className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[color:var(--fg-muted)] bg-[color:var(--bg)]"
@@ -119,7 +124,7 @@ function Dumbbell({ pre, post }: { pre: number; post: number }) {
       />
       <span
         className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[color:var(--accent)]"
-        style={{ left: `${post * 10}%` }}
+        style={{ left: `${at * 10}%`, transition: motion ? `left ${motion}` : undefined }}
       />
     </span>
   );
@@ -127,10 +132,12 @@ function Dumbbell({ pre, post }: { pre: number; post: number }) {
 
 export function BarrierToEntry({ figureNumber }: { figureNumber?: number } = {}) {
   const [open, setOpen] = useState<string | null>(null);
+  const { ref, pending, animate } = useEntrance<HTMLDivElement>(0.3);
+  let row = 0;
 
   return (
     <figure>
-      <div className="themed-surface p-4 sm:p-5">
+      <div ref={ref} className="themed-surface p-4 sm:p-5">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[color:var(--accent-warm)]">
@@ -186,7 +193,7 @@ export function BarrierToEntry({ figureNumber }: { figureNumber?: number } = {})
                           <span className="text-sm text-[color:var(--fg)]">{r.label}</span>
                           <span aria-hidden className="font-mono text-[10px] text-[color:var(--fg-subtle)] sm:hidden">{expanded ? '−' : '+'}</span>
                         </span>
-                        <Dumbbell pre={pre} post={post} />
+                        <Dumbbell pre={pre} post={post} slide={{ pending, animate, delay: (row++) * 80 }} />
                         <span className="text-right font-mono text-xs text-[color:var(--fg-muted)]">
                           +{post - pre}
                         </span>

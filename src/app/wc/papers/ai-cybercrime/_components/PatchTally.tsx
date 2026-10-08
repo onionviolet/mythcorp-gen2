@@ -1,10 +1,14 @@
+'use client';
+
 import { Cite, FigureCaption } from './PaperApparatus';
+import { useEntrance } from './useEntrance';
 
 export const PATCH_TALLY = { reported: 530, patched: 75, asOf: '2026-05-22' } as const;
 
 export function PatchTally({ figureNumber }: { figureNumber: number }) {
   const { reported, patched, asOf } = PATCH_TALLY;
   const waiting = reported - patched;
+  const { ref, pending, animate } = useEntrance<HTMLDivElement>(0.5);
   return (
     <figure className="mt-6">
       <div className="themed-surface p-4 sm:p-5">
@@ -15,6 +19,7 @@ export function PatchTally({ figureNumber }: { figureNumber: number }) {
           <span className="text-[color:var(--fg-subtle)]">1 mark = 1 flaw</span>
         </div>
         <div
+          ref={ref}
           role="img"
           aria-label={`${reported} flaws reported, ${patched} patched, ${waiting} without a patch`}
           className="mt-3 flex flex-wrap gap-[2px]"
@@ -22,7 +27,16 @@ export function PatchTally({ figureNumber }: { figureNumber: number }) {
           {Array.from({ length: reported }, (_, i) => (
             <span
               key={i}
-              className={`block h-[7px] w-[7px] ${i < patched ? 'bg-[color:var(--accent)]' : 'border border-[color:var(--border-strong)]'}`}
+              className="block h-[7px] w-[7px] border"
+              style={
+                i < patched && !pending
+                  ? {
+                      background: 'var(--accent)',
+                      borderColor: 'var(--accent)',
+                      transition: animate ? `background-color 160ms linear ${i * 9}ms, border-color 160ms linear ${i * 9}ms` : undefined,
+                    }
+                  : { borderColor: 'var(--border-strong)' }
+              }
             />
           ))}
         </div>
