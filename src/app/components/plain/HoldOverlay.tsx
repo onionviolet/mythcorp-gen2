@@ -5,14 +5,7 @@
 import dynamic from 'next/dynamic';
 import type { Scheme } from './holdScheme';
 
-/**
- * The two Canvas UI effects that draw their own geometry rather than
- * resampling the page, which is why they are the only ones from that half of
- * the library that survive here: they need no Chrome flag and look the same
- * for everyone. They run as a full-screen layer over the field and under the
- * chrome, so they compose with whatever the spectre and the message are doing
- * instead of replacing either.
- */
+/** Full-screen canvas effects that draw their own geometry, layered over the field and under the chrome. */
 const GlyphRain = dynamic(() => import('../canvasui/GlyphRain').then((m) => m.GlyphRain), { ssr: false });
 const ForceField = dynamic(() => import('../canvasui/ForceField').then((m) => m.ForceField), { ssr: false });
 const Clouds = dynamic(() => import('../canvasui/Clouds').then((m) => m.Clouds), { ssr: false });
@@ -23,50 +16,10 @@ export const OVERLAY_STYLES = ['none', 'rain', 'shield', 'fog', 'drops', 'scan']
 
 export type OverlayStyle = (typeof OVERLAY_STYLES)[number];
 
-/**
- * Four more were auditioned the same way and cut, each for its own reason,
- * which is worth writing down so nobody spends the afternoon again:
- *
- * - `grid` (Grid) maps the page onto 3D tiles, and with no page to map it
- *   fills them with flat tint, so it rendered as opaque grey rectangles
- *   sitting on the spectre and half the readout. The backdrop trap again.
- * - `fluid` (Liquid) is a GPU fluid and works, but it paints a milky smear
- *   over the readout at any strength worth having, and more to the point it
- *   competes with this theme's own ASCII fluid. We already have a fluid, it is
- *   ours, and it is the one with the story. Tunable if that ever changes.
- * - `tiles` (HexFloat) rendered fine but dark and mostly at the edges, and it
- *   is hexagons, which `shield` already does and does better because its
- *   lattice actually lights under the cursor. Cut for redundancy, not failure.
- * - `blaze` (Blaze) and `edge` (FlameWrap), the two fire effects, close the
- *   catalogue out. `edge` drew literally nothing: FlameWrap outlines an
- *   ELEMENT, and with no children there is no element to trace, so it is a
- *   border effect rather than a layer. `blaze` worked but monochrome fire is
- *   just moving grey specks, which this screen already has a better name for:
- *   the `dust` message. It is the strongest argument for ever allowing one
- *   hue in plain mode, and until that is decided it stays out.
- * - `frost` (Frost) is below, and is the third time this exact trap has been
- *   walked into.
- *
- * Frost is worth writing down at length because it is the clearest case. It answers the cursor
- * harder than anything else in the library, 77 references to the pointer, and
- * hovering melts a hole through the ice that refreezes behind you. But it
- * refracts what is BEHIND it, and behind it here is transparency, so with
- * nothing to bend it renders as a murky dark blob sitting on top of the
- * spectre. Same failure as the dither and glass models in HoldStage. The rule
- * this keeps teaching: on this screen, only components that draw their own
- * geometry survive. Anything that samples or refracts its backdrop has no
- * backdrop to work with.
- *
- * All of these bind pointer listeners inside their own subtree, so the
- * `pointer-events-none` layer below was disabling the half of each effect that
- * responds to you: the rain's `stir`, and, more embarrassingly, the shield's
- * `gridReveal="hover"`, which means the lattice only lights where the cursor
- * crosses it. That one was not a missing flourish, it was the entire mechanic.
- *
- * Re-enabling hit testing here is safe because the layer sits at `-z-10`.
- * Anything painted above it, which is every picker and every link, is hit
- * first, and the overlay only picks up pointers over otherwise empty screen.
- */
+/** Overlays that sample or refract their backdrop render as murky blobs here (nothing is behind
+ * them), so only effects that draw their own geometry belong in this list.
+ * The layer is pointer-enabled at `-z-10`: the effects bind listeners in their own subtree,
+ * and every picker and link above still gets hit first. */
 const FILL = 'h-full w-full pointer-events-auto';
 
 export function HoldOverlay({

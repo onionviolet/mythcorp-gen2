@@ -30,40 +30,14 @@
 .solidLine {
   position: relative;
   display: inline-block;
-  isolation: isolate;
-  letter-spacing: 0.02em;
-  animation: solidTypePhase 12.8s var(--motion-ease, ease-in-out) infinite;
+  font-weight: 700;
+  letter-spacing: 0.025em;
 }
 
 .solidText {
   position: relative;
   z-index: 1;
   display: inline-block;
-}
-
-.solidLine::before,
-.solidLine::after {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  content: attr(data-solid-label);
-  color: transparent;
-  pointer-events: none;
-  -webkit-text-stroke: 0.012em var(--accent);
-}
-
-.solidLine::before {
-  opacity: 0;
-  text-shadow: 0 0 0.22em var(--accent-glow);
-  animation: solidOutlinePhase 12.8s var(--motion-ease, ease-in-out) infinite;
-}
-
-.solidLine::after {
-  z-index: 2;
-  opacity: 0;
-  text-shadow: 0 0 0.32em var(--accent-glow-strong);
-  clip-path: inset(0 100% 0 0);
-  animation: solidScanPhase 12.8s var(--motion-ease, ease-in-out) infinite;
 }
 
 @keyframes decodeSweep {
@@ -103,62 +77,9 @@
   }
 }
 
-@keyframes solidTypePhase {
-  0%, 18%, 100% {
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    text-shadow: 0 0 0 var(--accent-glow);
-  }
-
-  34%, 48% {
-    font-weight: 780;
-    letter-spacing: 0.042em;
-    text-shadow: 0 0 0.1em var(--accent-glow);
-  }
-
-  66%, 82% {
-    font-weight: 640;
-    letter-spacing: 0.012em;
-    text-shadow: 0 0 0.04em var(--accent-glow);
-  }
-}
-
-@keyframes solidOutlinePhase {
-  0%, 22%, 70%, 100% {
-    opacity: 0;
-  }
-
-  36%, 52% {
-    opacity: 0.42;
-  }
-}
-
-@keyframes solidScanPhase {
-  0%, 50% {
-    opacity: 0;
-    clip-path: inset(0 100% 0 0);
-  }
-
-  54% {
-    opacity: 0.5;
-  }
-
-  70% {
-    opacity: 0.28;
-  }
-
-  76%, 100% {
-    opacity: 0;
-    clip-path: inset(0 0 0 100%);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .decodeLine::before,
-  .decodeText,
-  .solidLine,
-  .solidLine::before,
-  .solidLine::after {
+  .decodeText {
     animation: none;
   }
 
@@ -169,19 +90,5 @@
   .decodeText {
     filter: none;
     opacity: 1;
-  }
-
-  .solidLine {
-    font-weight: 700;
-    letter-spacing: 0.025em;
-    text-shadow: 0 0 0.06em var(--accent-glow);
-  }
-
-  .solidLine::before {
-    opacity: 0.28;
-  }
-
-  .solidLine::after {
-    display: none;
   }
 }

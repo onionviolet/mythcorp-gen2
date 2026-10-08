@@ -3,7 +3,6 @@
 // Walkthrough: /wc/learn/plain-mode
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react';
-import { DisturbedText, GENTLE } from './DisturbedText';
 import styles from './HoldStatus.module.css';
 import {
   getMetrics,
@@ -16,22 +15,7 @@ import {
   subscribeFieldActivity,
 } from './fieldActivity';
 
-/**
- * The meter is by far the widest row: 28 cells plus the brackets and the
- * percentage is 36 mono characters, and at this tracking that alone is wider
- * than a phone. It used to push the whole grid past the viewport, and because
- * the readout is centred, both ends hung off: every label lost its first
- * letter and the percentage lost its last. Fewer cells is the honest fix. The
- * meter is measured, so its resolution can follow the room it has, where the
- * labels cannot lose letters and still read.
- *
- * Both widths are rendered and CSS picks one, rather than a matchMedia hook
- * choosing in JS. The hook version was written first and was wrong: the query
- * matched at desktop width while the DOM still held the narrow bar, because
- * the state only updates if a change event actually arrives. CSS has no such
- * gap, needs no listener, and cannot disagree with the tracking and gap rules
- * beside it, which are at the same breakpoint.
- */
+/** Narrow screens get fewer meter cells: the wide bar overflows a phone. Both are rendered and CSS picks one, because a matchMedia hook can disagree with the CSS breakpoints. */
 const BAR_CELLS_WIDE = 28;
 const BAR_CELLS_NARROW = 14;
 const READOUT_PREFERENCE_KEY = 'mythcorp:hold-readout';
@@ -40,15 +24,11 @@ const READOUT_PREFERENCE_KEY = 'mythcorp:hold-readout';
  *  restart the clock. It is time on the page, not time since this mount. */
 const OPENED_AT = Date.now();
 
-/**
- * The readout. Every number here is measured rather than decorative: the grid
- * really is that size, the activity meter reflects the visible fake cursor,
- * cat and click rings, and the clock really is how long you have been on the page.
- */
+/** The readout. Values are measured: grid size, visible movement, time on page. */
 export function HoldStatus({
-  style, scheme, message, overlay, onCycle, scene, onScene, model, onModel, nextValues,
+  style, message, overlay, onCycle, scene, onScene, model, onModel, nextValues,
 }: {
-  style: string; scheme: string; message: string; overlay: string;
+  style: string; message: string; overlay: string;
   scene?: string; onScene?: () => void;
   model?: string; onModel?: () => void;
   nextValues?: { scene?: string; model?: string; render?: string; words?: string; over?: string };
@@ -119,9 +99,7 @@ export function HoldStatus({
       {expanded && <>
         {model && <Row label="specimen" value={model} onCycle={onModel} nextValue={nextValues?.model} onHoverHint={setHoveredHint} onFocusHint={setFocusedHint} />}
         <Row label="render" value={style} onCycle={onCycle?.render} nextValue={nextValues?.render} onHoverHint={setHoveredHint} onFocusHint={setFocusedHint} />
-        <Row label="scheme" value={scheme} />
         <Row label="words" value={message} onCycle={onCycle?.words} nextValue={nextValues?.words} onHoverHint={setHoveredHint} onFocusHint={setFocusedHint} />
-        <Row label="halo" value="active" />
         <Row label="over" value={overlay} onCycle={onCycle?.over} nextValue={nextValues?.over} onHoverHint={setHoveredHint} onFocusHint={setFocusedHint} />
       </>}
       <Row
@@ -165,11 +143,7 @@ function subscribeWide(listener: () => void) {
   return () => media.removeEventListener('change', listener);
 }
 
-/**
- * Every value in this panel is client state: the clock, the measured grid, the
- * visitor's own colour scheme. The server cannot know any of it, so the text it
- * renders is a placeholder by definition rather than a mismatch to fix.
- */
+// Values are client state, so server text is a placeholder (hence suppressHydrationWarning).
 type ReadoutHint = string;
 
 function Row({
@@ -183,8 +157,6 @@ function Row({
   const hintId = useId();
   const control = useRef<HTMLButtonElement>(null);
   const clearAcknowledgement = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
 
   useEffect(() => () => {
     if (clearAcknowledgement.current) clearTimeout(clearAcknowledgement.current);
@@ -207,39 +179,32 @@ function Row({
   return (
     <>
       <dt data-short={hideOnShort || undefined} className="self-center text-[color:var(--fg-subtle)]">
-        <DisturbedText text={label} strength={GENTLE} />
+        {label}
       </dt>
-      {/* The meter is already glyphs and is not a string, so it is passed
-          through untouched. Everything else in the readout is text and erodes
-          like the rest of the screen. */}
-      <dd data-short={hideOnShort || undefined} className="self-center whitespace-pre" suppressHydrationWarning>
+<dd data-short={hideOnShort || undefined} className="self-center whitespace-pre" suppressHydrationWarning>
         {onCycle && typeof value === 'string' ? (
           <button
             ref={control}
             type="button"
             onClick={activate}
-            onMouseEnter={() => { setHovered(true); onHoverHint?.(nextValue ? label : null); }}
-            onMouseLeave={() => { setHovered(false); onHoverHint?.(null); }}
-            onFocus={() => { setFocused(true); onFocusHint?.(nextValue ? label : null); }}
-            onBlur={() => { setFocused(false); onFocusHint?.(null); }}
+            onMouseEnter={() => { onHoverHint?.(nextValue ? label : null); }}
+            onMouseLeave={() => { onHoverHint?.(null); }}
+            onFocus={() => { onFocusHint?.(nextValue ? label : null); }}
+            onBlur={() => { onFocusHint?.(null); }}
             aria-label={`${label}, ${value}, activate to change`}
             aria-describedby={nextValue ? hintId : undefined}
-            /* `uppercase` is repeated here on purpose: the browser's own
-               stylesheet sets `text-transform: none` on form controls, so
-               without it these three values render lowercase while every
-               read-only value around them is caps, which reads as a bug
-               rather than as an affordance. */
+            /* `uppercase` repeated: form controls reset text-transform. */
             className={`${styles.cycleControl} -mx-1 px-1 text-left uppercase underline-offset-4 transition-colors
                        hover:text-[color:var(--fg)] hover:underline
                        focus-visible:text-[color:var(--fg)] focus-visible:underline`}
           >
-            <DisturbedText text={value} strength={GENTLE} active={!hovered && !focused} />
+            {value}
             {nextValue && <>
               <span id={hintId} className="sr-only">Next value: {nextValue}</span>
             </>}
           </button>
         ) : typeof value === 'string' ? (
-          <DisturbedText text={value} strength={GENTLE} />
+          value
         ) : value}
       </dd>
     </>

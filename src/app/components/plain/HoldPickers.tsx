@@ -5,17 +5,7 @@
 import { DisturbedText, GENTLE } from './DisturbedText';
 import { SCHEME_CHOICES, type SchemeChoice } from './holdScheme';
 
-/**
- * What is left of the control rows. The style, message and overlay pickers
- * lived here and are gone: fifteen buttons, every one of them duplicating a
- * line the readout was already printing, and on a phone they wrapped into a
- * block taller than the model. Those three are rows in `HoldStatus` now, which
- * cycle when you click them.
- *
- * The scheme picker stays visible and stays a list. Light and dark is the one
- * control a visitor may actually go looking for, and three short words in the
- * corner cost nothing.
- */
+/** Light/dark picker. The other controls are rows in `HoldStatus`. */
 export function SchemePicker({
   choice,
   onPick,

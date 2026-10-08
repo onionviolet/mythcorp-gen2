@@ -16,13 +16,7 @@ import {
   MESSAGE_LINES, getMessageStyle, getServerMessageStyle, subscribeMessageStyle,
 } from './messageStore';
 
-/**
- * What decides the line break is not the grid's aspect, it is how many cells
- * each character gets. A letter drawn in ASCII needs roughly eight cells
- * across before it reads as a letter rather than a smudge, and one 16-glyph
- * line only clears that on a very wide grid. Breaking to two lines halves the
- * longest run and doubles the cells per character.
- */
+/** An ASCII letter needs about eight cells across to read; break to two lines when one line cannot give that. */
 const MIN_CELLS_PER_CHAR = 8;
 
 function holdLines(cols: number, rows: number): string[] {
@@ -75,10 +69,7 @@ export function PlainField() {
         : undefined,
     });
 
-    // All four go on window, because the canvas is pointer-events-none and so
-    // never receives anything itself. The id is forwarded on every one of them:
-    // it is what lets the field tell a drag apart from a finger landing in a
-    // new place, and what stops a second finger fighting the first.
+    // On window because the canvas is pointer-events-none; the pointer id keeps multi-touch apart.
     const onMove = (e: PointerEvent) => field.pointer(e.clientX, e.clientY, e.pointerId);
     const onDown = (e: PointerEvent) => {
       if (e.isPrimary && e.button === 0 && !isHoldControl(e.target)) field.press(e.clientX, e.clientY, e.pointerId);

@@ -46,9 +46,9 @@ function SpinShape({ color }: { color: string }) {
   );
 }
 
-export function MiniStarField({ settings }: { settings: MiniStarSettings }) {
+export function MiniStarField({ settings, backdrop: backdropOverride }: { settings: MiniStarSettings; backdrop?: string }) {
   const { theme } = useTheme();
-  const backdrop = BACKDROP_BY_THEME[theme];
+  const backdrop = backdropOverride ?? BACKDROP_BY_THEME[theme];
   const count = Math.min(
     Math.round(MINI_STARS_PER_UNIT * settings.stars),
     MINI_MAX_STARS,

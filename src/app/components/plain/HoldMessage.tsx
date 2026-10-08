@@ -16,11 +16,7 @@ const ParticleObject = dynamic(
   { ssr: false },
 );
 
-/**
- * The two DOM renderings of the message. The third, and the default, is not
- * here at all: it is dye in the fluid field, drawn by the canvas behind
- * everything. These are for when you want the words to simply be words.
- */
+/** DOM renderings of the message; the default `field` style is dye in the canvas, not here. */
 export function HoldMessage({ style, scheme }: { style: MessageStyle; scheme: Scheme }) {
   const run = useDecodeCycle(style === 'decode');
   const printable = useMessageImage(style === 'dust');
@@ -42,18 +38,12 @@ export function HoldMessage({ style, scheme }: { style: MessageStyle; scheme: Sc
 
   if (style === 'field') return null;
 
-  // The words rebuilt as the same particle cloud the spectre uses, by handing
-  // the component a PNG of the type instead of a model. The cursor scatters
-  // them and they spring back, so the message is something you can put your
-  // hand through. No autoRotate: a spinning word stops being a word.
+  // The words as the spectre's particle cloud, from a PNG of the type.
   if (style === 'dust') {
     if (!printable) return null;
     return (
       <div ref={dustFrame} className="pointer-events-none absolute inset-x-0 top-[6%] h-[34%]">
-        {/* pointer-events-auto on the canvas itself: the comment above promises
-            you can put your hand through the words, and the component listens
-            on its own canvas, which a non-interactive parent had been keeping
-            events away from. */}
+        {/* The canvas itself must take pointer events for the scatter to work. */}
         <ParticleObject
           className="pointer-events-auto absolute inset-0 h-full w-full"
           src={printable}
@@ -99,7 +89,6 @@ export function HoldMessage({ style, scheme }: { style: MessageStyle; scheme: Sc
           <span
             key={line}
             className={`${styles.solidLine} text-[8.5vw]`}
-            data-solid-label={line}
           >
             <DisturbedText text={line} className={styles.solidText} />
           </span>
@@ -109,11 +98,7 @@ export function HoldMessage({ style, scheme }: { style: MessageStyle; scheme: Sc
   );
 }
 
-/**
- * The type has to be rasterized on the client, after fonts are ready, or the
- * cloud is built from a fallback face. Null until then, which reads as one
- * empty frame rather than the wrong letterforms.
- */
+/** Rasterize after fonts load, or the cloud is built from a fallback face. */
 function useMessageImage(active: boolean): string | null {
   const [ready, setReady] = useState(false);
 
@@ -121,8 +106,7 @@ function useMessageImage(active: boolean): string | null {
     if (!active) return;
     let live = true;
     const done = () => { if (live) setReady(true); };
-    // Not `document.fonts?.ready.then(done) ?? done()`, which lints as an
-    // unused expression and reads as one too. Same behaviour, said out loud.
+    // Not `document.fonts?.ready.then(done) ?? done()`: that lints as an unused expression.
     if (document.fonts) document.fonts.ready.then(done);
     else done();
     return () => { live = false; };
