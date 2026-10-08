@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Cite } from './PaperApparatus';
 
-export const PAPER_VERSION = { label: 'v2.1', date: '2026-10-07' } as const;
+export const PAPER_VERSION = { label: 'v2.2', date: '2026-10-07' } as const;
 
 type Effect = 'strengthens' | 'narrows' | 'reverses';
 
@@ -44,6 +44,11 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
         Criminologists describe an industrialized underground where users buy attack capacity as a service and need no
         skill at all.<Cite ids={['collier-2021']} /> By 2023 malicious language-model services were sold on underground
         marketplaces and forums, cheaper for malicious code than traditional malware vendors.<Cite ids={['malla-2024']} />
+        The older record is concrete. Between about 2007 and 2011 the stolen-data market was already split into
+        specialists for each step, from data theft to cash-out.<Cite ids={['hutchings-holt-2015']} /> In 2010 a banking-trojan kit
+        sold for $3,000 to $19,000, and in 2012 botnet attack time rented for $30 to $70 an hour.<Cite ids={['dupont-2017']} /> By
+        2014 a denial-of-service subscription had a median price of $4.00 a month, bought mostly by gamers; that survey
+        heard back from only 13 of 51 operators it invited.<Cite ids={['hutchings-clayton-2016']} />
       </>
     ),
   },
@@ -81,13 +86,46 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     topic: 'Is AI already making cybercrime worse',
     effect: 'reverses',
     before: 'The 2025 version said the pool of plausible attackers grows by orders of magnitude, and read as if harm was already rising.',
-    now: 'I found no sign of an AI-driven crime wave in the harm data so far. The paper forecasts capability and access. It does not claim current harm.',
+    now: 'I found no sign of an AI-driven crime wave in the harm data so far. That is a statement about what official counts can show, which is a small and lopsided share of cybercrime, so it is not proof that no wave exists. The paper forecasts capability and access. It does not claim current harm.',
     evidence: (
       <>
         Ransomware payments fell from $1.25 billion in 2023 to $820 million in 2025.<Cite ids={['chainalysis-2025', 'chainalysis-2026']} /> AI-tagged
         losses were about 4% of the FBI&rsquo;s 2025 total.<Cite ids={['ic3-2025']} /> Mandiant does not count 2025 as the year AI
         directly caused breaches.<Cite ids={['mtrends-2026']} /> Police action has measurably cut rented attack services
-        before.<Cite ids={['collier-2019']} />
+        before.<Cite ids={['collier-2019']} /> The limit: in a Dutch survey of 97,186 crime victims from 2012 to 2015, only
+        7.1% of hacking, 24.0% of consumer fraud and 26.3% of identity theft reached the police, against 37.5% for all
+        crimes.<Cite ids={['vandeweijer-2019']} />
+      </>
+    ),
+  },
+  {
+    id: 'am-6',
+    date: '2026-10-07',
+    topic: 'What actually limits fraud',
+    effect: 'narrows',
+    before: 'When AI writes the lure and fakes the voice, fraud becomes open to anyone.',
+    now: 'AI cheapens the lure, the script and the call. The fraud networks studied most closely were limited by trusted people to move the money and to work on the inside, and AI does not supply those people.',
+    evidence: (
+      <>
+        Eighteen Dutch police investigations of online-banking phishing and malware networks, 2004 to 2014: 13 grew only
+        through offline social ties, core members bought their technical skill, and the scarce part was money mules,
+        cashers and insiders at banks and phone companies.<Cite ids={['leukfeldt-2017']} /> Scope: Dutch cases, banking fraud
+        only, and only the networks police chose to investigate.
+      </>
+    ),
+  },
+  {
+    id: 'am-7',
+    date: '2026-10-07',
+    topic: 'Voice impersonation before AI',
+    effect: 'narrows',
+    before: 'Voice or video impersonation scored 0 before AI: no tools were on offer.',
+    now: 'Generic voice impersonation was already for sale, so Q3 is now yes before AI and the row scores 2 before, 8 now. What was not for sale was the face or voice of a specific person the victim would recognize, which is what the Hong Kong case used.',
+    evidence: (
+      <>
+        Stolen-data forums sold calls by hired voices to pass bank voice checks, around 10 to 12 WebMoney dollars a
+        call,<Cite ids={['hutchings-holt-2015']} /> and Dutch phishing networks used human callers posing as bank
+        staff.<Cite ids={['leukfeldt-2017']} /> The Hong Kong call faked the victim&rsquo;s own company executives.<Cite ids={['hk-2024']} />
       </>
     ),
   },

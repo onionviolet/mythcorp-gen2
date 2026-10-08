@@ -74,10 +74,13 @@ export default function AiCybercrimePaper() {
             is whether fixing can speed up as fast as AI speeds up finding.
           </p>
           <p className="mt-4 text-base leading-relaxed text-[color:var(--fg-muted)]">
-            For fraud the shift in who can attack is visible now. For breaking into systems it reached the gated
+            For fraud the shift is visible in lures and fake voices, though the networks studied most closely were
+            limited by the people who move the money, which AI does not supply.<Cite ids={['leukfeldt-2017']} /> For
+            breaking into systems the shift reached the gated
             frontier in 2026, and downloadable models are a few months behind. The time from a flaw going public to its
             first exploitation fell from 63 days to 5 before AI agents existed.<Cite ids={['gtte-2024']} /> The harm data
-            so far show no AI-driven crime wave, so read this as a forecast about capability and access.<Cite ids={['chainalysis-2026', 'ic3-2025']} />
+            so far show no AI-driven crime wave, though official counts catch only a small share of cybercrime, so read
+            this as a forecast about capability and access.<Cite ids={['chainalysis-2026', 'ic3-2025', 'vandeweijer-2019']} />
           </p>
         </div>
 
@@ -175,11 +178,17 @@ export default function AiCybercrimePaper() {
           <p>
             Two research findings frame the same problem. A study of more than 4,000 security fixes across 682
             open-source projects found that a third of the flaws had sat in the code for over three years before repair,
-            and 7% of fixes did not fully close the hole.<Cite ids={['li-2017']} /> An exploit-prediction preprint, citing
-            industry data, reports that companies close a median 15.5% of their open vulnerabilities each month, while
-            only about 5% of known vulnerabilities are ever exploited in the wild.<Cite ids={['jacobs-2023']} /> That gap
-            is the defenders&rsquo; best lever: most flaws never need the three-day treatment, if you can tell which ones
-            do.
+            and 7% of fixes did not fully close the hole.<Cite ids={['li-2017']} />
+          </p>
+          <p>
+            Most flaws are never attacked, which makes repair partly a sorting problem. Of 25,159 flaws published between
+            mid-2016 and mid-2018, 921, or 3.7%, were seen exploited within a year. That counts only what commercial
+            intrusion-detection sensors caught, so it is a floor. Patching every flaw rated 7 or higher on the standard
+            severity scale had an efficiency of 6.2%, meaning most of that work went to flaws never seen exploited; the
+            EPSS prediction model reached the same coverage with 29% to 86% less work. Across about 300 companies, the
+            median flaw took 100 days to fix.<Cite ids={['epss-2021']} /> A later preprint by several of the same authors cites
+            industry data that companies close a median 15.5% of their open flaws a month.<Cite ids={['jacobs-2023']} /> If AI
+            multiplies the flaws found, telling which few matter becomes worth more.
           </p>
         </Section>
 
@@ -207,14 +216,21 @@ export default function AiCybercrimePaper() {
               The FBI tied $893 million of $20.877 billion in 2025 losses to AI, about 4%.<Cite ids={['ic3-2025']} /> Consumer
               fraud reports to the FTC rose from 2.6 million in 2024 to 3 million in 2025, and reported losses from about $12
               billion to $15.9 billion.<Cite ids={['ftc-2026']} /> These are reports, not counted incidents, and the FTC
-              testimony does not attribute any of it to AI. Fraud is rising; these numbers cannot say AI is why.
+              testimony does not attribute any of it to AI. Fraud is rising; these numbers cannot say AI is why. They also
+              miss most of it: in a Dutch survey of 97,186 crime victims from 2012 to 2015, only 7.1% of hacking, 24.0% of
+              consumer fraud and 26.3% of identity theft reached the police, against 37.5% for all
+              crimes.<Cite ids={['vandeweijer-2019']} /> The FBI and FTC collect complaints and consumer reports rather than
+              police reports, and the survey predates AI, but the point carries: official counts are a small, lopsided
+              sample. So &ldquo;about 4% AI-tagged&rdquo; is a floor that depends on victims noticing AI at all.
             </li>
             <li>
               <strong className="text-[color:var(--fg)]">Policing rented attack services has worked.</strong>{' '}
               Using five years of attack measurements, Cambridge researchers found that an FBI operation in December 2018
               cut denial-of-service attacks by about a third for at least 10 weeks.<Cite ids={['collier-2019']} /> Malicious AI
               services are sold through similar underground markets,<Cite ids={['malla-2024']} /> so the same lever may
-              apply. That last step is my inference.
+              apply. That last step is my inference. A review of anti-botnet operations adds a caution: arrests and
+              takedowns were often short-lived, with one botnet spamming again two days after its servers were seized and
+              another back 20 minutes after a takedown.<Cite ids={['dupont-2017']} />
             </li>
             <li>
               <strong className="text-[color:var(--fg)]">The early record found no new capability.</strong>{' '}
@@ -341,7 +357,21 @@ export default function AiCybercrimePaper() {
               <strong className="text-[color:var(--fg)]">Treat fraud as its own problem.</strong>{' '}
               Patching does nothing for impersonation. The Hong Kong loss went through 15 transfers approved on the
               strength of familiar faces on a call.<Cite ids={['hk-2024']} /> My inference is that the defense there is
-              procedure, such as confirming payments through a second channel, more than software.
+              procedure, such as confirming payments through a second channel, more than software. The same goes for the
+              people behind the money: banking-fraud networks were limited by mules, cashers and insiders, not by
+              lures.<Cite ids={['leukfeldt-2017']} />
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Press on chokepoints more than on individuals.</strong>{' '}
+              In the botnet era, enforcement against operators faded fast: one takedown disrupted only 38% of its
+              target&rsquo;s infrastructure. Countries where internet providers notified and cleaned infected customers saw
+              large drops, South Korea from 26% to 0.5% of machines infected between 2005 and 2011 and Japan from 2.5% to
+              0.6%, though that evidence is correlational.<Cite ids={['dupont-2017']} /> Booter operators were disrupted when
+              PayPal closed their accounts.<Cite ids={['hutchings-clayton-2016']} /> Criminologists also argue, as theory without
+              new data, that rare and exemplary prosecutions of young low-skill offenders can backfire by weakening the
+              law&rsquo;s legitimacy in their eyes.<Cite ids={['holt-2019']} /> My inference: if AI widens the pool of
+              low-skill offenders, pressure on model providers, package registries and payment rails is likely to do more
+              than prosecuting them one at a time.
             </li>
           </ol>
           <ForecastFrame label="forecast, low confidence">
@@ -401,6 +431,12 @@ export default function AiCybercrimePaper() {
               the AI companies, a section on what cuts against the thesis, and a list of readings that would prove me wrong.
             </li>
             <li>
+              <strong className="text-[color:var(--fg)]">Library readings added (v2.2).</strong>{' '}
+              Six paywalled criminology and security papers read in full through Washington and Lee University&rsquo;s
+              library, plus the open journal version of EPSS. They added amendments A6 and A7 and corrected the share of
+              flaws exploited from about 5% to 3.7%.
+            </li>
+            <li>
               <strong className="text-[color:var(--fg)]">Stages renamed.</strong>{' '}
               Unreliable Agent, Reliable Agent, Superhuman Coder and Superhuman Attacker became Assistant, Supervised
               agent, Expert vulnerability work and Unsupervised campaigns, which name what is observable.
@@ -426,7 +462,9 @@ export default function AiCybercrimePaper() {
 
         <Section id="sources" eyebrow="[ SOURCES ]" title="Sources">
           <p className="text-sm">
-            Each source was opened and read for this revision, using open copies only. Dates are publication dates.
+            Each source was opened and read for this revision. Entries marked library copy are paywalled journal
+            articles read in full through Washington and Lee University&rsquo;s library; the rest are open copies. Dates
+            are publication dates.
             Entries marked peer-reviewed passed a conference or journal review; preprints have not. Entries marked
             reporting are news accounts of an official statement I could not find in the original.
           </p>
@@ -441,6 +479,7 @@ export default function AiCybercrimePaper() {
                   </a>
                   . <span className="font-mono text-xs">{s.date}</span>
                   {s.kind !== 'primary' && <span className="font-mono text-xs"> · {s.kind}</span>}
+                  {'library' in s && s.library && <span className="font-mono text-xs"> · library copy</span>}
                 </span>
               </li>
             ))}

@@ -248,6 +248,11 @@ export function EndingsBranch() {
               exploited catalog went from 186 in 2024 to 245 in 2025, also about ×1.3.<Cite ids={['cisa-kev-2026']} /> Neither
               counts this queue. A research preprint cites industry data that companies close a median 15.5% of their open flaws a month,<Cite ids={['jacobs-2023']} /> but that is deployment at companies, not patch-writing by maintainers. I found no source that measures how fast repair grows, so the sliders stay my guesses.
             </li>
+            <li>
+              The model counts every flaw alike. In practice only a small, partly predictable share gets exploited, 3.7% of
+              flaws published in 2016 to 2018 within a year,<Cite ids={['epss-2021']} /> so a growing queue does less harm if
+              the dangerous few are fixed first. Repair is partly a sorting problem, which this model leaves out.
+            </li>
             <li>Scope is one program&rsquo;s open-source queue, not all software. Nothing leaves the queue except a patch, until {new Date(MODEL_END).getUTCFullYear()}.</li>
           </ul>
         </div>

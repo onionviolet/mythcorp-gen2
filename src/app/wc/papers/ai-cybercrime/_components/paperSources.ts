@@ -5,9 +5,46 @@ export type PaperSource = {
   date: string;
   url: string;
   kind: 'primary' | 'reporting' | 'peer-reviewed' | 'preprint';
+  library?: boolean;
 };
 
 export const PAPER_SOURCES = [
+  {
+    id: 'hutchings-holt-2015',
+    author: 'Hutchings and Holt',
+    title: 'A Crime Script Analysis of the Online Stolen Data Market, British Journal of Criminology 55(3), 596-614',
+    date: '2015 (online 2014-12-29)',
+    url: 'https://doi.org/10.1093/bjc/azu106',
+    kind: 'peer-reviewed',
+    library: true,
+  },
+  {
+    id: 'leukfeldt-2017',
+    author: 'Leukfeldt, Kleemans and Stol',
+    title: 'Cybercriminal Networks, Social Ties and Online Forums: Social Ties Versus Digital Ties within Phishing and Malware Networks, British Journal of Criminology 57(3), 704-722',
+    date: '2017 (online 2016-02-03)',
+    url: 'https://doi.org/10.1093/bjc/azw009',
+    kind: 'peer-reviewed',
+    library: true,
+  },
+  {
+    id: 'hutchings-clayton-2016',
+    author: 'Hutchings and Clayton',
+    title: 'Exploring the Provision of Online Booter Services, Deviant Behavior 37(10), 1163-1178',
+    date: '2016-05-09',
+    url: 'https://doi.org/10.1080/01639625.2016.1169829',
+    kind: 'peer-reviewed',
+    library: true,
+  },
+  {
+    id: 'dupont-2017',
+    author: 'Dupont',
+    title: 'Bots, cops, and corporations: on the limits of enforcement and the promise of polycentric regulation as a way to control large-scale cybercrime, Crime, Law and Social Change 67, 97-116',
+    date: '2017 (online 2016-10-05)',
+    url: 'https://doi.org/10.1007/s10611-016-9649-z',
+    kind: 'peer-reviewed',
+    library: true,
+  },
   {
     id: 'li-2017',
     author: 'Li and Paxson',
@@ -25,11 +62,37 @@ export const PAPER_SOURCES = [
     kind: 'peer-reviewed',
   },
   {
+    id: 'holt-2019',
+    author: 'Holt, Brewer and Goldsmith',
+    title: 'Digital Drift and the "Sense of Injustice": Counter-Productive Policing of Youth Cybercrime, Deviant Behavior 40(9), 1144-1156',
+    date: '2019 (online 2018-05-21)',
+    url: 'https://doi.org/10.1080/01639625.2018.1472927',
+    kind: 'peer-reviewed',
+    library: true,
+  },
+  {
+    id: 'vandeweijer-2019',
+    author: 'van de Weijer, Leukfeldt and Bernasco',
+    title: 'Determinants of reporting cybercrime: A comparison between identity theft, consumer fraud, and hacking, European Journal of Criminology 16(4), 486-508',
+    date: '2019 (online 2018-05-19)',
+    url: 'https://doi.org/10.1177/1477370818773610',
+    kind: 'peer-reviewed',
+    library: true,
+  },
+  {
     id: 'collier-2021',
     author: 'Collier, Clayton, Hutchings and Thomas',
     title: 'Cybercrime is (often) boring: infrastructure and alienation in a deviant subculture (British Journal of Criminology 61(5), accepted manuscript)',
     date: '2021-04-15',
     url: 'https://strathprints.strath.ac.uk/76156/1/Collier_etal_BJC_2021_Cybercrime_is_often_boring_infrastructure_and_alientation.pdf',
+    kind: 'peer-reviewed',
+  },
+  {
+    id: 'epss-2021',
+    author: 'Jacobs, Romanosky, Edwards, Adjerid and Roytman',
+    title: 'Exploit Prediction Scoring System (EPSS), Digital Threats: Research and Practice 2(3)',
+    date: '2021-07-09',
+    url: 'https://doi.org/10.1145/3436242',
     kind: 'peer-reviewed',
   },
   {

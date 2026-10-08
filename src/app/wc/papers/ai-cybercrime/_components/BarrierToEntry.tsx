@@ -35,10 +35,10 @@ const ROWS: ReadonlyArray<BarrierRow> = [
   },
   {
     label: 'Voice or video impersonation',
-    pre: [N, N, N, N, N],
+    pre: [N, N, Y, N, N],
     post: [Y, Y, Y, N, Y],
-    reasoning: 'The Hong Kong fraud used public video of real executives. The FBI now reports cloned voices in distress scams and deepfaked endorsements in investment fraud. Each call still targets one victim at a time, so I leave scale unchecked.',
-    evidence: ['hk-2024', 'ic3-2025'],
+    reasoning: 'Before AI, generic voices were already for hire: forums sold calls to pass bank voice checks, and phishing networks used human callers posing as bank staff, so tools were on offer. What could not be bought was a convincing copy of a specific person. The Hong Kong fraud used public video of real executives, and the FBI now reports cloned voices in distress scams and deepfaked endorsements. Each call still targets one victim at a time, so I leave scale unchecked.',
+    evidence: ['hutchings-holt-2015', 'leukfeldt-2017', 'hk-2024', 'ic3-2025'],
   },
   {
     label: 'Build a ransomware variant',
@@ -224,7 +224,7 @@ export function BarrierToEntry({ figureNumber }: { figureNumber?: number } = {})
         <p>
           {figureNumber != null && <span className="font-mono text-[color:var(--accent)]">Figure {figureNumber}. </span>}
           <span className="text-[color:var(--fg-muted)]">
-            On this rubric, the four attacks whose core work is writing, faking a person or routine code rose 4 to 8 points. Intrusion and finding new flaws rose 2, because the capable models are still gated.
+            On this rubric, the four attacks whose core work is writing, faking a person or routine code rose 4 to 6 points. Intrusion and finding new flaws rose 2, because the capable models are still gated.
           </span>
         </p>
         <p>
