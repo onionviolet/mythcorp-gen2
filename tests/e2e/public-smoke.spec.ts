@@ -218,7 +218,7 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
     const samples = Reflect.get(window, '__linkedinCatApproach') as Array<{ activity: string | null }>;
     return samples.some(sample => sample.activity !== null && sample.activity !== 'calm');
   }), { timeout: 5_000 }).toBe(true);
-  await expect(pet).toHaveAttribute('data-pet-phase', 'settled', { timeout: 5_000 });
+  await expect(pet).toHaveAttribute('data-pet-phase', 'settled', { timeout: 15_000 });
 
   const initialPetBox = await pet.boundingBox();
   expect(initialPetBox).not.toBeNull();
@@ -269,7 +269,9 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
     };
   })).toMatchObject({ clear: true, phase: 'following', pointerNear: 'true' });
 
-  await expect(pet).toHaveAttribute('data-pet-phase', 'settled', { timeout: 9_000 });
+  // The walk home advances by frame time, capped per frame, so a GPU-less CI
+  // runner at a few frames per second needs far longer than a real device.
+  await expect(pet).toHaveAttribute('data-pet-phase', 'settled', { timeout: 25_000 });
 
   const pull = await page.evaluate(async () => {
     const inviteElement = document.querySelector<HTMLElement>('[data-linkedin-invite]');
