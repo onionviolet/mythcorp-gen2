@@ -1,5 +1,16 @@
 # STATUS
 
+## Card angle, lighter model, location note and CI, 2026-10-09
+
+- Share card: `scripts/generate-share-spectre.mjs` now samples the spectre at a -35 degree yaw (`SHARE_YAW` overrides) so the card shows a three-quarter creature with its head toward the title; head-on it read as a block on legs. `shareImage` fits the sampled body to the right side of the card with its feet on the halo. Regenerated `public/share/mythcorp-card.png`.
+- `public/spectre.glb` texture cut from 2048 to 1024px (1.19 MB to 556 KB; repacked with a scratch script and macOS `sips`, geometry untouched). Desktop GPU comparison: Surface's skin spots hold at 1024 and blur at 512; ASCII scenes are indistinguishable.
+- The readout's `you` row carries a note (title plus screen-reader text): the viewer's sun comes from a rough guess at their city, only the angle reaches the page, nothing is stored.
+- `.github/workflows/ci.yml`: `npm run check` and the Playwright suite on pushes to main and on pull requests, bundled Chromium, 30 minute cap, never deploys. The repo is public, so standard runners are free.
+- Banner: the primary checkout's banner copies were older than PR #42's c20b37b and are stashed (`stash@{0}`). main was merged into `codex/linkedin-banner`, resolving STATUS only.
+- Not done: Cloudflare Web Analytics needs the dashboard toggle (the Wrangler token cannot change it). Custom event counters were skipped because they need Worker storage that can bill on paid plans.
+- Tests: Playwright now runs against the production build in CI (and locally with `PLAYWRIGHT_SERVER=start` after `npm run build`). On the dev server, on-demand compiles stalled the main thread for seconds at about 7s, exactly when the cat walks in; a production build shows no long task over 200ms there. The cat spec records the waiting position from the page (the 5s walk timer can beat a slow load), judges the walk by start and end position, sweeps the horizon first so the cat's demo stays out of the follow checks, and the quick-click spec no longer bounds MOVEMENT (the cat's walk lifts it too; the crouch is the gather check). Full suite: 44 passed on the production build; the cat, click and readout specs passed 8, 5 and 5 repeats.
+- Open: the Chrome origin-trial token in `.env` expires 2026-10-20.
+
 ## Paper halo, cat demo, share card and phone perf deployed, 2026-10-09
 
 Pushed c8095b5, 429d0a9 and 75ce8e0; deployed from a clean worktree as

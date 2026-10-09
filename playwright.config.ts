@@ -1,6 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const PORT = 3100;
+// CI (and PLAYWRIGHT_SERVER=start locally, after `npm run build`) tests the
+// production build: the dev server's on-demand compiles stall the main thread
+// for seconds and make timing-sensitive specs flaky.
+const PRODUCTION_SERVER = Boolean(process.env.CI) || process.env.PLAYWRIGHT_SERVER === 'start';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -21,7 +25,7 @@ export default defineConfig({
     },
   },
   webServer: {
-    command: `npm run dev -- --hostname 127.0.0.1 --port ${PORT}`,
+    command: `npm run ${PRODUCTION_SERVER ? 'start' : 'dev'} -- --hostname 127.0.0.1 --port ${PORT}`,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

@@ -124,7 +124,7 @@ export function HoldStatus({
       <Row label="elapsed" value={elapsed} hideOnShort />
       <Row label="chicago" value={chicago} hideOnShort />
       <Row label="sun" value={chicagoSun} hideOnShort />
-      <Row label="you" value={viewer} hideOnShort />
+      <Row label="you" value={viewer} hideOnShort note={VIEWER_NOTE} />
       <Row label="grid" value={metrics.cols ? `${metrics.cols} x ${metrics.rows} cells` : 'idle'} hideOnShort />
       <Row label="scene" value={scene ?? style} onCycle={onScene} nextValue={nextValues?.scene} onHoverHint={setHoveredHint} onFocusHint={setFocusedHint} />
       {expanded && <>
@@ -183,10 +183,15 @@ function subscribeWide(listener: () => void) {
  */
 type ReadoutHint = string;
 
+/** The viewer's sun comes from an IP-based guess at their city. Only rounded
+ *  sun angles reach the page, and nothing is stored. */
+const VIEWER_NOTE = 'Your sun, from a rough guess at your city. Only the angle reaches this page; nothing is stored.';
+
 function Row({
-  label, value, onCycle, nextValue, onHoverHint, onFocusHint, hideOnShort,
+  label, value, onCycle, nextValue, onHoverHint, onFocusHint, hideOnShort, note,
 }: {
   label: string; value: React.ReactNode; onCycle?: () => void; nextValue?: string;
+  note?: string;
   onHoverHint?: (hint: ReadoutHint | null) => void;
   onFocusHint?: (hint: ReadoutHint | null) => void;
   hideOnShort?: boolean;
@@ -223,7 +228,8 @@ function Row({
       {/* The meter is already glyphs and is not a string, so it is passed
           through untouched. Everything else in the readout is text and erodes
           like the rest of the screen. */}
-      <dd data-row={label} data-short={hideOnShort || undefined} className="self-center whitespace-pre" suppressHydrationWarning>
+      <dd data-row={label} data-short={hideOnShort || undefined} title={note} className="self-center whitespace-pre" suppressHydrationWarning>
+        {note && <span className="sr-only">{note} </span>}
         {onCycle && typeof value === 'string' ? (
           <button
             ref={control}

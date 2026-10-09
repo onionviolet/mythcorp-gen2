@@ -23,11 +23,17 @@ export function shareImage(now = SHARE_IMAGE_MOMENT, { timeless = true } = {}) {
   const light = [-Math.sin(sun.azimuth * radians), Math.sin(Math.max(-4, sun.elevation) * radians), 0.55];
   const length = Math.hypot(...light);
   const haloY = 505 - Math.max(-15, Math.min(65, sun.elevation)) * 1.35;
+  // Fit the sampled body into the right side of the card, feet on the halo.
+  const maxX = Math.max(...samples.map(([x]) => x));
+  const maxY = Math.max(...samples.map(([, y]) => y));
+  const step = Math.min(560 / (maxX + 1), (haloY - 70) / (maxY + 1));
+  const left = 1160 - (maxX + 1) * step;
+  const top = haloY + 4 - (maxY + 1) * step;
   const dust = samples.map(([x, y, nx, ny, nz], index) => {
     const lambert = Math.max(0, (nx * light[0] + ny * light[1] + nz * light[2]) / (100 * length));
     const scatter = scene.name === 'Drift' ? Math.sin(index * 19.7) * 3 : 0;
-    const radius = scene.name === 'Surface' ? 2.5 : scene.name === 'Suspension' ? 1.3 : 1.8;
-    return `<circle cx="${710 + x * 5.6 + scatter}" cy="${84 + y * 5.6}" r="${radius}" opacity="${(0.22 + 0.48 * day * lambert).toFixed(2)}"/>`;
+    const radius = (scene.name === 'Surface' ? 2.5 : scene.name === 'Suspension' ? 1.3 : 1.8) * step / 5.6;
+    return `<circle cx="${(left + x * step + scatter).toFixed(1)}" cy="${(top + y * step).toFixed(1)}" r="${radius.toFixed(2)}" opacity="${(0.22 + 0.48 * day * lambert).toFixed(2)}"/>`;
   }).join('');
   const field = Array.from({ length: 380 }, (_, i) => {
     const x = (i * 131.71) % 1200;
