@@ -74,7 +74,7 @@ for (const path of ['/wc/papers', '/about', '/experience', '/wc', '/og', '/conta
 
 test('Halo stays active behind the authored scene rotation', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal');
 
   const scene = () => page.getByRole('button', { name: /^scene,/ });
   const halo = page.locator('[data-hold-overlay="scan"]');
@@ -359,7 +359,7 @@ test('LinkedIn glow rises continuously as the pointer approaches', async ({ page
 });
 
 test('solid message cycles passively and becomes static for reduced motion', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?scene=signal');
   await page.getByRole('button', { name: 'words, dust, activate to change' }).click();
   await page.getByRole('button', { name: 'words, field, activate to change' }).click();
 

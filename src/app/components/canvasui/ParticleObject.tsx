@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from "react";
 
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { createSpecimenGazeRig } from "./specimenGazeRig"; // gaze
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DEFAULT_SPECIMEN_POSE, specimenPose } from "../plain/specimenPose";
 import { createRectCache } from "../rect-cache";
 
 export interface ParticleObjectOptions {
@@ -114,6 +116,12 @@ const MODEL_LIFT = 0.3;
 const RASTER_SIZE = 420;
 const ALBEDO_SIZE = 128;
 
+/** gather: a stable per-particle offset in -0.5..0.5 for the title's scatter. */
+function gatherJitter(seed: number): number {
+  const s = Math.sin(seed) * 43758.5453;
+  return s - Math.floor(s) - 0.5;
+}
+
 const VERT = `
 in vec3 aColor;
 in float aShade;
@@ -127,6 +135,11 @@ uniform float uDpr;
 uniform float uRefDist;
 uniform vec3 uTint;
 uniform float uUseTint;
+// sun: key light
+uniform vec3 uSunDir;
+uniform float uSunKey;
+uniform float uSunAmbient;
+out float vSun;
 
 void main() {
   vec3 p = position;
@@ -141,12 +154,16 @@ void main() {
   gl_PointSize = clamp(
     uSize * uDpr * jitter * (uRefDist / max(-mv.z, 0.1)), 0.0, 64.0);
   vColor = mix(aColor, uTint * aShade, uUseTint);
+  // sun: key light
+  vec3 sunNormal = normalize(mat3(modelViewMatrix) * position + vec3(0.0, 0.0, 1e-4));
+  vSun = uSunAmbient + (1.0 - uSunAmbient) * uSunKey * max(dot(sunNormal, uSunDir), 0.0);
   gl_Position = projectionMatrix * mv;
 }`;
 
 const FRAG = `
 precision highp float;
 in vec3 vColor;
+in float vSun;
 out vec4 outColor;
 
 void main() {
@@ -154,7 +171,7 @@ void main() {
   float r2 = dot(c, c);
   float alpha = 1.0 - smoothstep(0.16, 0.25, r2);
   if (alpha < 0.08) discard;
-  outColor = vec4(vColor, alpha);
+  outColor = vec4(vColor, alpha * vSun); // sun: key light
 }`;
 
 interface CloudSample {
@@ -569,7 +586,12 @@ export function createParticleObject(
   const floatGroup = new THREE.Group();
   floatGroup.position.y = MODEL_LIFT;
   const fitGroup = new THREE.Group();
-  floatGroup.add(fitGroup);
+  // Only the Installation's specimen reads the live pose; the dust title and the lab stay at rest.
+  const pose = canvas.closest("[data-specimen-layer]") ? specimenPose : DEFAULT_SPECIMEN_POSE;
+  // gaze
+  const gazeRig = createSpecimenGazeRig();
+  gazeRig.group.add(fitGroup);
+  floatGroup.add(gazeRig.group);
   scene.add(floatGroup);
 
   const controls = new OrbitControls(camera, canvas);
@@ -591,6 +613,10 @@ export function createParticleObject(
       uRefDist: { value: config.cameraDistance },
       uTint: { value: new THREE.Color(1, 1, 1) },
       uUseTint: { value: 0 },
+      // sun: key light
+      uSunDir: { value: new THREE.Vector3(0, 0, 1) },
+      uSunKey: { value: 1 },
+      uSunAmbient: { value: 1 },
     },
   });
 
@@ -598,6 +624,10 @@ export function createParticleObject(
   let homes: Float32Array | null = null;
   let velocities: Float32Array | null = null;
   let particleCount = 0;
+  // gather: the specimen swells and pulls tight; any other cloud (the dust title) scatters.
+  const gatherSpecimen = canvas.closest("[data-specimen-layer]") !== null;
+  let lastGather = 0;
+  let lastSpread = 0;
   let assetSource: AssetSource | null = null;
   let builtCount = -1;
   let loadedSrc: string | null = null;
@@ -837,6 +867,17 @@ export function createParticleObject(
     const stiffness = 60 * Math.max(config.spring, 0.05);
     const dampingRate = 3 + 12 * Math.min(Math.max(config.damping, 0), 1);
     const decay = Math.exp(-dampingRate * delta);
+    // gather
+    const gather = specimenPose.gather;
+    const gatherKick = gatherSpecimen ? (gather - lastGather) * -14 : 0;
+    lastGather = gather;
+    const gatherHome = gatherSpecimen ? 1 - Math.max(0, gather) * 0.14 : 1;
+    const gatherSpread = gatherSpecimen ? 0 : Math.max(0, gather) * 0.08;
+    const gatherShift = gatherSpread - lastSpread;
+    lastSpread = gatherSpread;
+    const gatherScatter = gatherSpread > 0 || gatherShift !== 0;
+    material.uniforms.uDrift.value = reducedMotion ? 0
+      : Math.max(config.drift, 0) * (gatherSpecimen ? 1 - Math.max(0, gather) * 0.8 : 1);
 
     let pushing = false;
     let ox = 0,
@@ -922,9 +963,17 @@ export function createParticleObject(
         }
       }
 
-      vx += (h[ix] - p[ix]) * stiffness * delta;
-      vy += (h[iy] - p[iy]) * stiffness * delta;
-      vz += (h[iz] - p[iz]) * stiffness * delta;
+      let hx = h[ix] * gatherHome; // gather
+      let hy = h[iy] * gatherHome; // gather
+      let hz = h[iz] * gatherHome; // gather
+      if (gatherScatter) { // gather: the title follows the scatter exactly, so it re-forms on release
+        const jx = gatherJitter(i * 1.7), jy = gatherJitter(i * 2.3 + 5) + 0.3, jz = gatherJitter(i * 3.1 + 9);
+        hx += jx * gatherSpread; hy += jy * gatherSpread; hz += jz * gatherSpread;
+        p[ix] += jx * gatherShift; p[iy] += jy * gatherShift; p[iz] += jz * gatherShift;
+      }
+      vx += (hx - p[ix]) * stiffness * delta + p[ix] * gatherKick; // gather
+      vy += (hy - p[iy]) * stiffness * delta + p[iy] * gatherKick; // gather
+      vz += (hz - p[iz]) * stiffness * delta + p[iz] * gatherKick; // gather
       vx *= decay;
       vy *= decay;
       vz *= decay;
@@ -950,6 +999,8 @@ export function createParticleObject(
     }
     const delta = lastTime ? Math.min((time - lastTime) / 1000, 1 / 30) : 0;
     lastTime = time;
+    // gaze
+    gazeRig.update(camera, controls, config.autoRotateSpeed, pose);
     controls.update();
 
     if (!reducedMotion) {
@@ -966,10 +1017,15 @@ export function createParticleObject(
         (Math.sin(elapsed / 1.5) / 10) * config.floatIntensity;
       material.uniforms.uTime.value += delta;
     }
+    if (gatherSpecimen) floatGroup.scale.setScalar(1 + 0.35 * specimenPose.gather); // gather
 
     pointerSpeed *= Math.exp(-3 * delta);
 
     if (delta > 0) simulate(delta);
+    // sun: key light
+    (material.uniforms.uSunDir.value as THREE.Vector3).fromArray(pose.key.dir);
+    material.uniforms.uSunKey.value = pose.key.intensity;
+    material.uniforms.uSunAmbient.value = pose.ambient;
     renderer.render(scene, camera);
   }
 

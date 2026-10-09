@@ -154,6 +154,43 @@ export function createAsciiFluid(canvas: HTMLCanvasElement, options: AsciiFluidO
     });
   }
 
+  /**
+   * The press-and-hold gather: a sink at the specimen with a slight spiral, fed
+   * by sparse dye at the rim so the inflow is visible as grain streaming in.
+   */
+  const PULL_ARMS = 7;
+  let pullHold = 1;
+  let pullTurn = 0;
+  function gather() {
+    const pull = opts.pull?.();
+    const amount = pull ? Math.max(-0.3, Math.min(1, pull.amount)) : 0;
+    pullHold = 1 - Math.max(0, amount) * 0.92;
+    if (!pull || Math.abs(amount) < 0.004) return;
+    const c = toGrid(pull.x, pull.y);
+    const core = Math.max(3, Math.min(cols, rows * CELL_ASPECT) * 0.06);
+    const force = amount * 0.075;
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const dx = c.x - x;
+        const dy = (c.y - y) * CELL_ASPECT;
+        const d = Math.hypot(dx, dy) || 1;
+        const f = force * Math.min(1, d / core) / d;
+        const i = idx(x, y);
+        vx[i] += (dx + dy * 0.35) * f;
+        vy[i] += (dy - dx * 0.35) * f / CELL_ASPECT;
+      }
+    }
+    if (amount <= 0) return;
+    const reach = Math.hypot(cols, rows * CELL_ASPECT) * 0.42;
+    pullTurn += 0.012;
+    const seeds = Math.ceil(amount * 24);
+    for (let k = 0; k < seeds; k++) {
+      const a = (k % PULL_ARMS) * (Math.PI * 2 / PULL_ARMS) + pullTurn + (Math.random() - 0.5) * 0.18;
+      const r = reach * (0.3 + 0.7 * Math.random());
+      splat(c.x + Math.cos(a) * r, c.y + Math.sin(a) * r / CELL_ASPECT, 1.8, DYE_CEILING * amount, 0, 0);
+    }
+  }
+
   function step() {
     // Advect every field backwards along its own velocity, then blur the
     // result slightly. Tracing backwards can only read values that already
@@ -190,7 +227,7 @@ export function createAsciiFluid(canvas: HTMLCanvasElement, options: AsciiFluidO
     // included, while the pointer can still push dye above the floor.
     if (source) {
       for (let i = 0; i < dye.length; i++) {
-        const floor = source[i] * opts.sourceHold;
+        const floor = source[i] * opts.sourceHold * pullHold;
         if (floor > dye[i]) dye[i] = floor;
         else if (dye[i] > DYE_CEILING) dye[i] = DYE_CEILING;
       }
@@ -214,8 +251,9 @@ export function createAsciiFluid(canvas: HTMLCanvasElement, options: AsciiFluidO
     if (!running) return;
     inject();
     ambient();
+    gather();
     step();
-    renderField(dye, target(), canvas.clientWidth, canvas.clientHeight, source);
+    renderField(dye, target(), canvas.clientWidth, canvas.clientHeight, source, pullHold);
     report();
     raf = requestAnimationFrame(frame);
   }

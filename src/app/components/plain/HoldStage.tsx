@@ -32,6 +32,10 @@ const FILL = 'absolute inset-0 h-full w-full';
 /** Particle and liquid bind pointer listeners on their own canvas, so it must opt back in under the `pointer-events-none` parent. */
 const REACTIVE = `${FILL} pointer-events-auto`;
 const SCENE_DURATION_MS = 360;
+/** The specimen reads as a body behind the title: every model frame is drawn this much larger. */
+const SPECIMEN_ZOOM = 1.2;
+/** World units the enlarged specimen drops, so a raised arm clears the top edge. */
+const SPECIMEN_DROP = 0.6;
 
 type SceneLayer = { id: number; style: HoldStyle; model: HoldModel };
 type SceneLayers = { visible: SceneLayer; incoming: SceneLayer | null; ready: boolean };
@@ -160,7 +164,7 @@ function ResolvedHoldStage({
     if (model.id !== DEFAULT_HOLD_MODEL_ID) setModel(DEFAULT_HOLD_MODEL);
     else onFatalError?.();
   }, [model, onModelError, onFatalError]);
-  const frame = { src: model.src, ...model.frame };
+  const frame = { src: model.src, ...model.frame, scale: model.frame.scale * SPECIMEN_ZOOM, yOffset: (model.frame.yOffset ?? 0) - SPECIMEN_DROP };
 
   switch (style) {
     case 'particle':

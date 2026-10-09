@@ -2,7 +2,7 @@
 
 // Walkthrough: /wc/learn/plain-mode
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { useScramble } from './useScramble';
 import { HoldClickResponse } from './HoldClickResponse';
 import { HoldStatus } from './HoldStatus';
@@ -22,6 +22,11 @@ import type { HoldRoomProps } from './HoldRoomFrame';
 import { DEFAULT_HOLD_MODEL_ID, HOLD_MODEL_IDS, resolveHoldModel, type HoldModel } from './holdModels';
 import entrance from './holdEntrance.module.css';
 import { HOLD_SCENE_CHANGE_EVENT } from './holdSceneEvents';
+import { useChicagoSunLight } from './sky/sunLight';
+import { HorizonDrag } from './HorizonDrag';
+import { useSpecimenGaze } from './useSpecimenGaze';
+import { useHoldGather } from './holdGather';
+import { useReducedMotion } from './useReducedMotion';
 
 /** Advance to the next option, wrapping. The readout rows cycle rather than
  *  listing, which is what let fifteen buttons come off the screen. */
@@ -76,9 +81,13 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
   };
 
   const wordmark = useScramble('MYTHCORP');
+  useChicagoSunLight();
+  const specimen = useRef<HTMLDivElement>(null);
+  useSpecimenGaze(specimen);
+  useHoldGather(useReducedMotion());
 
   return (
-    <div className={`${entrance.lander} fixed inset-0 z-10 flex flex-col justify-between p-5 sm:p-8`}>
+    <div className={`${entrance.lander} fixed inset-0 z-10 flex select-none flex-col justify-between p-5 [-webkit-touch-callout:none] sm:p-8`}>
       <HoldClickResponse />
 
       <div className={entrance.identity}>
@@ -104,7 +113,7 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
       {/* The model owns the middle of the screen. The readout sits inside the
           same box so it stays put when the style changes underneath it. */}
       <div data-hold-message={message} className={`${entrance.stage} pointer-events-none relative -mx-5 flex-1 sm:-mx-8`}>
-        <div className={`${entrance.specimen} absolute inset-x-0`}>
+        <div ref={specimen} className={`${entrance.specimen} absolute inset-x-0`}>
           <HoldStage style={style} scheme={scheme} modelId={model.id} onModelError={handleModelError} />
         </div>
         <div className={`${entrance.readoutDock} absolute inset-0 flex items-end pb-8`}>
@@ -139,11 +148,15 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
         </div>
       </div>
 
+      {/* Above the Halo, under the stage and the footer, so readout controls
+          and links keep their hits. */}
+      <HorizonDrag />
+
       {/* The three picker rows that used to live here are gone. They listed
           fifteen buttons and every one of them duplicated a line the readout
           was already printing, which on a phone wrapped into a block taller
           than the model. The readout rows are the controls now. */}
-      <div className="relative flex flex-wrap justify-between gap-5 font-mono text-xs">
+      <div className="pointer-events-none relative flex flex-wrap justify-between gap-5 font-mono text-xs [&>*]:pointer-events-auto">
         <HoldOperator />
         <HoldContactLinks />
       </div>

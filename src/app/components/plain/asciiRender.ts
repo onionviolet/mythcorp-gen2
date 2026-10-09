@@ -43,6 +43,7 @@ export function renderField(
   width: number,
   height: number,
   message?: Float32Array | null,
+  messageHold = 1,
 ) {
   const { ctx, cols, rows, cell, ink, fontFamily } = t;
   ctx.clearRect(0, 0, width, height);
@@ -63,16 +64,16 @@ export function renderField(
     }
   }
 
-  if (message) drawMessage(message, t);
+  if (message) drawMessage(message, t, messageHold);
   ctx.globalAlpha = 1;
 }
 
-function drawMessage(mask: Float32Array, t: RenderTarget) {
+function drawMessage(mask: Float32Array, t: RenderTarget, hold: number) {
   const { ctx, cols, rows, cell } = t;
   const cellH = cell * CELL_ASPECT;
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
-      const v = mask[y * cols + x];
+      const v = mask[y * cols + x] * hold;
       if (v < MESSAGE_EDGE) continue;
       const body = v >= MESSAGE_BODY;
       ctx.globalAlpha = body ? 0.95 : 0.45;

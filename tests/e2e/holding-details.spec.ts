@@ -17,7 +17,7 @@ test('locked homepage loads its own assets and identity', async ({ page }) => {
 
 test('the plain field responds to motion preference changes during a visit', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal');
   const field = page.locator('canvas[data-plain-field]');
   const light = page.getByRole('button', { name: 'light', exact: true });
 
@@ -35,7 +35,7 @@ test('the plain field responds to motion preference changes during a visit', asy
 
 test('readout hints follow actual next values and only the activated control acknowledges', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal');
   const scene = page.getByRole('button', { name: /^scene,/ });
   const render = page.getByRole('button', { name: /^render,/ });
 
@@ -128,7 +128,7 @@ test('specimen waits for its model and keeps the loaded canvas through promotion
     await modelGate;
     await route.continue();
   });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal');
   await expect(page.locator('[data-hold-overlay="scan"] canvas').first()).toBeAttached();
   const haloCanvases = await page.locator('[data-hold-overlay="scan"] canvas').elementHandles();
   await expect(page.locator('[data-specimen-layer="current"] canvas')).toHaveCount(1);
@@ -146,7 +146,7 @@ test('specimen waits for its model and keeps the loaded canvas through promotion
 
 test('rapid scene changes settle on the latest render without accumulating layers', async ({ page }) => {
   test.setTimeout(60_000);
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal');
   const scene = page.getByRole('button', { name: /^scene,/ });
   await scene.focus();
   for (const name of ['Suspension', 'Drift', 'Surface', 'Signal', 'Suspension']) {
@@ -175,7 +175,7 @@ test('a failed alternate specimen returns to Spectre and releases the failed lay
 
 test('a failed replacement render keeps the previous specimen and releases its candidate', async ({ page }) => {
   const firstModel = page.waitForResponse(response => new URL(response.url()).pathname === '/spectre.glb' && response.ok());
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal');
   await firstModel;
   await expect(page.locator('[data-specimen-layer="current"] canvas')).toHaveCount(1);
   await page.route('**/spectre.glb', route => route.abort());
@@ -189,7 +189,7 @@ test.describe('touch readout', () => {
   test.use({ hasTouch: true, viewport: { width: 390, height: 844 } });
 
   test('expanded controls have room below the specimen', async ({ page }) => {
-    await page.goto('/?room=installation');
+    await page.goto('/?room=installation&scene=signal');
     await page.getByRole('button', { name: 'Full readout' }).tap();
     const readout = await page.locator('[data-readout="full"]').boundingBox();
     const specimen = await page.locator('[data-specimen-layer="current"]').boundingBox();

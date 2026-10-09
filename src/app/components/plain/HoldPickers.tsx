@@ -42,7 +42,7 @@ function PickerButton({
       onClick={onClick}
       aria-pressed={active}
       className={[
-        'tracking-[0.16em] transition-colors',
+        'tracking-[0.16em] transition-colors pointer-coarse:min-h-11 pointer-coarse:min-w-11',
         active
           ? 'text-[color:var(--fg)] underline underline-offset-4'
           : 'text-[color:var(--fg-subtle)] hover:text-[color:var(--fg)]',

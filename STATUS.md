@@ -1,5 +1,88 @@
 # STATUS
 
+## Awe pass merged: two suns, gaze, horizon drag, gather, 2026-10-08
+
+Three parallel agents built the entries below in separate worktrees off the
+same uncommitted baseline; merged here file by file with `git merge-file`.
+Shared seam: `specimenPose.ts` (key/ambient = sun, gaze = pointer, gather =
+hold) and `skyTime.ts` (`skyNow`, drag offset). Merge fixes:
+- Renderers read the live pose only when their canvas sits inside `[data-specimen-layer]`, otherwise `DEFAULT_SPECIMEN_POSE`, so the Signal dust title and `/wc/lab/canvas` no longer turn or shade. The title's gather scatter still reads `specimenPose.gather` directly.
+- `HorizonDrag` follows the Halo's sun-driven offset (`useViewerHorizon`) instead of a fixed 160px.
+- At 700px+ wide and 700px+ tall, the specimen box reaches 6% from the stage bottom, so tablets and small laptops get the full body too.
+
+Verification: `npm run check` passed after the merge. Dev server, built-in browser: Signal at dusk (gaze faces pointer, hold reaches SURGE and recovers, title stays flat), Surface at noon at 1100x800, Drift at dusk at 375x812, Suspension keyboard sweep (+6h moved the clock 19:45 to 01:45 and both suns to night, band followed the Halo). No console errors. Playwright not run. Not committed.
+
+Open for the owner: warm dusk accent (not added); the 375px header wraps `system light dark` over the title (seen, not compared to baseline); the halo is faint in the light scheme.
+
+## Bigger specimen and two suns, 2026-10-08
+
+The specimen is now a body behind the title, about 2.5x its old size, and two
+real suns drive the installation: Chicago's lights the specimen, the viewer's
+own is the halo line.
+
+Decisions:
+- Scale: `.specimen` gets `z-index: -1` and `.stage` loses its `z-index`, so the specimen joins the lander's stacking context above the halo (-10) and below the words and readout. Box is taller (desktop `top -40px / bottom -100px`, phones `top -56px / bottom 48%` so it ends above the compact readout); `HoldStage` multiplies every model frame by `SPECIMEN_ZOOM = 1.2` and drops it `SPECIMEN_DROP = 0.6` world units.
+- Sun math lives in `plain/sky/` (NOAA-style, no deps). Chicago is 41.88, -87.63. The view faces south: east screen left, west screen right, elevation up. The sun's depth component is fixed toward the viewer (`SUN_DEPTH`), because a true south-facing view would backlight the specimen at noon. Night blends to a fixed moon direction with intensity scaled by phase.
+- Pose contract: `ambient = 1` means no directional shading, so the defaults are exact. Day writes ambient 0.45, night 0.28. ASCII and liquid add a `DirectionalLight` at intensity `(1 - ambient) * key.intensity * 10` and scale environment intensity by `ambient`; particles fade alpha by `ambient + (1 - ambient) * key * lambert` using the offset from the cloud centre as the normal; liquid also rotates its flow sheen toward the key. All edits are marked `// sun: key light`.
+- Horizon: `HoldOverlay`'s `scan` Laser takes offset, core, glow and thickness from the viewer's sun (`horizonFor`), quantised to 0.25 degrees so it re-renders only on change. Monochrome, no warm accent.
+- Viewer location: first frame uses the browser zone (standard UTC offset as longitude, latitude 40). `/api/sky` returns only the rounded sun, zone and moon phase; the client recovers a coarse site in memory (`siteFromSun`) so a horizon drag can time-lapse it. Coordinates never leave the server response.
+- Everything reads `skyNow()` and `subscribeSky` (minute tick, visibilitychange, `subscribeSkyOffset`, site refinement), so a `setSkyOffset` drag updates the readout, the halo and the light at once. No rAF loop of its own, so reduced motion adds no animation.
+- Readout: `sun` (Chicago, `38° S`, `2° dusk`, `−12° night`) and `you` (viewer zone HH:MM plus elevation or dawn/dusk/night) rows, both hidden on short compact screens; the `chicago` clock now reads `skyNow()`.
+- `?sun=dawn|noon|dusk|night` pins both suns (moon phase 0.5) and skips the network.
+
+Open for the owner: the halo in the light scheme is barely visible (as before); at noon the raised halo crosses the specimen's legs; at 1440x900 the liquid specimen's head can pass under the room switch.
+
+Verification: `npm run check` passed. Screenshots taken with headless Chrome (Playwright script) of all four scenes at 1440x900 and 390x844, Signal and Surface at 320x568, light and dark, `?sun=dawn|noon|dusk|night`; no console errors. Phone full-readout check: readout stays 16px+ below the specimen at 390x844 and 320x568, no horizontal scroll. The e2e suite was not run. Not committed, pushed or deployed.
+## Specimen gaze and horizon drag, 2026-10-08
+
+The first touch now pays off: the specimen turns to look at the pointer, and
+dragging the Halo line sweeps the sky clock.
+
+Decisions:
+- Gaze lives in `specimenPose.gaze`, written by `useSpecimenGaze` (mounted in HoldInstallation) with an exact critically damped spring (rate 3/s, no overshoot). Pointer offset from the specimen box centre, normalised by half the viewport, maps to ±35° yaw and ±15° pitch. A released touch or a cursor that left the window holds its point for 3s, then drifts home. Reduced motion keeps gaze at 0.
+- Gaze vs turntable: `gaze.face` (new field, 0..1, eased at 2.2/s) is engagement. The renderers scale OrbitControls' `autoRotateSpeed` by `1 - face` and add `face × camera azimuth` to the model's yaw, so an engaged specimen stops and turns to face the viewer from wherever the turntable left it; idle, it turns back and the turntable resumes. At the default pose nothing changes.
+- Renderers: `canvasui/specimenGazeRig.ts` adds a group between the float group and the fitted model (so the float rock still plays) and is called once per frame before `controls.update()`. Each edit in AsciiObject, ParticleObject and LiquidObject is marked `// gaze`; these are deliberate hand edits to otherwise vendored files.
+- Horizon drag: `HorizonDrag` is a 64px invisible `role="slider"` band centred on the Halo line, following its sun-driven `offset` (`useViewerHorizon`). One viewport width is 24h, rightward is later, clamped to ±24h; release eases home over 1.2s (snaps under reduced motion). Arrows sweep an hour and ease home 1.5s after the last key; Home returns at once. `touch-action: pan-y`, `cursor: ew-resize`, a faint line on hover and focus, and a mono `+6h 40m` hint while active.
+- Stacking: the band sits above the overlays and below the stage (z 1) and the footer row, so the readout, links and operator keep their hits. The footer row is now `pointer-events-none` with its children re-enabled, so its empty gaps reach the band on phones. `isHoldControl` now includes `[role="slider"]`, so drags raise no click ring and no field press.
+- The readout's `chicago` row reads `skyNow()` and re-renders on offset changes.
+
+Verification: `npm run check` passed. Dev server on 3102, headless Chrome via Playwright (scratch script, not committed): gaze reached about ±0.59 rad yaw with face 1 on all four scenes (ascii, particle, swarm, liquid) and screenshots show the specimen turned toward each side; band click raised no ring while an empty click did; a half-width drag showed `+12h 00m` and the clock 12h ahead, then returned to 0; 390x844 touch drag worked with `pan-y`; reduced motion kept gaze 0 and snapped back; no console errors. Not committed.
+## Press-and-hold gather, 2026-10-08
+
+Holding on empty field pulls the whole Installation in toward the specimen and
+lets it spring back on release. Visitor-caused only; no idle gather.
+
+Decisions:
+- `holdGather.ts` owns `specimenPose.gather`. Threshold 250ms, 10px slop before it cancels (so a scroll or drag never gathers), controls excluded via `isHoldControl`. A quick click is untouched: the ring and field burst still fire on pointerdown as before.
+- Easing is a spring: critically damped toward 1 while held (about 95% at 1.5s), underdamped toward 0 on release (zeta 0.62, about 7% overshoot below rest, settled in about 1.2s).
+- Field: `asciiFluid` gained a `pull` option (sink with a slight spiral at the specimen centre, plus dye seeded on seven rotating arms at the rim so the inflow is visible). The same amount loosens the source floor and the field message pass, so the Suspension title erodes into the flow and re-inks on release.
+- Specimen: each renderer scales `floatGroup` by up to 1.35x (Liquid multiplies its squash). Particles also pull their homes 14% tighter with less drift, and get an inward kick on gather and an outward burst on release. Edits are marked `// gather`.
+- Title: solid (Drift, Surface) erodes through `DisturbedText`'s ramp and throws glyphs outward from the specimen (new `gather` prop, only on the message lines). Dust (Signal) scatters each particle by a stable offset tied directly to gather, so it re-forms exactly on release. A ParticleObject counts as the specimen only inside `[data-specimen-layer]`. Decode has no gather response.
+- MOVEMENT: `reportGather` lifts the level to 0.92 x gather (SURGE above about 0.7), then the normal release brings it home.
+- Touch: the Installation root has `select-none` and `-webkit-touch-callout: none`; `contextmenu` is prevented only while a press is pending or gathering. Scrolling is untouched (no `touch-action` change).
+- Reduced motion: no gather at all. A frozen half-gathered state read as a stuck frame, not calm.
+
+Verification: `npm run check` passed. Browser check on a dev server (hidden pane, about 1.5fps, so timings were not judged): all four scenes gathered (field, specimen, title, MOVEMENT SURGE) and recovered fully; at 390x844 a touch hold gathered, a 20px move before the threshold cancelled, a quick click did not gather, and contextmenu was prevented during the hold. The click ring could not be observed at that frame rate; its code path is unchanged. Not committed.
+
+## Shared daily scene and Chicago clock, 2026-10-08
+
+Every cold load used to rotate from a locally stored last scene, so a first
+visit always saw Signal and nobody shared a scene. Now the first load each
+Chicago day opens the day's scene, and later loads continue the rotation.
+
+Decisions:
+- Daily scene is the Chicago day index mod 4 (`chicagoTime.ts`, `dailyComposition`). 2026-10-07 Suspension, 10-08 Drift, 10-09 Surface, 10-10 Signal.
+- New storage key `mythcorp:hold-cold-day` records the day last seen; the old scene key is kept. A new day, or a missing scene key, resets to the daily scene.
+- Blocked storage gets the daily scene on every load. `?scene=` pins and writes nothing.
+- A first visit is no longer guaranteed Signal. That is a compromise on audit Q4, accepted so everyone shares the day's scene. `DEFAULT_HOLD_COMPOSITION` (Signal) stays as the pre-pick placeholder so hydration matches.
+- Readout gains a `chicago` row (HH:MM, `useSyncExternalStore`, minute tick plus a visibilitychange refresh, server snapshot `--:--`), hidden on short compact screens. The console boot line uses the same formatter; `your time` is unchanged.
+- Existing e2e specs that assumed Signal are pinned with `scene=signal`; `tests/e2e/daily-scene.spec.ts` is new.
+- Story copy in `storyData.ts` and DESIGN.md updated to match.
+
+Phone pass (390x844, 320x568, dev server, coarse pointer): added `pointer-coarse:` 44px targets on the scheme picker, Let go buttons, Calhoun and star buttons, and the contact links (links only when the viewport is 700px tall or more, because at 568px tall they shrank the Console and Tour panes). Open for the owner: at 320x568 the Console pane is 161px and Tour/Let go 205px tall; the installation ghost backdrop overlaps the compact readout by about 51px there.
+
+Verification: `npm run check:roll` and `npm run check` run locally. Playwright was not run (Chromium not installed), so the new and edited specs are untested. Not committed, pushed or deployed.
+
 ## Paper v2.8 deployed, 2026-10-08
 
 Pushed main to 8acd8c3 and deployed it as Cloudflare version cd4103b1 from a

@@ -4,6 +4,7 @@
 
 import dynamic from 'next/dynamic';
 import type { Scheme } from './holdScheme';
+import { useViewerHorizon } from './sky/sunLight';
 
 /** Full-screen canvas effects that draw their own geometry, layered over the field and under the chrome. */
 const GlyphRain = dynamic(() => import('../canvasui/GlyphRain').then((m) => m.GlyphRain), { ssr: false });
@@ -65,23 +66,7 @@ export function HoldOverlay({
           <></>
         </GlyphRain>
       ) : overlay === 'scan' ? (
-        <Laser
-          className={FILL}
-          speed={0.25}
-          offset={160}
-          color={ink}
-          thickness={4}
-          core={0.8}
-          radius={16}
-          glow={1.2}
-          wave={8}
-          width={0.6}
-          flicker={0.15}
-          heat={1}
-          sparkle={0.2}
-        >
-          <></>
-        </Laser>
+        <SunHorizon ink={ink} />
       ) : overlay === 'fog' ? (
         <Clouds
           className={FILL}
@@ -132,5 +117,30 @@ export function HoldOverlay({
         </ForceField>
       )}
     </div>
+  );
+}
+
+/** The halo line is the viewer's own sun: its height and brightness follow
+ *  local solar elevation. Monochrome by rule, no warm accent. */
+function SunHorizon({ ink }: { ink: [number, number, number] }) {
+  const horizon = useViewerHorizon();
+  return (
+    <Laser
+      className={FILL}
+      speed={0.25}
+      offset={horizon?.offset ?? 160}
+      color={ink}
+      thickness={horizon?.thickness ?? 4}
+      core={horizon?.core ?? 0.8}
+      radius={16}
+      glow={horizon?.glow ?? 1.2}
+      wave={8}
+      width={0.6}
+      flicker={0.15}
+      heat={1}
+      sparkle={0.2}
+    >
+      <></>
+    </Laser>
   );
 }

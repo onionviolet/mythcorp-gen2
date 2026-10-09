@@ -32,6 +32,7 @@ Single-screen index of where things live. Read this first; grep second.
 | `/a/[id]` | `src/app/a/[id]/page.tsx` | Public image view with safe OpenGraph metadata and direct link. Extensionless id, noindex, embeds still unfurl |
 | `/i/[key]` | `src/app/i/[key]/page.tsx` | Legacy view route, 308s to `/a/[id]`. Kept so already-shared links survive |
 | `/d/[token]` | `src/app/d/[token]/page.tsx` | Delete-token confirm page. Renders read-only, the delete is a POST from `DeleteConfirm.tsx` |
+| `GET /api/sky` | `src/app/api/sky/route.ts` | Viewer's sun from Cloudflare `request.cf`. Returns only `{ elevation, azimuth, timezone, moonPhase }`, rounded, `private, no-store`; 503 when `cf` has no coordinates (plain `next dev`). Never returns or logs coordinates |
 | `POST /api/delete` | `src/app/api/delete/route.ts` | Redeems a delete token. POST only, so unfurlers and prefetch cannot destroy an image |
 | `/og/chat` | `src/app/og/chat/page.tsx` | Local-only chat sandbox |
 | `/og/specimen-story` | `src/app/og/specimen-story/page.tsx` | Scrollytelling study: a sticky R3F stage beside five acts on how the holding installation works; scroll scrubs the camera between act poses. Data in `storyData.ts`, scroll in `useStoryScroll.ts` |
@@ -165,7 +166,7 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/PlainField.tsx` | Plain-theme canvas mount, pointer wiring, teardown |
 | `src/app/components/plain/plainFieldLifecycle.ts` | Synchronous canvas release before leaving plain mode |
 | `src/app/components/plain/PlainHold.tsx` | The held front page: picks one room per load (`?room=` pins one) and owns the hold attribute |
-| `src/app/components/plain/landerRooms.ts` | Room list and per-load rotation: first visit Installation, then the next room each load |
+| `src/app/components/plain/landerRooms.ts` | Room list. Every load opens the Installation; `?room=` pins one |
 | `src/app/components/plain/HoldRoomFrame.tsx` | Shared room chrome: wordmark, room switch, scheme picker, operator notes, contact links. Rooms own only the middle |
 | `src/app/components/plain/HoldRoomSwitch.tsx` | Steps to the next room without a reload |
 | `src/app/components/plain/HoldInstallation.tsx` | Room 1: specimen, field-drawn words and the readout (the original holding screen) |
@@ -173,7 +174,11 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/rooms/LetGoRoom.tsx` | Room 3: the words fall and can be thrown. Uses `src/app/og/gravity/letterSolver.ts` |
 | `src/app/components/plain/rooms/ConsoleRoom.tsx` | Room 4: lock-aware terminal with true-valued commands. Commands in `rooms/console/commands.ts` |
 | `src/app/components/plain/holdRoll.ts` | Retained budgeted randomizer and noise weights. Checked by `npm run check:roll`; the lander's cold load uses holdCompositions |
-| `src/app/components/plain/holdCompositions.ts` | Four authored scenes, Signal on a first visit, then one scene further per load (`?scene=` pins one); Halo is the persistent base while each scene selects a secondary overlay |
+| `src/app/components/plain/holdCompositions.ts` | Four authored scenes, the Chicago day's shared scene on the first load of each day, then one scene further per load (`?scene=` pins one, blocked storage gets the daily scene); Halo is the persistent base while each scene selects a secondary overlay |
+| `src/app/components/plain/chicagoTime.ts` | America/Chicago day key and index (drives the daily scene) and 24 hour clock (readout row, console boot line) |
+| `src/app/components/plain/sky/solarPosition.ts` | NOAA-style sun elevation/azimuth from date and lat/lon, moon phase, and `siteFromSun` (coarse site from one rounded reading, client-side only) |
+| `src/app/components/plain/sky/skyState.ts` | Chicago and viewer skies on `skyNow()`, `?sun=` pin (dawn, noon, dusk, night), viewer site guess then `/api/sky` refinement, `subscribeSky`, readout strings |
+| `src/app/components/plain/sky/sunLight.ts` | Writes Chicago's sun into `specimenPose.key`/`ambient` (`useChicagoSunLight`); maps the viewer's sun to the halo line (`useViewerHorizon`) |
 | `src/app/components/plain/holdState.ts` | `PLAIN_OPEN_PREFIXES` allowlist, read by React and the pre-paint script |
 | `src/app/components/plain/asciiFluid.ts` | The ASCII fluid solver, no React |
 | `src/app/components/plain/asciiRender.ts` | Ramp quantizer, dye field to characters |
@@ -181,17 +186,21 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/useScramble.ts` | Ideaboard #65, the decode effect |
 | `src/app/components/plain/DisturbedText.tsx` | Type the cursor erodes into the field's ramp, so what is behind shows through the holes |
 | `src/app/components/plain/holdPointer.ts` | One `pointermove` listener, published on a frame, read by every piece of disturbed type |
+| `src/app/components/plain/useSpecimenGaze.ts` | Writes `specimenPose.gaze`: critically damped turn toward the pointer (±35° yaw, ±15° pitch) and `face`, which stops the turntable while engaged; 3s linger after touch release |
+| `src/app/components/canvasui/specimenGazeRig.ts` | Project-owned (not vendored): the group the Ascii, Particle and Liquid renderers wrap the model in to apply `specimenPose.gaze`; edits there are marked `// gaze` |
+| `src/app/components/plain/HorizonDrag.tsx` | Invisible `role="slider"` band over the Halo line: drag (one viewport width is 24h) or arrow keys sweep `skyTime`'s offset, release eases it home |
 | `src/app/components/plain/HoldStage.tsx` | Selected model in four dynamic monochrome renderers; load-aware crossfade retains at most two keyed layers and preserves the loaded canvas on promotion; styles in HoldStage.module.css |
 | `src/app/components/plain/holdModels.ts` | Model registry: local assets, per-model framing, source, license and credit metadata |
 | `docs/HOLD_MODEL_ONBOARDING.md` | How to add and verify future GLBs |
 | `scripts/generate-hold-calibration-glb.mjs` | Regenerates the original public/models/calibration.glb specimen |
 | `src/app/components/plain/HoldOverlay.tsx` | Full-screen Canvas UI layer: `rain`, `shield`, `fog`, `drops`, `scan`. All draw their own geometry. Five more were auditioned and cut, each for a recorded reason, see the file |
 | `src/app/components/plain/HoldPickers.tsx` | Just the scheme picker now. The style, message and overlay rows moved into the readout |
-| `src/app/components/plain/HoldStatus.tsx` | Full/compact readout, saved layout preference, next-value hints and direct-change acknowledgement; styles in HoldStatus.module.css |
+| `src/app/components/plain/HoldStatus.tsx` | Full/compact readout, Chicago clock row, saved layout preference, next-value hints and direct-change acknowledgement; styles in HoldStatus.module.css |
 | `src/app/components/plain/useReducedMotion.ts` | Live system motion preference for the field, disturbed type, title scramble and specimen transitions |
 | `src/app/components/plain/holdSceneEvents.ts` | User scene-change event consumed by the cat's one-shot ear reaction |
 | `src/app/components/plain/fieldMetrics.ts` | One-value store the field publishes to and the readout reads |
-| `src/app/components/plain/fieldActivity.ts` | MOVEMENT signal fed only by the fake cursor, cat and click rings, with speed-sensitive attack and exponential release |
+| `src/app/components/plain/fieldActivity.ts` | MOVEMENT signal fed only by the fake cursor, cat, click rings and the press-and-hold gather, with speed-sensitive attack and exponential release |
+| `src/app/components/plain/holdGather.ts` | Press-and-hold gather: 250ms threshold, 10px slop, spring-eased `specimenPose.gather`, specimen centre for the field sink and title scatter, long-press callout suppression |
 | `src/app/components/plain/holdScheme.ts` | Plain mode's own light/dark switch: key, attribute, ink colours |
 | `src/app/components/plain/usePlainScheme.ts` | Owns the scheme (`usePlainScheme`) and follows it (`useResolvedScheme`) |
 | `src/app/components/plain/HoldContact.tsx` | `CONTACT`, the single source for contact values, and the corner contact links |

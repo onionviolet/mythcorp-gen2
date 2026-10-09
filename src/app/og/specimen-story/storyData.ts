@@ -71,7 +71,7 @@ export const STORY_STEPS: ReadonlyArray<StoryStep> = [
     title: 'Signal',
     body: [
       'The installation has four authored scenes, and the camera now walks a lap around the specimen to meet them. The first is Signal: the specimen drawn as ASCII, over lettering made of dust.',
-      'A first visit opens here. After that, each load opens on the next scene in the order, so a reload always shows a new room. Add ?scene=drift to the address to pin one for sharing.',
+      'Each Chicago day opens on one shared scene for everyone, and loads then carry on in order, so a reload always shows a new room. Add ?scene=drift to the address to pin one for sharing.',
     ],
     pose: { azimuth: 40, elevation: 8, distance: 1.7 },
     treatment: 'flat',
@@ -120,7 +120,7 @@ export const STORY_STEPS: ReadonlyArray<StoryStep> = [
     kicker: 'act 3 · four rooms',
     title: 'Surface',
     body: [
-      'Surface is the liquid style: a glassy skin with a faint sheen and grain, stripped of every colour it shipped with. The lap ends here, and the next reload starts again at Signal.',
+      'Surface is the liquid style: a glassy skin with a faint sheen and grain, stripped of every colour it shipped with. The lap ends here, and the next reload carries on to Signal.',
     ],
     pose: { azimuth: 310, elevation: 10, distance: 1.7 },
     treatment: 'gloss',

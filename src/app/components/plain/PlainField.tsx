@@ -9,6 +9,7 @@ import { isHoldControl } from './holdPress';
 import { createAsciiFluid } from './asciiFluid';
 import { renderTextMask } from './textMask';
 import { isHeld } from './holdState';
+import { getGather } from './holdGather';
 import { publishMetrics, resetMetrics } from './fieldMetrics';
 import { useResolvedScheme } from './usePlainScheme';
 import { useReducedMotion } from './useReducedMotion';
@@ -59,6 +60,7 @@ export function PlainField() {
       sourceHold: 0.95,
       vorticity: 0.6,
       onMetrics: publishMetrics,
+      pull: getGather,
       source: held && messageStyle === 'field'
         ? (cols, rows) =>
             renderTextMask(holdLines(cols, rows), cols, rows, {

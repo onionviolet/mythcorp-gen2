@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from "react";
 
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { createSpecimenGazeRig } from "./specimenGazeRig"; // gaze
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DEFAULT_SPECIMEN_POSE, specimenPose } from "../plain/specimenPose";
 
 export interface AsciiObjectOptions {
   /** URL of the asset to display: GLB/glTF, SVG, PNG, JPEG, WebP, or GIF. Object URLs from a file input work too. The format is sniffed from the bytes, not the extension. */
@@ -925,8 +927,16 @@ export function createAsciiObject(
   const floatGroup = new THREE.Group();
   floatGroup.position.y = MODEL_LIFT;
   const fitGroup = new THREE.Group();
-  floatGroup.add(fitGroup);
+  // Only the Installation's specimen reads the live pose; the dust title and the lab stay at rest.
+  const pose = canvas.closest("[data-specimen-layer]") ? specimenPose : DEFAULT_SPECIMEN_POSE;
+  // gaze
+  const gazeRig = createSpecimenGazeRig();
+  gazeRig.group.add(fitGroup);
+  floatGroup.add(gazeRig.group);
   scene.add(floatGroup);
+  // sun: key light
+  const sunKey = new THREE.DirectionalLight(0xffffff, 0);
+  scene.add(sunKey);
 
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
@@ -1348,6 +1358,8 @@ export function createAsciiObject(
       envDirty = false;
       refreshEnvironment();
     }
+    // gaze
+    gazeRig.update(camera, controls, config.autoRotateSpeed, pose);
     controls.update();
 
     if (!reducedMotion) {
@@ -1363,6 +1375,12 @@ export function createAsciiObject(
         config.yOffset +
         (Math.sin(elapsed / 1.5) / 10) * config.floatIntensity;
     }
+    floatGroup.scale.setScalar(1 + 0.35 * pose.gather); // gather
+
+    // sun: key light
+    scene.environmentIntensity = pose.ambient;
+    sunKey.intensity = (1 - pose.ambient) * pose.key.intensity * 10;
+    sunKey.position.fromArray(pose.key.dir).transformDirection(camera.matrixWorld);
 
     renderer.setRenderTarget(target);
     renderer.render(scene, camera);

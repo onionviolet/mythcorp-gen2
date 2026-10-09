@@ -3,6 +3,9 @@
 // Walkthrough: /wc/learn/plain-mode
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react';
+import { chicagoClock } from './chicagoTime';
+import { skyNow } from './skyTime';
+import { chicagoSky, subscribeSky, sunReading, viewerReading } from './sky/skyState';
 import { DisturbedText, GENTLE } from './DisturbedText';
 import styles from './HoldStatus.module.css';
 import {
@@ -43,7 +46,9 @@ const OPENED_AT = Date.now();
 /**
  * The readout. Every number here is measured rather than decorative: the grid
  * really is that size, the activity meter reflects the visible fake cursor,
- * cat and click rings, and the clock really is how long you have been on the page.
+ * cat and click rings, the clock really is how long you have been on the page,
+ * the chicago row is the real America/Chicago time, ticking each minute, and
+ * the sun and you rows are Chicago's sun and the visitor's own.
  */
 export function HoldStatus({
   style, scheme, message, overlay, onCycle, scene, onScene, model, onModel, nextValues,
@@ -60,6 +65,9 @@ export function HoldStatus({
     subscribeFieldActivity, getFieldActivity, getServerFieldActivity,
   );
   const elapsed = useElapsed();
+  const chicago = useSyncExternalStore(subscribeSky, getChicagoClock, () => '--:--');
+  const chicagoSun = useSyncExternalStore(subscribeSky, getChicagoSun, () => '--');
+  const viewer = useSyncExternalStore(subscribeSky, getViewerReading, () => '--:--');
   const wide = useSyncExternalStore(subscribeWide, getWide, () => false);
   const [expandedChoice, setExpandedChoice] = useState<boolean | null>(null);
   const [hoveredHint, setHoveredHint] = useState<ReadoutHint | null>(null);
@@ -114,6 +122,9 @@ export function HoldStatus({
                    sm:gap-x-6 sm:tracking-[0.18em]">
       <Row label="status" value="building" />
       <Row label="elapsed" value={elapsed} hideOnShort />
+      <Row label="chicago" value={chicago} hideOnShort />
+      <Row label="sun" value={chicagoSun} hideOnShort />
+      <Row label="you" value={viewer} hideOnShort />
       <Row label="grid" value={metrics.cols ? `${metrics.cols} x ${metrics.rows} cells` : 'idle'} hideOnShort />
       <Row label="scene" value={scene ?? style} onCycle={onScene} nextValue={nextValues?.scene} onHoverHint={setHoveredHint} onFocusHint={setFocusedHint} />
       {expanded && <>
@@ -212,7 +223,7 @@ function Row({
       {/* The meter is already glyphs and is not a string, so it is passed
           through untouched. Everything else in the readout is text and erodes
           like the rest of the screen. */}
-      <dd data-short={hideOnShort || undefined} className="self-center whitespace-pre" suppressHydrationWarning>
+      <dd data-row={label} data-short={hideOnShort || undefined} className="self-center whitespace-pre" suppressHydrationWarning>
         {onCycle && typeof value === 'string' ? (
           <button
             ref={control}
@@ -245,6 +256,10 @@ function Row({
     </>
   );
 }
+
+function getChicagoClock() { return chicagoClock(skyNow()); }
+function getChicagoSun() { return sunReading(chicagoSky()); }
+function getViewerReading() { return viewerReading(); }
 
 /** mm:ss on the page. Ticks on a timer, not a frame loop. */
 function useElapsed() {

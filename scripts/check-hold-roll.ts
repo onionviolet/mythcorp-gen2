@@ -10,7 +10,8 @@
  * tell you either of those things. Counting the outcomes does.
  */
 import { rollHold, HOLD_NOISE } from '../src/app/components/plain/holdRoll';
-import { DEFAULT_HOLD_COMPOSITION, HOLD_COMPOSITIONS, compositionName } from '../src/app/components/plain/holdCompositions';
+import { DEFAULT_HOLD_COMPOSITION, HOLD_COMPOSITIONS, compositionName, dailyComposition } from '../src/app/components/plain/holdCompositions';
+import { chicagoClock, chicagoDay } from '../src/app/components/plain/chicagoTime';
 
 const STYLES = ['ascii', 'particle', 'swarm', 'liquid'] as const;
 const MESSAGES = ['field', 'solid', 'decode', 'dust'] as const;
@@ -72,9 +73,25 @@ if (compositionName({ style: 'liquid', message: 'decode', overlay: 'none' }) !==
   throw new Error('Manual composition must remain identifiable as Custom');
 }
 if (DEFAULT_HOLD_COMPOSITION.name !== 'Signal') {
-  throw new Error('Cold visits must begin with Signal');
+  throw new Error('The pre-pick placeholder must be Signal');
 }
 if (DEFAULT_HOLD_COMPOSITION.overlay !== 'none') {
   throw new Error('Signal must begin without a secondary overlay');
 }
 console.log(`${authoredKeys.size} authored compositions: unique and within budget`);
+
+const dayNames = ['2026-10-07', '2026-10-08', '2026-10-09', '2026-10-10']
+  .map(day => dailyComposition(new Date(`${day}T17:00:00Z`)).name);
+if (new Set(dayNames).size !== 4) {
+  throw new Error(`Four consecutive Chicago days must map to four scenes: ${dayNames.join(', ')}`);
+}
+if (chicagoDay(new Date('2026-10-08T04:59:00Z')).key === chicagoDay(new Date('2026-10-08T05:00:00Z')).key) {
+  throw new Error('Chicago midnight (05:00Z in CDT) must start a new day');
+}
+if (chicagoDay(new Date('2026-11-02T06:30:00Z')).index - chicagoDay(new Date('2026-11-01T05:30:00Z')).index !== 1) {
+  throw new Error('Day indexes must stay consecutive across the November DST change');
+}
+if (chicagoClock(new Date('2026-10-08T19:05:00Z')) !== '14:05' || chicagoClock(new Date('2026-12-01T19:05:00Z')) !== '13:05') {
+  throw new Error('Chicago clock must follow daylight saving');
+}
+console.log('daily scene and Chicago clock: ok');

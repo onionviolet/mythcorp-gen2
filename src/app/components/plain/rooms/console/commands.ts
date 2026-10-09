@@ -1,5 +1,6 @@
 import { SKETCHES } from '../../../../og/sketches';
 import { CONTACT } from '../../HoldContact';
+import { chicagoClock } from '../../chicagoTime';
 import { LANDER_ROOMS, nextRoom, roomName, type LanderRoomId } from '../../landerRooms';
 
 
@@ -117,7 +118,7 @@ export function bootLines(current: LanderRoomId): string[] {
   return [
     'mythcorp internal terminal',
     `your time      ${fmt()}`,
-    `chicago time   ${fmt('America/Chicago')}`,
+    `chicago time   ${chicagoClock(now)}`,
     `reduced motion ${yes('(prefers-reduced-motion: reduce)') ? 'preferred' : 'not asked for'}`,
     `dark mode      ${yes('(prefers-color-scheme: dark)') ? 'preferred' : 'not asked for'}`,
     `front rooms    ${LANDER_ROOMS.length}`,
