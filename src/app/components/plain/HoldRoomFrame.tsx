@@ -29,11 +29,11 @@ export function HoldRoomFrame({
   return (
     <div className={`${entrance.lander} fixed inset-0 z-10 flex flex-col`}>
       <header
-        className={`${entrance.identity} relative z-20 flex items-start justify-between gap-4 p-5 font-mono text-xs sm:p-8
+        className={`${entrance.identity} relative z-20 flex items-center justify-between gap-4 p-5 font-mono text-xs sm:p-8
                     ${over ? 'pointer-events-none' : ''}`}
       >
-        <DisturbedText text={wordmark} className="tracking-[0.45em] text-[color:var(--fg)]" />
-        <div className="pointer-events-auto flex flex-wrap items-start justify-end gap-x-6 gap-y-1">
+        <DisturbedText text={wordmark} className="tracking-[0.3em] text-[color:var(--fg)] min-[380px]:tracking-[0.45em]" />
+        <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-x-3 gap-y-1 min-[380px]:gap-x-6 [-webkit-text-stroke:3px_var(--bg)] [paint-order:stroke_fill]">
           {roomSwitch}
           <SchemePicker choice={schemeChoice} onPick={onSchemeChoice} />
         </div>

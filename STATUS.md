@@ -1,5 +1,20 @@
 # STATUS
 
+## Phone header fits on one row, 2026-10-09
+
+The header wrapped `system light dark` onto the title on phones: three 44px
+scheme targets beside the wordmark and room switch did not fit. Below `sm` the
+picker is one button that shows the current scheme and cycles (`Colour scheme,
+system. Activate for light`), like the readout rows. Below 380px the room
+counter hides and the wordmark tracking and control gap tighten. The header
+controls get the same page-coloured knockout stroke as the title, since the
+specimen's head can rise behind them; the active-scheme marker is a border on
+the text, because the stroke hid the underline. The header rows are centre
+aligned, so touch-sized targets no longer sit lower than their neighbours.
+Measured one row with no horizontal scroll at 320, 360, 375, 390 and 412 wide,
+Installation, Tour, Let go and Console. `npm run check` passed; e2e 44 of 44 on
+the production build.
+
 ## CI gate is the check; e2e there is informational, 2026-10-09
 
 The first CI runs failed different WebGL timing specs each time (software
