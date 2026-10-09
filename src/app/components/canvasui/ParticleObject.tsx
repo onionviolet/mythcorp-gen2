@@ -9,6 +9,7 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DEFAULT_SPECIMEN_POSE, specimenPose } from "../plain/specimenPose";
 import { createRectCache } from "../rect-cache";
+import { createPixelRatioGovernor } from "./adaptivePixelRatio"; // perf
 
 export interface ParticleObjectOptions {
   /** URL of the asset to display: GLB/glTF, SVG, PNG, JPEG, WebP, or GIF. Object URLs from a file input work too. The format is sniffed from the bytes, not the extension. */
@@ -115,6 +116,9 @@ const CAMERA_DIR = new THREE.Vector3(0, -1, 4).normalize();
 const MODEL_LIFT = 0.3;
 const RASTER_SIZE = 420;
 const ALBEDO_SIZE = 128;
+/** Below this speed and distance from home, in cloud units, a cloud is at rest and skips simulation and upload. */
+const REST_SPEED = 1e-3;
+const REST_OFFSET = 1e-4; // perf
 
 /** gather: a stable per-particle offset in -0.5..0.5 for the title's scatter. */
 function gatherJitter(seed: number): number {
@@ -623,7 +627,9 @@ export function createParticleObject(
   let points: THREE.Points | null = null;
   let homes: Float32Array | null = null;
   let velocities: Float32Array | null = null;
+  let jitter: Float32Array | null = null; // perf
   let particleCount = 0;
+  let resting = false; // perf
   // gather: the specimen swells and pulls tight; any other cloud (the dust title) scatters.
   const gatherSpecimen = canvas.closest("[data-specimen-layer]") !== null;
   let lastGather = 0;
@@ -646,7 +652,9 @@ export function createParticleObject(
     points = null;
     homes = null;
     velocities = null;
+    jitter = null; // perf
     particleCount = 0;
+    resting = false; // perf
   }
 
   function clearAsset() {
@@ -752,6 +760,7 @@ export function createParticleObject(
   const tint = new THREE.Color();
 
   function applyOptions() {
+    resting = false; // perf
     renderer.setClearColor(
       new THREE.Color(config.background || "#000000"),
       config.background ? 1 : 0,
@@ -783,10 +792,12 @@ export function createParticleObject(
     }
   }
 
+  const pixelRatio = createPixelRatioGovernor(); // perf
+
   function resize() {
     const width = Math.max(canvas.clientWidth, 1);
     const height = Math.max(canvas.clientHeight, 1);
-    const pr = Math.min(window.devicePixelRatio || 1, 2);
+    const pr = pixelRatio.ratio(); // perf
     renderer.setPixelRatio(pr);
     renderer.setSize(width, height, false);
     material.uniforms.uDpr.value = pr;
@@ -864,11 +875,15 @@ export function createParticleObject(
     const h = homes;
     const v = velocities;
 
+    // gather
+    const gather = specimenPose.gather;
+    const pointerLive = pointerActive && !reducedMotion && config.strength > 0;
+    if (resting && !pointerLive && gather === lastGather) return; // perf
+    resting = false;
+
     const stiffness = 60 * Math.max(config.spring, 0.05);
     const dampingRate = 3 + 12 * Math.min(Math.max(config.damping, 0), 1);
     const decay = Math.exp(-dampingRate * delta);
-    // gather
-    const gather = specimenPose.gather;
     const gatherKick = gatherSpecimen ? (gather - lastGather) * -14 : 0;
     lastGather = gather;
     const gatherHome = gatherSpecimen ? 1 - Math.max(0, gather) * 0.14 : 1;
@@ -890,7 +905,7 @@ export function createParticleObject(
     let pushAccel = 0;
     let shove = 0;
 
-    if (pointerActive && !reducedMotion && config.strength > 0) {
+    if (pointerLive) {
       const width = Math.max(canvas.clientWidth, 1);
       const height = Math.max(canvas.clientHeight, 1);
       ndc.set((pointerX / width) * 2 - 1, -(pointerY / height) * 2 + 1);
@@ -928,6 +943,16 @@ export function createParticleObject(
 
     const swirl = Math.min(Math.max(config.swirl, 0), 2);
     const r2max = localRadius * localRadius;
+    if (gatherScatter && !jitter) { // perf
+      jitter = new Float32Array(particleCount * 3);
+      for (let i = 0; i < particleCount; i++) {
+        jitter[i * 3] = gatherJitter(i * 1.7);
+        jitter[i * 3 + 1] = gatherJitter(i * 2.3 + 5) + 0.3;
+        jitter[i * 3 + 2] = gatherJitter(i * 3.1 + 9);
+      }
+    }
+    let maxSpeed = 0; // perf
+    let maxOffset = 0;
 
     for (let i = 0; i < particleCount; i++) {
       const ix = i * 3;
@@ -967,7 +992,7 @@ export function createParticleObject(
       let hy = h[iy] * gatherHome; // gather
       let hz = h[iz] * gatherHome; // gather
       if (gatherScatter) { // gather: the title follows the scatter exactly, so it re-forms on release
-        const jx = gatherJitter(i * 1.7), jy = gatherJitter(i * 2.3 + 5) + 0.3, jz = gatherJitter(i * 3.1 + 9);
+        const jx = jitter![ix], jy = jitter![iy], jz = jitter![iz]; // perf
         hx += jx * gatherSpread; hy += jy * gatherSpread; hz += jz * gatherSpread;
         p[ix] += jx * gatherShift; p[iy] += jy * gatherShift; p[iz] += jz * gatherShift;
       }
@@ -983,9 +1008,14 @@ export function createParticleObject(
       v[ix] = vx;
       v[iy] = vy;
       v[iz] = vz;
+      const speed = Math.abs(vx) + Math.abs(vy) + Math.abs(vz); // perf
+      if (speed > maxSpeed) maxSpeed = speed;
+      const offset = Math.abs(hx - p[ix]) + Math.abs(hy - p[iy]) + Math.abs(hz - p[iz]);
+      if (offset > maxOffset) maxOffset = offset;
     }
 
     positionAttr.needsUpdate = true;
+    resting = !pointerLive && maxSpeed < REST_SPEED && maxOffset < REST_OFFSET; // perf
   }
 
   let inView = true;
@@ -998,6 +1028,7 @@ export function createParticleObject(
       return;
     }
     const delta = lastTime ? Math.min((time - lastTime) / 1000, 1 / 30) : 0;
+    if (pixelRatio.sample(lastTime ? time - lastTime : 0)) resize(); // perf
     lastTime = time;
     // gaze
     gazeRig.update(camera, controls, config.autoRotateSpeed, pose);

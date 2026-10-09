@@ -116,7 +116,7 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
         <div ref={specimen} className={`${entrance.specimen} absolute inset-x-0`}>
           <HoldStage style={style} scheme={scheme} modelId={model.id} onModelError={handleModelError} />
         </div>
-        <div className={`${entrance.readoutDock} absolute inset-0 flex items-end pb-8`}>
+        <div className={`${entrance.readoutDock} absolute inset-0 z-[1] flex items-end pb-8`}>
           <div className={`${entrance.readout} pointer-events-auto px-6 pt-8`}>
             <HoldStatus
               scene={scene}
@@ -148,8 +148,8 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
         </div>
       </div>
 
-      {/* Above the Halo, under the stage and the footer, so readout controls
-          and links keep their hits. */}
+      {/* Above the Halo, under the readout dock (z-1) and the footer, so
+          readout controls and links keep their hits. */}
       <HorizonDrag />
 
       {/* The three picker rows that used to live here are gone. They listed

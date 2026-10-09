@@ -1,5 +1,94 @@
 # STATUS
 
+## E2E Chrome channel and Installation coverage, 2026-10-08
+
+Use `PLAYWRIGHT_CHANNEL=chrome npm run test:smoke` locally; CI still defaults
+to bundled Chromium. Added night sun/viewer rows, private sky response shapes,
+keyboard horizon return, quick-click versus hold/cat crouch, and locked
+OG/Twitter PNG coverage. Scene/sun pins stabilize unrelated tests; the old
+click-SURGE assertion now belongs to the strict quick-click regression test.
+
+Verified: `npm run check` passed; final targeted lint and diff whitespace passed.
+Full suite: 44 tests, 3 HTTP passes, 41 browser launch failures (Chrome SIGABRT
+before pages opened in this restricted environment). No browser assertions or
+screenshots verified. Source conflict: `reportVisibleClick` sets 0.78, above
+SURGE's 0.65 threshold; the new quick-click peak assertion requires `< 0.65`.
+App/MAP edits preserved. Port 3100 stopped; test results and traces removed.
+No commits, staging, push or deployment. Scratch evidence: `scratchpad/e2e/`.
+
+Follow-up by the merging session: Codex's sandbox could not launch Chrome, so the suite was run outside it. First run: 40 passed, 4 failed. Fixed one app regression (the horizon drag band painted over the readout after `.stage` lost its z-index, so it swallowed the phone "Full readout" tap; the readout dock is now `z-[1]`) and three test issues (the acknowledgement was read at `animationstart`, which can land after the 620ms clear on a slow frame; it now reads at the attribute change via MutationObserver, a click-peak bound below the designed 0.78, and a 4.5s cat-settle window too tight for the larger specimen). Rerun: 44 passed with `PLAYWRIGHT_CHANNEL=chrome`.
+
+## Halo on paper, 2026-10-08
+
+Cause of the light-scheme mound: where html-in-canvas exists (production
+Chrome), Laser's shimmer branch sampled the empty Installation content and
+wrote its transparent black at the reveal band's alpha, a black dome up to
+400px above the beam. Black paper hid it. The beam itself is emitted light
+(white core, ink-coloured glow), so on white it nearly vanished.
+
+Decision: Laser gains `paper` and `dash` options. Paper mode is a separate
+shader branch that draws graphite coverage in the ink colour: the core
+becomes a rule, the glow a soft grey haze capped at 35%, the heat a faint
+smoke at 10%, and content shimmer is skipped. `horizonFor(sky, paper)` maps
+the same sun to a heavier, higher rule at noon, a thin solid hairline at
+dawn and dusk, and a dotted hairline at night. `HoldOverlay` turns it on
+when the scheme resolves to light. The dark path is untouched; its shimmer
+still samples transparent black, harmless on black paper.
+
+Verified: `npm run check` green. Headless Chrome with
+`--enable-blink-features=CanvasDrawElement` reproduced the mound at HEAD in
+all four light sun states on signal and surface; after the change light shows
+the rule, dark matches HEAD side by side, and `system` resolves to light.
+Also checked 390x844 night and noon, and noon light without html-in-canvas.
+## The cat shows the horizon, 2026-10-08
+
+Unstaged in the `cat` worktree, not committed or deployed.
+- Once per page load the cat demonstrates the horizon with no copy. It walks from where it is to the halo line, pads 26px right while it nudges the sky clock +30 min (smoothstep over 900ms), lets go so the offset eases home with HorizonDrag's own 1200ms cubic release, then walks back and settles. That takes about 4.4s at 60fps. While pushing it leans 7deg with a paw out. On the walk it pads with a small bob and faces the way it moves.
+- Trigger. Fine pointers: 2.5s after the cat settles, with the mouse quiet for 2s. Touch: 4s after load. If the cat hasn't approached yet it walks in from its waiting spot, and the demo replaces the approach. It never runs under reduced motion, while hidden, during a gather, outside the Installation (it needs `[data-horizon-drag]`), or after the visitor has swept the horizon (`markSkyTouched` in `skyTime.ts`).
+- Cancel. Any pointerdown or keydown (capture) stops it at once. Touching the horizon hands the current offset to HorizonDrag. Anything else eases the offset home, and the cat walks back. Blur, resize and scroll park it.
+- Decision: the ease lives in `skyTime.ts` (`easeSkyOffset`, `easeSkyHome`, `stopSkyEase`), so the demo and HorizonDrag share one owner and a grab always stops whichever ease is running.
+- Decision: the demo timeline advances by frame time clamped to 50ms, not wall time. Under a janky load (seen in headless), wall time skipped the push stage and the clock never moved.
+- Decision: the path is planned once. It prefers a spot 80px left of home and searches outward for one where the cat, the push and both curved walks stay clear of every link and button. At 390x844, when the halo sits behind the contact stack, the cat uses the empty left side.
+- Decision: no hold hint. Nothing on screen anchors a hold, and faking a gather would drive the whole installation, which is not subtle. A crouch with no field response would read as a twitch.
+- Coarse pointers get a 24px cat (`@media (pointer: coarse)`). Desktop stays 19px.
+- Verified with headless Chrome (swiftshader), `/api/sky` blocked so the viewer's sun is a Bangkok morning, at 1440x900 and in a 390x844 touch context. In each the clock rose about +30 min, the halo moved about 12px and the clock returned to real time with offset 0. No sample overlapped a link or button. Pinned `?sun=dusk` and `?sun=night` on the phone found clear paths too. A click mid-push stopped it: gait cleared on the next frame, offset peaked at the press value and was 0 within 1s, then the cat settled. A touch tap did the same. Reduced motion never entered the demo and the offset stayed 0. No page errors. `npm run check` passes. The existing e2e cat test was not rerun.
+## Front page perf audit and three safe fixes, 2026-10-08
+
+Measured the production build in headless Chrome at 390x844 with 4x CPU throttling and slow 4G. Report: `docs/audits/FRONT_PAGE_PERF_2026-10-08.md`.
+- The main thread holds 60 fps in every scene. On slow 4G the specimen shows at about 9.1 s because `spectre.glb` carries a 1 MB, 2048 px texture. A 512 px test copy, served by route, brought that to 4.5 s. The asset is not changed; that is recommendation 1.
+- GPU fill is the phone risk. The halo `Laser` and the specimen are the costly layers, and pixel ratio is the lever.
+- Shipped: particle clouds sleep at rest and skip the position upload; the gather jitter is computed once; and a new `canvasui/adaptivePixelRatio.ts` steps the specimen and title pixel ratio from 2 to 1.5 to 1.25 on touch devices that cannot hold about 45 fps. It never steps back up, and fine pointers are untouched. Renderer edits are marked `// perf`.
+- Decision: the governor is per renderer and coarse-pointer only, so desktop output is unchanged. The halo should adopt it next; `Laser.tsx` belonged to another track this pass.
+
+Verification: `npm run check` passed. Interleaved before/after A/B (Metal, 4x CPU): Signal's main-thread busy time fell from 27-28% to 20-21% under touch, and from 9% to 6-7% at idle. The other scenes were within noise. The governor stepped to 1.25 under SwiftShader, raising fps from 15.5 to about 19.5, and stayed at 2.0 on Metal at phone and desktop sizes. Not tested on a real device.
+## Link preview verified locally, 2026-10-08
+
+Added a shared 1200x630 OG/Twitter PNG at `/opengraph-image`: WORK IN PROGRESS,
+the actual spectre mesh sampled as dust, and a thin halo. Dynamic ImageResponse
+works in OpenNext 1.20.6's local Workers runtime. The day's `dailyComposition`
+changes the dust treatment; Chicago's hourly solar position sets lighting and
+the halo. Five-minute browser and hourly shared-cache directives; no ISR cache
+binding needed. Uses existing plain dark tokens and Geist Mono, embedded to
+avoid runtime font fetches. Only the exact image path was added to the lock
+allowlist. Root metadata now has metadataBase, warm OG/Twitter copy and a large
+Twitter card. Asset and adapter notes: `docs/SHARE_PREVIEW.md`.
+
+Verified: `npm run check` passed; `npx opennextjs-cloudflare build` passed;
+`npx opennextjs-cloudflare preview --port 3204` served both card URLs as PNGs.
+Dev and Workers fetches were each 1200x630 and 79,263 bytes. Production HTML
+contains absolute `https://mythcorp.org` image URLs; Next dev's generated OG
+URL uses localhost. Both environments retain 307 redirects for `/about`, `/og`
+and `/opengraph-image-extra`. Four daily treatments rendered at 65,611 to
+93,550 bytes; same-hour bytes match and day/night bytes differ. Generator,
+targeted lint, text policy and diff whitespace checks passed. Visually inspected
+the dev and Workers PNGs. Local servers stopped. Nothing staged or deployed.
+
+Artifacts: assigned `scratchpad/og` folder, including `dev-og-image.png`,
+`preview-og-image.png`, fetched HTML, logs and scene variants. Open: requested
+headless Chrome launch aborted with SIGABRT, so browser screenshots are
+unavailable; HTTP probes and saved PNG inspection completed. An earlier disk
+ENOSPC interrupted dev compilation; verification passed after space recovered.
+
 ## Awe pass deployed, 2026-10-08
 
 Pushed main to e7e51d2 and deployed it as Cloudflare version fa8defed from a

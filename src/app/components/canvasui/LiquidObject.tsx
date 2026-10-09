@@ -11,6 +11,7 @@ import { DEFAULT_SPECIMEN_POSE, specimenPose } from "../plain/specimenPose";
 import { SVGLoader } from "three/addons/loaders/SVGLoader.js";
 import { toCreasedNormals } from "three/addons/utils/BufferGeometryUtils.js";
 import { createRectCache } from "../rect-cache";
+import { createPixelRatioGovernor } from "./adaptivePixelRatio"; // perf
 
 export interface LiquidObjectOptions {
   /** URL of the asset to display: GLB/glTF, SVG, PNG, JPEG, WebP, or GIF. Object URLs from a file input work too. The format is sniffed from the bytes, not the extension. */
@@ -1835,10 +1836,12 @@ export function createLiquidObject(
     buildModel();
   }
 
+  const pixelRatio = createPixelRatioGovernor(); // perf
+
   function resize() {
     const width = Math.max(canvas.clientWidth, 1);
     const height = Math.max(canvas.clientHeight, 1);
-    const pr = Math.min(window.devicePixelRatio || 1, 2);
+    const pr = pixelRatio.ratio(); // perf
     renderer.setPixelRatio(pr);
     renderer.setSize(width, height, false);
     sceneTarget.setSize(
@@ -1870,6 +1873,7 @@ export function createLiquidObject(
       return;
     }
     const delta = lastTime ? Math.min((time - lastTime) / 1000, 0.05) : 0;
+    if (pixelRatio.sample(lastTime ? time - lastTime : 0)) resize(); // perf
     lastTime = time;
     if (envDirty) {
       envDirty = false;

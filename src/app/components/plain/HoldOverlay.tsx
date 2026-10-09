@@ -66,7 +66,7 @@ export function HoldOverlay({
           <></>
         </GlyphRain>
       ) : overlay === 'scan' ? (
-        <SunHorizon ink={ink} />
+        <SunHorizon ink={ink} paper={scheme === 'light'} />
       ) : overlay === 'fog' ? (
         <Clouds
           className={FILL}
@@ -121,9 +121,11 @@ export function HoldOverlay({
 }
 
 /** The halo line is the viewer's own sun: its height and brightness follow
- *  local solar elevation. Monochrome by rule, no warm accent. */
-function SunHorizon({ ink }: { ink: [number, number, number] }) {
-  const horizon = useViewerHorizon();
+ *  local solar elevation. Monochrome by rule, no warm accent. Dark paper gets
+ *  emitted light; white paper gets a graphite rule, since light added to
+ *  white is invisible and its shadow reads as a smudge. */
+function SunHorizon({ ink, paper }: { ink: [number, number, number]; paper: boolean }) {
+  const horizon = useViewerHorizon(paper);
   return (
     <Laser
       className={FILL}
@@ -139,6 +141,8 @@ function SunHorizon({ ink }: { ink: [number, number, number] }) {
       flicker={0.15}
       heat={1}
       sparkle={0.2}
+      paper={paper}
+      dash={horizon?.dash ?? 0}
     >
       <></>
     </Laser>

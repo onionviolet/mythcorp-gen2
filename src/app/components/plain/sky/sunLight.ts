@@ -52,21 +52,41 @@ export function useChicagoSunLight(): void {
   }, []);
 }
 
-export type HorizonLook = { offset: number; core: number; glow: number; thickness: number };
+export type HorizonLook = {
+  offset: number;
+  core: number;
+  glow: number;
+  thickness: number;
+  /** Paper only: 0 is a solid rule, 1 a dotted one. */
+  dash: number;
+};
 
 /** The viewer's sun as the halo line: highest and brightest at noon, a thin
- *  ember at dusk, nearly dark at night with a trace of moon. */
-export function horizonFor(sky: SkyState): HorizonLook {
+ *  ember at dusk, nearly dark at night with a trace of moon. On paper the
+ *  same sun is a graphite rule: heaviest at noon, a hairline at dusk, a
+ *  dotted hairline at night. */
+export function horizonFor(sky: SkyState, paper = false): HorizonLook {
   const el = Math.min(65, Math.max(-15, sky.elevation));
   const night = 0.02 + 0.04 * moonIllumination(sky.moonPhase);
   const brightness = el < 0
     ? night + (0.12 - night) * smoothstep(-12, 0, el)
     : 0.12 + 0.88 * smoothstep(0, 50, el);
+  const offset = Math.round(110 + 190 * (el / 65));
+  if (paper) {
+    return {
+      offset,
+      core: 0.55 + 0.4 * brightness,
+      glow: 0.6 * brightness,
+      thickness: 1 + 1.5 * brightness,
+      dash: 1 - smoothstep(0.07, 0.11, brightness),
+    };
+  }
   return {
-    offset: Math.round(110 + 190 * (el / 65)),
+    offset,
     core: 0.8 * brightness,
     glow: 1.2 * brightness,
     thickness: 1 + 3 * brightness,
+    dash: 0,
   };
 }
 
@@ -76,9 +96,9 @@ function horizonKey(): string {
 }
 
 /** Re-renders only when the viewer's quarter-degree sun changes. */
-export function useViewerHorizon(): HorizonLook | null {
+export function useViewerHorizon(paper = false): HorizonLook | null {
   const key = useSyncExternalStore(subscribeSky, horizonKey, () => '');
   if (!key) return null;
   const [elevation, moonPhase] = key.split('|').map(Number);
-  return horizonFor({ elevation, azimuth: 180, moonPhase });
+  return horizonFor({ elevation, azimuth: 180, moonPhase }, paper);
 }

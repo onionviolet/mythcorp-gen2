@@ -7,6 +7,7 @@ Single-screen index of where things live. Read this first; grep second.
 | Route | File | Purpose |
 |---|---|---|
 | `/` | `src/app/page.tsx` | Plain holding installation while the site lock is active |
+| `/opengraph-image` | `src/app/opengraph-image.tsx` | Shared OG and Twitter PNG, hourly Chicago sky and daily scene; exact lock exemption |
 | `/experience` | `src/app/experience/page.tsx` | 3D simulation lab (menu + Simulation) |
 | `/og/animals` | `src/app/og/animals/page.tsx` | Parked animal intermission, queued for a licensed-art rebuild |
 | `/about` | `src/app/about/page.tsx` | Short "what is this" page |
@@ -175,6 +176,12 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/rooms/ConsoleRoom.tsx` | Room 4: lock-aware terminal with true-valued commands. Commands in `rooms/console/commands.ts` |
 | `src/app/components/plain/holdRoll.ts` | Retained budgeted randomizer and noise weights. Checked by `npm run check:roll`; the lander's cold load uses holdCompositions |
 | `src/app/components/plain/holdCompositions.ts` | Four authored scenes, the Chicago day's shared scene on the first load of each day, then one scene further per load (`?scene=` pins one, blocked storage gets the daily scene); Halo is the persistent base while each scene selects a secondary overlay |
+| `src/app/components/plain/share/shareImage.tsx` | 1200x630 Workers-compatible share card; daily dust treatment, hourly Chicago sun, embedded Geist Mono and plain dark palette |
+| `src/app/components/plain/share/shareSpectre.json` | Baked surface samples from the posed spectre; generator uses the same skinned-clone and measured-bounds approach as spectreFit |
+| `src/app/components/plain/share/shareFont.json` + `shareFont.LICENSE.txt` | Existing Geist Mono family in base64 TTF form for ImageResponse, with OFL license |
+| `src/app/components/plain/share/sharePalette.json` | Snapshot of globals.css plain dark tokens, refreshed by the spectre generator |
+| `scripts/generate-share-spectre.mjs` | Regenerates spectre surface samples and share palette without browser or new dependencies |
+| `docs/SHARE_PREVIEW.md` | Share-card rendering, cache policy, asset sources and Workers verification |
 | `src/app/components/plain/chicagoTime.ts` | America/Chicago day key and index (drives the daily scene) and 24 hour clock (readout row, console boot line) |
 | `src/app/components/plain/sky/solarPosition.ts` | NOAA-style sun elevation/azimuth from date and lat/lon, moon phase, and `siteFromSun` (coarse site from one rounded reading, client-side only) |
 | `src/app/components/plain/sky/skyState.ts` | Chicago and viewer skies on `skyNow()`, `?sun=` pin (dawn, noon, dusk, night), viewer site guess then `/api/sky` refinement, `subscribeSky`, readout strings |
@@ -188,7 +195,8 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/holdPointer.ts` | One `pointermove` listener, published on a frame, read by every piece of disturbed type |
 | `src/app/components/plain/useSpecimenGaze.ts` | Writes `specimenPose.gaze`: critically damped turn toward the pointer (±35° yaw, ±15° pitch) and `face`, which stops the turntable while engaged; 3s linger after touch release |
 | `src/app/components/canvasui/specimenGazeRig.ts` | Project-owned (not vendored): the group the Ascii, Particle and Liquid renderers wrap the model in to apply `specimenPose.gaze`; edits there are marked `// gaze` |
-| `src/app/components/plain/HorizonDrag.tsx` | Invisible `role="slider"` band over the Halo line: drag (one viewport width is 24h) or arrow keys sweep `skyTime`'s offset, release eases it home |
+| `src/app/components/canvasui/adaptivePixelRatio.ts` | Project-owned (not vendored): the pixel-ratio cap the Ascii, Particle and Liquid renderers share. Touch devices that cannot hold about 45fps step from 2 to 1.5 to 1.25 and never back; fine pointers never change. Renderer edits are marked `// perf`. Audit: `docs/audits/FRONT_PAGE_PERF_2026-10-08.md` |
+| `src/app/components/plain/HorizonDrag.tsx` | Invisible `role="slider"` band over the Halo line: drag (one viewport width is 24h) or arrow keys sweep `skyTime`'s offset, release eases it home through `skyTime`'s shared `easeSkyHome`, which the cat's demo also uses |
 | `src/app/components/plain/HoldStage.tsx` | Selected model in four dynamic monochrome renderers; load-aware crossfade retains at most two keyed layers and preserves the loaded canvas on promotion; styles in HoldStage.module.css |
 | `src/app/components/plain/holdModels.ts` | Model registry: local assets, per-model framing, source, license and credit metadata |
 | `docs/HOLD_MODEL_ONBOARDING.md` | How to add and verify future GLBs |
@@ -204,7 +212,8 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/holdScheme.ts` | Plain mode's own light/dark switch: key, attribute, ink colours |
 | `src/app/components/plain/usePlainScheme.ts` | Owns the scheme (`usePlainScheme`) and follows it (`useResolvedScheme`) |
 | `src/app/components/plain/HoldContact.tsx` | `CONTACT`, the single source for contact values, and the corner contact links |
-| `src/app/components/plain/LinkedInInvite.tsx` | Distinct profile control with a responsive external arrow, continuous two-ring proximity glow, idle cursor echo and a cat that follows movement then eases home; styling in LinkedInInvite.module.css |
+| `src/app/components/plain/LinkedInInvite.tsx` | Distinct profile control with a responsive external arrow, continuous two-ring proximity glow, idle cursor echo and a cat that follows movement then eases home, and once per load walks to the halo line and nudges the sky clock (choreography in catHorizonDemo.ts); styling in LinkedInInvite.module.css |
+| `src/app/components/plain/catHorizonDemo.ts` | Pure path planning and timeline for the cat's one-time horizon demo: walk to the halo line clear of every control, push +30 min, let go, walk home |
 | `src/app/components/plain/HoldOperator.tsx` | Quiet `0w0` disclosure with console access and robot notes; LinkedIn stays visible in HoldContact |
 | `src/app/components/terminalEvents.ts` | Shared console-open event for the operator disclosure and terminal listener |
 | `src/app/components/terminalOverlay.module.css` | Theme-timed console entrance with a reduced-motion fallback |

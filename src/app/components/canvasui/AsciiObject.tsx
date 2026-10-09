@@ -8,6 +8,7 @@ import { createSpecimenGazeRig } from "./specimenGazeRig"; // gaze
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DEFAULT_SPECIMEN_POSE, specimenPose } from "../plain/specimenPose";
+import { createPixelRatioGovernor } from "./adaptivePixelRatio"; // perf
 
 export interface AsciiObjectOptions {
   /** URL of the asset to display: GLB/glTF, SVG, PNG, JPEG, WebP, or GIF. Object URLs from a file input work too. The format is sniffed from the bytes, not the extension. */
@@ -1322,10 +1323,12 @@ export function createAsciiObject(
     applyFit();
   }
 
+  const pixelRatio = createPixelRatioGovernor(); // perf
+
   function resize() {
     const width = Math.max(canvas.clientWidth, 1);
     const height = Math.max(canvas.clientHeight, 1);
-    const pr = Math.min(window.devicePixelRatio || 1, 2);
+    const pr = pixelRatio.ratio(); // perf
     renderer.setPixelRatio(pr);
     renderer.setSize(width, height, false);
     const deviceW = Math.round(width * pr);
@@ -1353,6 +1356,7 @@ export function createAsciiObject(
       return;
     }
     const delta = lastTime ? Math.min((time - lastTime) / 1000, 0.1) : 0;
+    if (pixelRatio.sample(lastTime ? time - lastTime : 0)) resize(); // perf
     lastTime = time;
     if (envDirty) {
       envDirty = false;

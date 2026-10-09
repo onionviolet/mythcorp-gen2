@@ -2,14 +2,15 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import type { KeyboardEvent, PointerEvent } from 'react';
-import { getSkyOffset, setSkyOffset, skyNow, subscribeSkyOffset } from './skyTime';
+import {
+  easeSkyHome, getSkyOffset, markSkyTouched, setSkyOffset, skyNow, stopSkyEase, subscribeSkyOffset,
+} from './skyTime';
 import { chicagoClock } from './chicagoTime';
 import { useReducedMotion } from './useReducedMotion';
 import { useViewerHorizon } from './sky/sunLight';
 
 const DAY_MS = 86_400_000;
 const HOUR_MS = 3_600_000;
-const RETURN_MS = 1200;
 /** Keyboard sweeps wait this long after the last key before easing home. */
 const KEY_SETTLE_MS = 1500;
 /** The Halo's resting `offset` before the viewer's sun is known. */
@@ -39,37 +40,29 @@ export function HorizonDrag() {
   const [focused, setFocused] = useState(false);
   const [hintX, setHintX] = useState<number | null>(null);
   const drag = useRef<{ id: number; startX: number; startOffset: number } | null>(null);
-  const returnFrame = useRef(0);
   const keyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const stopReturn = () => {
-    if (returnFrame.current) cancelAnimationFrame(returnFrame.current);
-    returnFrame.current = 0;
+    stopSkyEase();
     if (keyTimer.current) clearTimeout(keyTimer.current);
     keyTimer.current = null;
   };
 
   const returnHome = () => {
     stopReturn();
-    const from = getSkyOffset();
-    if (reducedMotion || from === 0) { setSkyOffset(0); return; }
-    const started = performance.now();
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - started) / RETURN_MS);
-      setSkyOffset(t >= 1 ? 0 : from * (1 - t) ** 3);
-      returnFrame.current = t < 1 ? requestAnimationFrame(tick) : 0;
-    };
-    returnFrame.current = requestAnimationFrame(tick);
+    if (reducedMotion || getSkyOffset() === 0) { setSkyOffset(0); return; }
+    easeSkyHome();
   };
 
   useEffect(() => () => {
-    cancelAnimationFrame(returnFrame.current);
+    stopSkyEase();
     if (keyTimer.current) clearTimeout(keyTimer.current);
     setSkyOffset(0);
   }, []);
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (!e.isPrimary || e.button !== 0) return;
+    markSkyTouched();
     stopReturn();
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* pointer already gone */ }
     drag.current = { id: e.pointerId, startX: e.clientX, startOffset: getSkyOffset() };
@@ -98,6 +91,7 @@ export function HorizonDrag() {
     if (e.key === 'Home') { e.preventDefault(); returnHome(); return; }
     if (!step) return;
     e.preventDefault();
+    markSkyTouched();
     stopReturn();
     setSkyOffset(clampOffset(getSkyOffset() + step));
     setHintX(null);

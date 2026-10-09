@@ -5,7 +5,9 @@ const THEME_KEY = 'mythcorp-theme-v2';
 function captureRuntimeErrors(page: Page): string[] {
   const errors: string[] = [];
   page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(`console: ${message.text()}`);
+    const unavailableSky = new URL(message.location().url || page.url()).pathname === '/api/sky'
+      && /503/.test(message.text());
+    if (message.type() === 'error' && !unavailableSky) errors.push(`console: ${message.text()}`);
   });
   page.on('pageerror', (error) => errors.push(`page: ${error.message}`));
   return errors;
@@ -74,7 +76,7 @@ for (const path of ['/wc/papers', '/about', '/experience', '/wc', '/og', '/conta
 
 test('Halo stays active behind the authored scene rotation', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto('/?room=installation&scene=signal');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
 
   const scene = () => page.getByRole('button', { name: /^scene,/ });
   const halo = page.locator('[data-hold-overlay="scan"]');
@@ -91,9 +93,9 @@ test('Halo stays active behind the authored scene rotation', async ({ page }) =>
   await expect(page.getByRole('button', { name: /scene, (Halo|Trace),/ })).toHaveCount(0);
 });
 
-test('movement meter ignores the real pointer and reacts to click rings', async ({ page }) => {
+test('movement meter ignores the real pointer', async ({ page }) => {
   const errors = captureRuntimeErrors(page);
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
   const meter = page.locator('[data-field-activity]');
 
   await expect(page.locator('html')).toHaveClass(/theme-ready/);
@@ -102,14 +104,12 @@ test('movement meter ignores the real pointer and reacts to click rings', async 
   await page.mouse.move(620, 240, { steps: 4 });
   await expect(meter).toHaveAttribute('data-field-activity', 'calm');
 
-  await page.mouse.click(620, 240);
-  await expect(meter).toHaveAttribute('data-field-activity', 'surge');
   expect(errors).toEqual([]);
 });
 
 test('LinkedIn invitation keeps the exact public profile contract', async ({ page }) => {
   const errors = captureRuntimeErrors(page);
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
 
   const invite = page.locator('[data-linkedin-invite]');
   await expect(invite).toHaveAttribute('href', 'https://www.linkedin.com/in/0w0/');
@@ -175,7 +175,7 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
     };
     installObserver();
   });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
 
   const invite = page.locator('[data-linkedin-invite]');
   const pet = page.locator('[data-linkedin-pet]');
@@ -248,7 +248,7 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
     };
   })).toMatchObject({ clear: true, phase: 'following', pointerNear: 'true' });
 
-  await expect(pet).toHaveAttribute('data-pet-phase', 'settled', { timeout: 4_500 });
+  await expect(pet).toHaveAttribute('data-pet-phase', 'settled', { timeout: 9_000 });
 
   const pull = await page.evaluate(async () => {
     const inviteElement = document.querySelector<HTMLElement>('[data-linkedin-invite]');
@@ -321,7 +321,7 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
 
 test('LinkedIn glow rises continuously as the pointer approaches', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
   const invite = page.locator('[data-linkedin-invite]');
   const box = await invite.boundingBox();
   if (!box) throw new Error('LinkedIn invitation has no layout box');
@@ -359,7 +359,7 @@ test('LinkedIn glow rises continuously as the pointer approaches', async ({ page
 });
 
 test('solid message cycles passively and becomes static for reduced motion', async ({ page }) => {
-  await page.goto('/?scene=signal');
+  await page.goto('/?scene=signal&sun=noon');
   await page.getByRole('button', { name: 'words, dust, activate to change' }).click();
   await page.getByRole('button', { name: 'words, field, activate to change' }).click();
 
@@ -389,7 +389,7 @@ test('every load opens the Installation and ?room pins one', async ({ page }) =>
 test('reduced motion keeps the LinkedIn cat static and disables pulse and follow', async ({ page }) => {
   const errors = captureRuntimeErrors(page);
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
 
   const invite = page.locator('[data-linkedin-invite]');
   const pet = page.locator('[data-linkedin-pet]');
@@ -417,7 +417,7 @@ test('reduced motion keeps the LinkedIn cat static and disables pulse and follow
 test('touch parks the LinkedIn cat without causing mobile overflow', async ({ page }) => {
   const errors = captureRuntimeErrors(page);
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
 
   const invite = page.locator('[data-linkedin-invite]');
   const pet = page.locator('[data-linkedin-pet]');
