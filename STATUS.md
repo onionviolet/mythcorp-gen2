@@ -1,5 +1,21 @@
 # STATUS
 
+## Paper halo, cat demo, share card and phone perf deployed, 2026-10-09
+
+Pushed c8095b5, 429d0a9 and 75ce8e0; deployed from a clean worktree as
+Cloudflare version 28b00979 (the banner work in the primary checkout stayed
+out). The first deploy (965f6fab) rendered the share card per request and
+every production request failed with Cloudflare error 1102; making the route
+"static" did not help because OpenNext still renders it in the Worker without
+an incremental cache. The card is now a committed PNG at
+`/share/mythcorp-card.png`. Wrangler's first upload also failed with a
+transient `fetch failed`; the retry succeeded.
+
+Verified on mythcorp.org: og:image and twitter:image point at the card, which
+returns 200 image/png 1200x630 and matches the committed file; `/api/sky` 200;
+headless Chrome renders light and dark at 1440x900 and light at 390x844 with
+the slider present, the 24px touch cat, and no page errors.
+
 ## E2E Chrome channel and Installation coverage, 2026-10-08
 
 Use `PLAYWRIGHT_CHANNEL=chrome npm run test:smoke` locally; CI still defaults
