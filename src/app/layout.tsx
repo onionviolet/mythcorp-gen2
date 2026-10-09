@@ -32,12 +32,13 @@ export const metadata: Metadata = {
     title: "MYTHCORP / work in progress",
     description: "A small world to spend a moment in. Come play.",
     type: "website",
+    images: [{ url: "/share/mythcorp-card.png", width: 1200, height: 630, alt: "WORK IN PROGRESS, a spectre made of dust above a thin halo line." }],
   },
   twitter: {
     card: "summary_large_image",
     title: "MYTHCORP / work in progress",
     description: "A small world to spend a moment in. Come play.",
-    images: [{ url: "/opengraph-image", alt: "WORK IN PROGRESS, a spectre made of dust above a thin halo line." }],
+    images: [{ url: "/share/mythcorp-card.png", alt: "WORK IN PROGRESS, a spectre made of dust above a thin halo line." }],
   },
   title: SITE_LOCKED ? "MYTHCORP / work in progress" : "MYTHCORP - Discover Your Potential",
   description: SITE_LOCKED

@@ -9,8 +9,9 @@ import ink from './sharePalette.json';
 export const SHARE_IMAGE_ALT = 'WORK IN PROGRESS, a spectre made of dust above a thin halo line.';
 export const SHARE_IMAGE_SIZE = { width: 1200, height: 630 };
 
-/** Late afternoon in Chicago: a low key light and a visible halo. The live
- *  route exceeds Workers' CPU limit, so the card is drawn once at build. */
+/** Late afternoon in Chicago: a low key light and a visible halo. Rendering
+ *  per request exceeded Workers' CPU limit, so the card is a committed PNG
+ *  drawn by `scripts/generate-share-image.tsx`. */
 export const SHARE_IMAGE_MOMENT = new Date('2026-10-08T22:00:00Z');
 
 export function shareImage(now = SHARE_IMAGE_MOMENT, { timeless = true } = {}) {
@@ -45,7 +46,7 @@ export function shareImage(now = SHARE_IMAGE_MOMENT, { timeless = true } = {}) {
         </div>
       </div>
       <div style={{ position: 'absolute', left: 64, bottom: 52, fontSize: 18, color: ink['--fg-muted'] }}>Spend a moment here.</div>
-      <div style={{ display: 'flex', position: 'absolute', right: 64, bottom: 52, fontSize: 14, color: ink['--fg-subtle'] }}>{scene.name.toUpperCase()} / CHICAGO{timeless ? '' : ` ${chicagoClock(hour)}`}</div>
+      <div style={{ display: 'flex', position: 'absolute', right: 64, bottom: 52, fontSize: 14, color: ink['--fg-subtle'] }}>{timeless ? 'CHICAGO, IL' : `${scene.name.toUpperCase()} / CHICAGO ${chicagoClock(hour)}`}</div>
     </div>,
     {
       ...SHARE_IMAGE_SIZE,

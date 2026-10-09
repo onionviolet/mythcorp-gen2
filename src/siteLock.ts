@@ -11,7 +11,7 @@ export function isLockedOpenPath(pathname: string): boolean {
 }
 
 export function isRequiredSiteRequest(pathname: string): boolean {
-  if (pathname === '/' || pathname === '/opengraph-image') return true;
+  if (pathname === '/') return true;
   if (isLockedOpenPath(pathname)) return true;
   if (pathname.startsWith('/_next/') || pathname.startsWith('/api/')) return true;
   return /\/[^/]+\.[^/]+$/.test(pathname);

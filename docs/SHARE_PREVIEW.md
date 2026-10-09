@@ -1,9 +1,11 @@
 # Share preview, 2026-10-08
 
-`/opengraph-image` renders a 1200x630 monochrome PNG for both Open Graph and
-Twitter. Root metadata uses `https://mythcorp.org` by default, or the existing
-`NEXT_PUBLIC_SITE_URL` override. Only that exact extensionless image path was
-added to `isRequiredSiteRequest`; the middleware still locks other pages.
+`/share/mythcorp-card.png` is a 1200x630 monochrome PNG for both Open Graph and
+Twitter, committed under `public/` and served as a static asset, so the site
+lock's file-extension rule already lets crawlers fetch it. Root metadata uses
+`https://mythcorp.org` by default, or the existing `NEXT_PUBLIC_SITE_URL`
+override. Regenerate after changing the card:
+`npx tsx --tsconfig scripts/tsconfig.share.json scripts/generate-share-image.tsx`.
 
 ## Rendering and cache
 
@@ -13,13 +15,14 @@ of those scenes, not a screenshot of their live renderers. Chicago's solar
 position sets the specimen's lighting and the halo height. A shared card cannot
 know the viewer's location, so its halo also uses Chicago.
 
-The card is static: it is drawn once at build for `SHARE_IMAGE_MOMENT`
-(17:00 Chicago, a low key light and a visible halo), labelled with the scene
-and CHICAGO but no clock. The first deploy rendered it per request and every
+The card is static: it is drawn once, offline, for `SHARE_IMAGE_MOMENT`
+(17:00 Chicago, a low key light and a visible halo), labelled CHICAGO, IL with no
+scene or clock, since a fixed image cannot follow the daily scene. The first deploy rendered it per request and every
 request on production failed with Cloudflare error 1102 (Worker exceeded
 resource limits), although local Workers preview, which has no CPU cap,
-rendered it. A per-hour card would need pre-rendered variants or a cache
-binding; `shareImage(now, { timeless: false })` still draws one.
+rendered it. A Next "static" route did not help: without an incremental
+cache binding OpenNext still renders it in the Worker. A per-hour card would
+need pre-rendered variants or a cache binding; `shareImage(now, { timeless: false })` still draws one.
 
 OpenNext 1.20.6 explicitly supports the ImageResponse library: its installed
 `dist/cli/build/patches/ast/patch-vercel-og-library.js` discovers the traced

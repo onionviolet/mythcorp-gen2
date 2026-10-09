@@ -210,7 +210,7 @@ test.describe('touch readout', () => {
 });
 
 test('share image remains public while locked and is a 1200x630 PNG', async ({ request }) => {
-  const response = await request.get('/opengraph-image', { maxRedirects: 0 });
+  const response = await request.get('/share/mythcorp-card.png', { maxRedirects: 0 });
   expect(response.status()).toBe(200);
   expect(response.headers()['content-type']).toMatch(/^image\/png(?:;|$)/);
   const png = await response.body();
@@ -226,7 +226,7 @@ test('locked homepage advertises OG and Twitter images', async ({ request }) => 
   const tags = (await response.text()).match(/<meta\b[^>]*>/g) ?? [];
   for (const attribute of ['property="og:image"', 'name="twitter:image"']) {
     const tag = tags.find(tag => tag.includes(attribute));
-    expect(tag).toMatch(/content="[^" ]*\/opengraph-image(?:\?[^" ]*)?"/);
+    expect(tag).toMatch(/content="https?:\/\/[^" ]+\/share\/mythcorp-card\.png"/);
   }
 });
 
