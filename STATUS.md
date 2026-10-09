@@ -1,5 +1,15 @@
 # STATUS
 
+## Awe pass deployed, 2026-10-08
+
+Pushed main to e7e51d2 and deployed it as Cloudflare version fa8defed from a
+clean detached worktree, because the primary checkout still holds the
+uncommitted banner work (PR #42). Verified on mythcorp.org with cache-busting
+queries: `/api/sky` returns 200 with `private, no-store` and only rounded
+angles, zone and moon phase; headless Chrome at 1440x900 and 390x844 shows
+the large specimen, the `sun` and `you` rows (night), and no page errors.
+Seen live: in the light scheme at night the halo draws as a heavy dark mound.
+
 ## The cat and the cursor echo join the sky and the gather, 2026-10-08
 
 Small touches that reward a second look:
