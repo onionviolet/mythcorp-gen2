@@ -13,12 +13,13 @@ of those scenes, not a screenshot of their live renderers. Chicago's solar
 position sets the specimen's lighting and the halo height. A shared card cannot
 know the viewer's location, so its halo also uses Chicago.
 
-Time is floored to the UTC hour, which also aligns with Chicago hours. Requests
-within an hour draw identical images. The route is dynamic, with browser caching
-for 5 minutes and shared-cache caching for an hour, plus 5 minutes of stale
-revalidation. These are response cache directives, not an ISR storage binding.
-The existing Workers config has no persistent incremental cache, so the route
-does not depend on one. Social platforms may keep their own previews longer.
+The card is static: it is drawn once at build for `SHARE_IMAGE_MOMENT`
+(17:00 Chicago, a low key light and a visible halo), labelled with the scene
+and CHICAGO but no clock. The first deploy rendered it per request and every
+request on production failed with Cloudflare error 1102 (Worker exceeded
+resource limits), although local Workers preview, which has no CPU cap,
+rendered it. A per-hour card would need pre-rendered variants or a cache
+binding; `shareImage(now, { timeless: false })` still draws one.
 
 OpenNext 1.20.6 explicitly supports the ImageResponse library: its installed
 `dist/cli/build/patches/ast/patch-vercel-og-library.js` discovers the traced
