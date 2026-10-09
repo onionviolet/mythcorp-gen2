@@ -145,15 +145,23 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
         frame = undefined;
         observer.disconnect();
       };
+      let endedAt: number | undefined;
       const record = () => {
         const pet = document.querySelector<HTMLElement>('[data-linkedin-pet]');
-        if (!pet || pet.dataset.petPhase !== 'approaching') {
-          if (samples.length > 0) stop();
-          return;
+        if (!pet) return;
+        if (pet.dataset.petPhase !== 'approaching') {
+          if (samples.length === 0) return;
+          // MOVEMENT decays slowly, so keep reading it briefly after the walk;
+          // a long main-thread stall can swallow most of the 2.4s approach.
+          endedAt ??= performance.now();
+          if (performance.now() - endedAt > 1_000) {
+            stop();
+            return;
+          }
         }
         const rect = pet.getBoundingClientRect();
         samples.push({
-          phase: pet.dataset.petPhase,
+          phase: pet.dataset.petPhase ?? '',
           activity: document.querySelector<HTMLElement>('[data-field-activity]')?.dataset.fieldActivity ?? null,
           x: rect.x,
           y: rect.y,
@@ -162,6 +170,10 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
       };
       const begin = () => {
         const pet = document.querySelector<HTMLElement>('[data-linkedin-pet]');
+        if (pet?.dataset.petPhase === 'waiting' && !Reflect.has(window, '__linkedinCatWaiting')) {
+          const rect = pet.getBoundingClientRect();
+          Reflect.set(window, '__linkedinCatWaiting', { x: rect.x, y: rect.y });
+        }
         if (pet?.dataset.petPhase === 'approaching' && frame === undefined) record();
       };
       const observer = new MutationObserver(begin);
@@ -171,7 +183,7 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
         childList: true,
         subtree: true,
       });
-      window.setTimeout(stop, 9_000);
+      window.setTimeout(stop, 15_000);
     };
     installObserver();
   });
@@ -179,7 +191,19 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
 
   const invite = page.locator('[data-linkedin-invite]');
   const pet = page.locator('[data-linkedin-pet]');
-  await expect(pet).toHaveAttribute('data-pet-phase', 'waiting');
+  // The walk starts on a 5s timer, so a slow load can miss the waiting phase;
+  // the init script records where the cat waited instead.
+  const waitingBox = await page.waitForFunction(
+    () => Reflect.get(window, '__linkedinCatWaiting') as { x: number; y: number } | undefined,
+  ).then(handle => handle.jsonValue());
+  if (!waitingBox) throw new Error('LinkedIn pet never reported a waiting position');
+  // A visitor who has swept the horizon never gets the cat's horizon demo;
+  // sweep once so the demo cannot take over the follow checks below.
+  const horizon = page.getByRole('slider', { name: 'Sweep the time of day' });
+  await horizon.focus();
+  await horizon.press('ArrowRight');
+  await horizon.press('Home');
+  await horizon.blur();
   await expect(invite).toHaveAttribute('data-pointer-near', 'false');
   await expect(invite).toHaveAttribute('data-pulse-enabled', 'true');
   await expect(invite).toHaveAttribute('data-magnetic-return', 'false');
@@ -191,20 +215,17 @@ test('LinkedIn cat approaches, follows the pointer safely, and exposes proximity
     return samples.some(sample => sample.phase === 'approaching');
   }), { timeout: 7_000 }).toBe(true);
   await expect.poll(() => page.evaluate(() => {
-    const samples = Reflect.get(window, '__linkedinCatApproach') as Array<{ x: number; y: number }>;
-    if (samples.length < 2) return 0;
-    const first = samples[0];
-    return Math.max(...samples.map(sample => Math.hypot(sample.x - first.x, sample.y - first.y)));
-  }), { timeout: 3_500 }).toBeGreaterThan(8);
-  await expect.poll(() => page.evaluate(() => {
     const samples = Reflect.get(window, '__linkedinCatApproach') as Array<{ activity: string | null }>;
     return samples.some(sample => sample.activity !== null && sample.activity !== 'calm');
-  }), { timeout: 3_500 }).toBe(true);
-  await expect(pet).toHaveAttribute('data-pet-phase', 'settled', { timeout: 3_500 });
+  }), { timeout: 5_000 }).toBe(true);
+  await expect(pet).toHaveAttribute('data-pet-phase', 'settled', { timeout: 5_000 });
 
   const initialPetBox = await pet.boundingBox();
   expect(initialPetBox).not.toBeNull();
   if (!initialPetBox) throw new Error('LinkedIn pet has no layout box');
+  // The walk is a compositor animation, so judge it by where it starts and
+  // ends rather than by frame samples a stalled main thread may skip.
+  expect(Math.hypot(initialPetBox.x - waitingBox.x, initialPetBox.y - waitingBox.y)).toBeGreaterThan(8);
 
   await page.mouse.move(420, 280);
   await expect.poll(() => page.evaluate((initial) => {
