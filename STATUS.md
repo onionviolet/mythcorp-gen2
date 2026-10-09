@@ -1,5 +1,16 @@
 # STATUS
 
+## CI gate is the check; e2e there is informational, 2026-10-09
+
+The first CI runs failed different WebGL timing specs each time (software
+WebGL flags, two retries and longer cat waits did not settle it; one run took
+15 minutes with 3 failed and 2 flaky). GitHub's free runners have no GPU and two
+cores, so the scenes draw a few frames a second. `npm run check` is now the
+blocking CI gate; the Playwright suite still runs in CI with
+`continue-on-error` and uploads traces on failure. The pre-ship e2e gate is
+local: `PLAYWRIGHT_SERVER=start PLAYWRIGHT_CHANNEL=chrome npm run test:smoke`
+after `npm run build` (44 of 44 on the last ship).
+
 ## Untextured liquid and a knockout edge on the title and readout, 2026-10-09
 
 - Surface (liquid) drops the spectre's colour texture (`untextured` on LiquidObject, edits marked `// untextured`): the spotted skin and painted eye made it read as a game asset. Dark mode tints it pure white, so it reads as a white faceted body that mirrors light mode's black.
