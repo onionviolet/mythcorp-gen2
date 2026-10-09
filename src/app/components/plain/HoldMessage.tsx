@@ -91,7 +91,7 @@ export function HoldMessage({ style, scheme }: { style: MessageStyle; scheme: Sc
             className={`${styles.solidLine} text-[8.5vw]`}
             data-solid-label={line}
           >
-            <DisturbedText text={line} className={styles.solidText} />
+            <DisturbedText text={line} className={styles.solidText} gather />
           </span>
         )
       ))}

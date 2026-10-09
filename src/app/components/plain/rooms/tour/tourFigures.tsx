@@ -45,7 +45,7 @@ export function CalhounFigure() {
             type="button"
             onClick={() => setI(n)}
             aria-pressed={n === i}
-            className={`min-h-9 min-w-9 border px-3 transition-colors ${
+            className={`min-h-11 min-w-11 border px-3 transition-colors ${
               n === i
                 ? 'border-[color:var(--fg)] text-[color:var(--fg)]'
                 : 'border-[color:var(--border)] text-[color:var(--fg-muted)] hover:text-[color:var(--fg)]'
@@ -72,7 +72,7 @@ export function StarFigure() {
         <button
           type="button"
           onClick={() => setOn(true)}
-          className="border border-[color:var(--border)] px-4 py-2 font-mono text-xs text-[color:var(--fg-muted)] hover:text-[color:var(--fg)]"
+          className="min-h-11 border border-[color:var(--border)] px-4 py-2 font-mono text-xs text-[color:var(--fg-muted)] hover:text-[color:var(--fg)]"
         >
           start the stars
         </button>

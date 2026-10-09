@@ -43,6 +43,12 @@ export type AsciiFluidOptions = {
    * default because it costs two extra sweeps of the whole grid.
    */
   vorticity?: number;
+  /**
+   * Read every frame. A positive amount draws the field in toward a client-space
+   * point and loosens the source mask so its dye can follow; a negative amount
+   * pushes outward. Null or 0 costs nothing.
+   */
+  pull?: () => { x: number; y: number; amount: number } | null;
   /** Called about five times a second with the grid size and mean dye. */
   onMetrics?: (m: { cols: number; rows: number; ink: number }) => void;
 };

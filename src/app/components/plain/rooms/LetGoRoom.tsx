@@ -12,7 +12,7 @@ import {
 const MAX_RUN_SECONDS = 9;
 
 const BUTTON =
-  'border border-[color:var(--border-strong)] px-3 py-1.5 font-mono text-xs text-[color:var(--fg)] ' +
+  'min-h-11 border border-[color:var(--border-strong)] px-3 py-1.5 pointer-coarse:px-4 font-mono text-xs text-[color:var(--fg)] ' +
   'hover:border-[color:var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--accent)]';
 
 function detectLowPower(): boolean {

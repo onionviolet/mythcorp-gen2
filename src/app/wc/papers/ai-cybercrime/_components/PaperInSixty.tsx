@@ -12,10 +12,10 @@ export function PaperInSixty() {
       </p>
       <dl className="mt-5 grid gap-4 sm:grid-cols-3">
         <div>
-          <dt className="font-serif text-3xl text-[color:var(--fg)]">63 → &minus;7</dt>
+          <dt className="font-serif text-3xl text-[color:var(--fg)]">A closing window</dt>
           <dd className="mt-1 text-xs leading-relaxed text-[color:var(--fg-muted)]">
-            average days from a flaw going public to its first observed exploitation, 2018 to 2019 and then 2025, from two
-            Mandiant reports<Cite ids={['gtte-2024', 'mtrends-2026']} />
+            less time between a patch&rsquo;s release and first exploitation, already shrinking before AI agents. See
+            section <a href="#repair" className="underline underline-offset-4">1.3</a>.
           </dd>
         </div>
         <div>

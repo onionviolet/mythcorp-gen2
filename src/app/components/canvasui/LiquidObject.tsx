@@ -4,11 +4,14 @@ import { useEffect, useRef, useState } from "react";
 
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { createSpecimenGazeRig } from "./specimenGazeRig"; // gaze
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DEFAULT_SPECIMEN_POSE, specimenPose } from "../plain/specimenPose";
 import { SVGLoader } from "three/addons/loaders/SVGLoader.js";
 import { toCreasedNormals } from "three/addons/utils/BufferGeometryUtils.js";
 import { createRectCache } from "../rect-cache";
+import { createPixelRatioGovernor } from "./adaptivePixelRatio"; // perf
 
 export interface LiquidObjectOptions {
   /** URL of the asset to display: GLB/glTF, SVG, PNG, JPEG, WebP, or GIF. Object URLs from a file input work too. The format is sniffed from the bytes, not the extension. */
@@ -319,6 +322,9 @@ uniform float uHasBackground;
 uniform float uExposure;
 uniform float uBrightness;
 uniform float uSaturation;
+// sun: key light
+uniform vec3 uSunSheenDir;
+uniform float uSunSheenGain;
 
 in vec2 vUv;
 out vec4 fragColor;
@@ -373,8 +379,8 @@ void main() {
   vec3 color = vec3(sr.r, sg.g, sb.b);
 
   vec3 normal = normalize(vec3(-grad * 0.3, 1.0));
-  float spec = pow(max(dot(normal, normalize(vec3(-0.4, 0.55, 0.73))), 0.0), 16.0);
-  color += spec * uSheen * 2.5 * alpha;
+  float spec = pow(max(dot(normal, uSunSheenDir), 0.0), 16.0); // sun: key light
+  color += spec * uSheen * 2.5 * alpha * uSunSheenGain;
 
   float energy = length(flow);
   float rim = length(grad);
@@ -1130,7 +1136,12 @@ export function createLiquidObject(
   const floatGroup = new THREE.Group();
   floatGroup.position.y = MODEL_LIFT;
   const fitGroup = new THREE.Group();
-  floatGroup.add(fitGroup);
+  // Only the Installation's specimen reads the live pose; the dust title and the lab stay at rest.
+  const pose = canvas.closest("[data-specimen-layer]") ? specimenPose : DEFAULT_SPECIMEN_POSE;
+  // gaze
+  const gazeRig = createSpecimenGazeRig();
+  gazeRig.group.add(fitGroup);
+  floatGroup.add(gazeRig.group);
   scene.add(floatGroup);
 
   const controls = new OrbitControls(camera, canvas);
@@ -1138,6 +1149,10 @@ export function createLiquidObject(
   controls.enablePan = false;
 
   scene.add(camera);
+  // sun: key light
+  const sunKey = new THREE.DirectionalLight(0xffffff, 0);
+  scene.add(sunKey);
+  const sunSheenBase = new THREE.Vector3(-0.4, 0.55, 0.73).normalize();
   const surface = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
     metalness: 0,
@@ -1569,6 +1584,9 @@ export function createLiquidObject(
     uExposure: { value: 1 },
     uBrightness: { value: 1 },
     uSaturation: { value: 1 },
+    // sun: key light
+    uSunSheenDir: { value: sunSheenBase.clone() },
+    uSunSheenGain: { value: 1 },
   });
 
   function runPass(
@@ -1818,10 +1836,12 @@ export function createLiquidObject(
     buildModel();
   }
 
+  const pixelRatio = createPixelRatioGovernor(); // perf
+
   function resize() {
     const width = Math.max(canvas.clientWidth, 1);
     const height = Math.max(canvas.clientHeight, 1);
-    const pr = Math.min(window.devicePixelRatio || 1, 2);
+    const pr = pixelRatio.ratio(); // perf
     renderer.setPixelRatio(pr);
     renderer.setSize(width, height, false);
     sceneTarget.setSize(
@@ -1853,11 +1873,14 @@ export function createLiquidObject(
       return;
     }
     const delta = lastTime ? Math.min((time - lastTime) / 1000, 0.05) : 0;
+    if (pixelRatio.sample(lastTime ? time - lastTime : 0)) resize(); // perf
     lastTime = time;
     if (envDirty) {
       envDirty = false;
       refreshEnvironment();
     }
+    // gaze
+    gazeRig.update(camera, controls, config.autoRotateSpeed, pose);
     controls.update();
 
     if (!reducedMotion) {
@@ -1871,6 +1894,7 @@ export function createLiquidObject(
       squash = Math.min(Math.max(squash + squashVel * delta, -0.3), 0.3);
       const bulge = 1 - squash * 0.5;
       floatGroup.scale.set(bulge, 1 + squash, bulge);
+      floatGroup.scale.multiplyScalar(1 + 0.35 * pose.gather); // gather
       floatGroup.rotation.x =
         (Math.cos(elapsed / 4) / 8) * config.rotationIntensity + wobbleTilt.x;
       floatGroup.rotation.y =
@@ -1885,6 +1909,22 @@ export function createLiquidObject(
 
     if (delta > 0 && (queued.length > 0 || simEnergy > 0.002)) {
       stepSimulation(Math.min(delta, SIM_STEP * 2));
+    }
+
+    // sun: key light
+    {
+      const fill = 1 - pose.ambient;
+      const [kx, ky] = pose.key.dir;
+      const reach = Math.hypot(sunSheenBase.x, sunSheenBase.y) / (Math.hypot(kx, ky) || 1);
+      scene.environmentIntensity = config.environmentIntensity * pose.ambient;
+      sunKey.intensity = fill * pose.key.intensity * 10;
+      sunKey.position.fromArray(pose.key.dir).transformDirection(camera.matrixWorld);
+      (compositePass.uniforms.uSunSheenDir.value as THREE.Vector3).set(
+        sunSheenBase.x + (kx * reach - sunSheenBase.x) * fill,
+        sunSheenBase.y + (ky * reach - sunSheenBase.y) * fill,
+        sunSheenBase.z,
+      ).normalize();
+      compositePass.uniforms.uSunSheenGain.value = 1 + (pose.key.intensity - 1) * fill;
     }
 
     renderer.setRenderTarget(sceneTarget);

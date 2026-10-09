@@ -47,14 +47,14 @@ export function HoldContactLinks() {
     <address className="ml-auto flex flex-col gap-1 not-italic font-mono text-[11px]
                         uppercase tracking-[0.18em] text-[color:var(--fg-subtle)]">
       <LinkedInInvite />
-      <a href={`mailto:${CONTACT.email}`} className="w-fit transition-colors hover:text-[color:var(--fg)]">
+      <a href={`mailto:${CONTACT.email}`} className="w-fit content-center transition-colors [@media(min-height:700px)]:pointer-coarse:min-h-11 hover:text-[color:var(--fg)]">
         <DisturbedText text={CONTACT.email} strength={GENTLE} />
       </a>
-      <a href={`tel:${CONTACT.tel}`} className="w-fit transition-colors hover:text-[color:var(--fg)]">
+      <a href={`tel:${CONTACT.tel}`} className="w-fit content-center transition-colors [@media(min-height:700px)]:pointer-coarse:min-h-11 hover:text-[color:var(--fg)]">
         <DisturbedText text={CONTACT.phone} strength={GENTLE} />
       </a>
       <DisturbedText text={CONTACT.place} strength={GENTLE} />
-      <Link href="/wc/papers/ai-cybercrime" className="w-fit transition-colors hover:text-[color:var(--fg)]">
+      <Link href="/wc/papers/ai-cybercrime" className="w-fit content-center transition-colors [@media(min-height:700px)]:pointer-coarse:min-h-11 hover:text-[color:var(--fg)]">
         <DisturbedText text="Read the paper →" strength={GENTLE} />
       </Link>
     </address>

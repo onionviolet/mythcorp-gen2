@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('locked homepage loads its own assets and identity', async ({ page }) => {
   const requests: string[] = [];
   page.on('request', request => requests.push(new URL(request.url()).pathname));
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
 
   await expect(page).toHaveTitle('MYTHCORP / work in progress');
   await expect(page.locator('html')).toHaveClass(/theme-ready/);
@@ -17,7 +17,7 @@ test('locked homepage loads its own assets and identity', async ({ page }) => {
 
 test('the plain field responds to motion preference changes during a visit', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
   const field = page.locator('canvas[data-plain-field]');
   const light = page.getByRole('button', { name: 'light', exact: true });
 
@@ -35,7 +35,7 @@ test('the plain field responds to motion preference changes during a visit', asy
 
 test('readout hints follow actual next values and only the activated control acknowledges', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
   const scene = page.getByRole('button', { name: /^scene,/ });
   const render = page.getByRole('button', { name: /^render,/ });
 
@@ -44,10 +44,16 @@ test('readout hints follow actual next values and only the activated control ack
   await scene.focus();
   await expect(page.locator('[data-readout-hint="scene"]')).toHaveText('next: Suspension');
   await scene.evaluate(button => {
-    button.addEventListener('animationstart', () => button.setAttribute('data-observed-acknowledgement',
-      [...document.querySelectorAll('[data-activated="true"]')].map(element =>
-        element.getAttribute('aria-label')?.split(',')[0] ?? '').join(','),
-    ), { once: true });
+    // Read the set at the moment the attribute lands; animationstart can arrive
+    // after the 620ms clear on a slow frame.
+    const observer = new MutationObserver(() => {
+      if (button.getAttribute('data-activated') !== 'true') return;
+      observer.disconnect();
+      button.setAttribute('data-observed-acknowledgement',
+        [...document.querySelectorAll('[data-activated="true"]')].map(element =>
+          element.getAttribute('aria-label')?.split(',')[0] ?? '').join(','));
+    });
+    observer.observe(button, { attributes: true, attributeFilter: ['data-activated'] });
   });
   await scene.press('Enter');
   await expect(scene).toHaveAttribute('data-observed-acknowledgement', 'scene');
@@ -66,7 +72,7 @@ test('readout hints follow actual next values and only the activated control ack
 test('readout remembers an explicit choice across reload and viewport changes', async ({ page }) => {
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
   await expect(page.locator('[data-readout]')).toHaveAttribute('data-readout', 'full');
   await page.getByRole('button', { name: 'Compact readout' }).click();
   await page.reload();
@@ -90,7 +96,7 @@ for (const storage of ['invalid', 'blocked']) {
         Object.defineProperty(Storage.prototype, 'setItem', { value() { throw new Error('Storage blocked'); } });
       }
     }, storage);
-    await page.goto('/?room=installation');
+    await page.goto('/?room=installation&scene=signal&sun=noon');
     await expect(page.locator('[data-readout]')).toHaveAttribute('data-readout', 'compact');
     await page.getByRole('button', { name: 'Full readout' }).click();
     await expect(page.locator('[data-readout]')).toHaveAttribute('data-readout', 'full');
@@ -98,7 +104,7 @@ for (const storage of ['invalid', 'blocked']) {
 }
 
 test('cat reacts only to deliberate scene changes and settles under reduced motion', async ({ page }) => {
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
   const pet = page.locator('[data-linkedin-pet]');
   const scene = page.getByRole('button', { name: /^scene,/ });
   await expect(page.locator('[data-linkedin-invite]')).toHaveAttribute('data-pulse-enabled', 'true');
@@ -128,7 +134,7 @@ test('specimen waits for its model and keeps the loaded canvas through promotion
     await modelGate;
     await route.continue();
   });
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
   await expect(page.locator('[data-hold-overlay="scan"] canvas').first()).toBeAttached();
   const haloCanvases = await page.locator('[data-hold-overlay="scan"] canvas').elementHandles();
   await expect(page.locator('[data-specimen-layer="current"] canvas')).toHaveCount(1);
@@ -146,7 +152,7 @@ test('specimen waits for its model and keeps the loaded canvas through promotion
 
 test('rapid scene changes settle on the latest render without accumulating layers', async ({ page }) => {
   test.setTimeout(60_000);
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
   const scene = page.getByRole('button', { name: /^scene,/ });
   await scene.focus();
   for (const name of ['Suspension', 'Drift', 'Surface', 'Signal', 'Suspension']) {
@@ -166,7 +172,7 @@ test('rapid scene changes settle on the latest render without accumulating layer
 
 test('a failed alternate specimen returns to Spectre and releases the failed layer', async ({ page }) => {
   await page.route('**/models/calibration.glb', route => route.abort());
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
   await page.getByRole('button', { name: /^specimen,/ }).click();
   await expect(page.getByRole('status')).toHaveText('Calibration unavailable. Showing Spectre.');
   await expect(page.getByRole('button', { name: /^specimen,/ })).toHaveAccessibleName('specimen, Spectre, activate to change');
@@ -175,7 +181,7 @@ test('a failed alternate specimen returns to Spectre and releases the failed lay
 
 test('a failed replacement render keeps the previous specimen and releases its candidate', async ({ page }) => {
   const firstModel = page.waitForResponse(response => new URL(response.url()).pathname === '/spectre.glb' && response.ok());
-  await page.goto('/?room=installation');
+  await page.goto('/?room=installation&scene=signal&sun=noon');
   await firstModel;
   await expect(page.locator('[data-specimen-layer="current"] canvas')).toHaveCount(1);
   await page.route('**/spectre.glb', route => route.abort());
@@ -189,7 +195,7 @@ test.describe('touch readout', () => {
   test.use({ hasTouch: true, viewport: { width: 390, height: 844 } });
 
   test('expanded controls have room below the specimen', async ({ page }) => {
-    await page.goto('/?room=installation');
+    await page.goto('/?room=installation&scene=signal&sun=noon');
     await page.getByRole('button', { name: 'Full readout' }).tap();
     const readout = await page.locator('[data-readout="full"]').boundingBox();
     const specimen = await page.locator('[data-specimen-layer="current"]').boundingBox();
@@ -201,4 +207,68 @@ test.describe('touch readout', () => {
     await expect(page.getByRole('button', { name: /^render,/ })).toHaveAccessibleName('render, particle, activate to change');
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
+});
+
+test('share image remains public while locked and is a 1200x630 PNG', async ({ request }) => {
+  const response = await request.get('/share/mythcorp-card.png', { maxRedirects: 0 });
+  expect(response.status()).toBe(200);
+  expect(response.headers()['content-type']).toMatch(/^image\/png(?:;|$)/);
+  const png = await response.body();
+  expect([...png.subarray(0, 8)]).toEqual([137, 80, 78, 71, 13, 10, 26, 10]);
+  expect(png.toString('ascii', 12, 16)).toBe('IHDR');
+  expect(png.readUInt32BE(16)).toBe(1200);
+  expect(png.readUInt32BE(20)).toBe(630);
+});
+
+test('locked homepage advertises OG and Twitter images', async ({ request }) => {
+  const response = await request.get('/');
+  expect(response.status()).toBe(200);
+  const tags = (await response.text()).match(/<meta\b[^>]*>/g) ?? [];
+  for (const attribute of ['property="og:image"', 'name="twitter:image"']) {
+    const tag = tags.find(tag => tag.includes(attribute));
+    expect(tag).toMatch(/content="https?:\/\/[^" ]+\/share\/mythcorp-card\.png"/);
+  }
+});
+
+test('quick empty-field click stays below SURGE and does not gather', async ({ page }) => {
+  await page.goto('/?room=installation&scene=signal&sun=noon');
+  await expect(page.locator('html')).toHaveClass(/theme-ready/);
+  await page.keyboard.press('Escape');
+  await page.mouse.move(620, 240);
+  const meter = page.locator('[data-field-activity]');
+  await expect(meter).toHaveAttribute('data-field-activity', 'calm');
+  await meter.evaluate(element => {
+    const record = () => element.setAttribute('data-click-peak', String(Math.max(
+      Number(element.getAttribute('data-click-peak') ?? 0),
+      Number(element.getAttribute('data-movement-level') ?? 0),
+    )));
+    new MutationObserver(record).observe(element, { attributes: true, attributeFilter: ['data-movement-level'] });
+    record();
+  });
+  await page.mouse.click(620, 240);
+  await page.waitForTimeout(350);
+  await expect(page.locator('[data-linkedin-pet]')).not.toHaveAttribute('data-pet-crouch', 'true');
+  // A click ring lifts MOVEMENT to exactly 0.78 (reportVisibleClick); a gather would push past it.
+  expect(Number(await meter.getAttribute('data-click-peak'))).toBeLessThanOrEqual(0.785);
+});
+
+test('empty-field hold gathers, raises MOVEMENT and releases the cat crouch', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/?room=installation&scene=signal&sun=noon');
+  await expect(page.locator('html')).toHaveClass(/theme-ready/);
+  await page.keyboard.press('Escape');
+  const pet = page.locator('[data-linkedin-pet]');
+  await expect(pet).toHaveCount(1);
+  await page.mouse.move(620, 240);
+  await page.mouse.down();
+  try {
+    await page.waitForTimeout(1200);
+    await expect(pet).toHaveAttribute('data-pet-crouch', 'true');
+    await expect(page.locator('[data-field-activity]')).toHaveAttribute('data-field-activity', 'surge');
+  } finally {
+    await page.mouse.up();
+  }
+  await expect(pet).not.toHaveAttribute('data-pet-crouch', 'true');
+  expect(errors).toEqual([]);
 });

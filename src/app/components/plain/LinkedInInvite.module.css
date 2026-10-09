@@ -91,6 +91,43 @@
   display: block;
   width: 100%;
   height: 100%;
+  transform-origin: 50% 100%;
+  transition: transform 220ms var(--motion-ease), rotate 260ms var(--motion-ease);
+}
+
+.pet[data-pet-facing='left'] svg {
+  scale: -1 1;
+}
+
+.pet[data-pet-gait='walk'] svg {
+  animation: pet-pad 230ms ease-in-out infinite alternate;
+}
+
+.pet[data-pet-gait='push'] svg {
+  rotate: 7deg;
+}
+
+.petPaw {
+  opacity: 0;
+  transition: opacity 160ms var(--motion-ease);
+}
+
+.pet[data-pet-gait='push'] .petPaw {
+  opacity: 1;
+}
+
+.pet svg,
+.magneticCursor svg {
+  filter: drop-shadow(var(--sun-shadow-x, 0) var(--sun-shadow-y, 0) 0
+    color-mix(in srgb, var(--fg) var(--sun-shadow-opacity, 0%), transparent));
+}
+
+.pet[data-pet-asleep] {
+  opacity: 0.5;
+}
+
+.pet[data-pet-crouch] svg {
+  transform: scale(1.08, 0.8);
 }
 
 .petReaction {
@@ -113,7 +150,8 @@
   animation-delay: 0ms;
 }
 
-.following {
+.following,
+.demo {
   position: fixed;
   left: 0;
   top: 0;
@@ -169,6 +207,17 @@
   }
 }
 
+@keyframes pet-pad {
+  from {
+    translate: 0 0;
+    rotate: -1.5deg;
+  }
+  to {
+    translate: 0 -0.8px;
+    rotate: 1.5deg;
+  }
+}
+
 @keyframes pet-ear-flick {
   0%,
   100% {
@@ -195,7 +244,8 @@
   .waiting,
   .approaching,
   .settled,
-  .following {
+  .following,
+  .demo {
     animation: none;
   }
 
@@ -216,5 +266,13 @@
 @media (max-width: 480px) {
   .invite {
     --linkedin-pet-travel: clamp(88px, 27vw, 150px);
+  }
+}
+
+@media (pointer: coarse) {
+  .pet {
+    left: -2.1rem;
+    width: 1.5rem;
+    height: 1.25rem;
   }
 }

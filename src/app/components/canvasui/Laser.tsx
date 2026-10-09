@@ -39,6 +39,12 @@ export interface LaserOptions {
   sparkle?: number;
   /** How much scrolling boosts the beam and the reveal glow (0 to 3). */
   reactivity?: number;
+  /** Draw for a light page: graphite coverage in `color` instead of emitted
+   *  light, so the core becomes a rule, the glow a soft grey and the heat a
+   *  faint smoke. Content shimmer is skipped. */
+  paper?: boolean;
+  /** Paper only: how far the rule breaks into dots (0 solid, 1 dotted). */
+  dash?: number;
 }
 
 export interface LaserElements {
@@ -75,6 +81,8 @@ const DEFAULTS: Required<LaserOptions> = {
   shimmer: 12,
   sparkle: 0.25,
   reactivity: 1,
+  paper: false,
+  dash: 0,
 };
 
 type PaintableCanvas = HTMLCanvasElement & {
@@ -119,6 +127,9 @@ uniform float uSparkle;
 uniform vec3 uBezel;
 uniform float uMaxX;
 uniform float uHasContent;
+uniform float uPaper;
+uniform float uDash;
+uniform float uDashPeriod;
 
 float hash (vec2 v) {
   return fract(sin(dot(v, vec2(89.44, 19.36))) * 22189.22);
@@ -214,6 +225,42 @@ void main () {
   float yb = uBeamY + bend;
   float dy = uv.y - yb;
   float pxd = abs(dy) * uResolution.y;
+
+  if (uPaper > 0.5) {
+    vec3 pc = vec3(0.0);
+    float pa = 0.0;
+    if (dy < 0.0 && uHasContent > 0.5) {
+      pc = uBezel;
+      pa = 1.0;
+    }
+    if (dy >= 0.0 && dy < uRevealH && uRevealH > 0.0 && uHeat > 0.0 && env > 0.0) {
+      float k = dy / uRevealH;
+      float w = exp(-3.0 * k) * (1.0 - smoothstep(0.55, 1.0, k));
+      vec2 sp = uv * uResolution / uResolution.y;
+      float s = smoothstep(0.3, 1.05, smokeField(sp * vec2(2.4, 3.4), t));
+      float heat = max(w * uHeat * env * (0.4 + 0.9 * s), 0.0);
+      float d = (1.0 - exp(-heat * uBright)) * env * 0.1;
+      pc = uColor * d + pc * (1.0 - d);
+      pa = d + pa * (1.0 - d);
+    }
+    if (env > 0.0) {
+      float pd = pxd / max(env, 0.18);
+      float rule = uCore * clamp(uHalfCore + 0.5 - pd, 0.0, 1.0);
+      float g = pow(uRadius / max(pd, 0.75), 0.9) * exp(-0.55 * pd / uRadius);
+      float haze = 0.35 * (1.0 - exp(-uGlow * g * 0.2));
+      float d = 1.0 - (1.0 - clamp(rule, 0.0, 1.0)) * (1.0 - haze);
+      if (uDash > 0.0) {
+        float ph = fract(uv.x * uResolution.x / uDashPeriod);
+        float dot = smoothstep(0.0, 0.12, ph) * (1.0 - smoothstep(0.38, 0.5, ph));
+        d *= mix(1.0, dot, uDash);
+      }
+      d = clamp(d * env * mix(1.0, uBright, 0.5), 0.0, 1.0);
+      pc = uColor * d + pc * (1.0 - d);
+      pa = d + pa * (1.0 - d);
+    }
+    outColor = vec4(pc, clamp(pa, 0.0, 1.0));
+    return;
+  }
 
   vec3 col;
   float alpha;
@@ -549,6 +596,9 @@ export function createLaser(
     gl!.uniform3f(uniforms.uBezel, bezel[0], bezel[1], bezel[2]);
     gl!.uniform1f(uniforms.uMaxX, contentMaxX);
     gl!.uniform1f(uniforms.uHasContent, htmlInCanvas ? 1 : 0);
+    gl!.uniform1f(uniforms.uPaper, config.paper ? 1 : 0);
+    gl!.uniform1f(uniforms.uDash, Math.min(Math.max(config.dash, 0), 1));
+    gl!.uniform1f(uniforms.uDashPeriod, 7 * dpr);
     gl!.bindFramebuffer(gl!.FRAMEBUFFER, null);
     gl!.viewport(0, 0, output.width, output.height);
     gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4);

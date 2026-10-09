@@ -5,27 +5,27 @@
 }
 
 .stage {
-  --specimen-lift: 16%;
-  --specimen-lift-px: 80px;
   min-height: 320px;
-  z-index: 1;
 }
 
-.stage[data-hold-message='dust'] {
-  --specimen-lift: 6%;
-  --specimen-lift-px: 30px;
-}
-
+/* The specimen is a body behind the title, not a figurine under it. No
+   z-index on .stage, so this negative layer joins the lander's stacking
+   context: above the halo (-10), below the words and the readout. */
 .specimen {
-  top: calc(28% - var(--specimen-lift));
-  bottom: calc(36% + var(--specimen-lift));
+  z-index: -1;
+  top: -56px;
+  bottom: 48%;
 }
 .readoutDock { justify-content: center; }
 
+/* Tablets and small laptops have the height for a full body; the compact
+   readout layers over the legs, as the words do over the chest. */
+@media (min-width: 700px) and (min-height: 700px) {
+  .specimen { bottom: 6%; }
+}
+
 @media (min-width: 1200px) {
-  .stage { --specimen-lift: 12%; }
-  .stage[data-hold-message='dust'] { --specimen-lift: 10%; }
-  .specimen { top: calc(28% - var(--specimen-lift)); bottom: calc(8% + var(--specimen-lift)); }
+  .specimen { top: -40px; bottom: -100px; }
   .readoutDock { justify-content: flex-start; padding-inline: 2.5vw; }
 }
 
@@ -35,9 +35,9 @@
   }
 
   .stage:has([data-readout="full"]) .specimen {
-    top: calc(200px - var(--specimen-lift-px));
+    top: -56px;
     bottom: auto;
-    height: 240px;
+    height: 420px;
   }
 }
 

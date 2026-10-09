@@ -2,7 +2,7 @@ export const PRESS_DURATION = 620;
 export const PRESS_RADIUS = 150;
 
 export function isHoldControl(target: EventTarget | null): boolean {
-  return target instanceof Element && Boolean(target.closest('button, a, input, select, textarea, summary, [role="button"]'));
+  return target instanceof Element && Boolean(target.closest('button, a, input, select, textarea, summary, [role="button"], [role="slider"]'));
 }
 
 export function pressWave(distance: number, progress: number): number {

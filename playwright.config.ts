@@ -14,6 +14,11 @@ export default defineConfig({
   use: {
     baseURL: `http://127.0.0.1:${PORT}`,
     trace: 'retain-on-failure',
+    // PLAYWRIGHT_CHANNEL=chrome uses installed Chrome locally; CI defaults to bundled Chromium.
+    channel: process.env.PLAYWRIGHT_CHANNEL,
+    launchOptions: process.env.CI ? undefined : {
+      args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+    },
   },
   webServer: {
     command: `npm run dev -- --hostname 127.0.0.1 --port ${PORT}`,

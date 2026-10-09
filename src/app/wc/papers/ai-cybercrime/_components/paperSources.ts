@@ -6,16 +6,43 @@ export type PaperSource = {
   url: string;
   kind: 'primary' | 'reporting' | 'peer-reviewed' | 'preprint';
   library?: boolean;
+  archive?: string;
 };
 
-export const PAPER_SOURCES = [
+const SOURCES_BY_DATE = [
+  {
+    id: 'arora-2008',
+    author: 'Arora, Telang and Xu',
+    title: 'Optimal Policy for Software Vulnerability Disclosure, Management Science 54(4), 642-656 (abstract only)',
+    date: '2008-04',
+    url: 'https://doi.org/10.1287/mnsc.1070.0771',
+    kind: 'peer-reviewed',
+  },
   {
     id: 'herley-2009',
     author: 'Herley and Florêncio',
     title: 'Nobody Sells Gold for the Price of Silver: Dishonesty, Uncertainty and the Underground Economy (Microsoft Research MSR-TR-2009-34; later a Springer chapter)',
     date: '2009-06',
     url: 'https://www.microsoft.com/en-us/research/publication/nobody-sells-gold-for-the-price-of-silver-dishonesty-uncertainty-and-the-underground-economy/',
+    archive: 'https://web.archive.org/web/20261001013009/https://www.microsoft.com/en-us/research/publication/nobody-sells-gold-for-the-price-of-silver-dishonesty-uncertainty-and-the-underground-economy/',
     kind: 'primary',
+  },
+  {
+    id: 'arora-2010',
+    author: 'Arora, Krishnan, Telang and Yang',
+    title: "An Empirical Analysis of Software Vendors' Patch Release Behavior: Impact of Vulnerability Disclosure, Information Systems Research 21(1), 115-132 (abstract only)",
+    date: '2010-03',
+    url: 'https://doi.org/10.1287/isre.1080.0226',
+    kind: 'peer-reviewed',
+  },
+  {
+    id: 'bilge-2012',
+    author: 'Bilge and Dumitraș',
+    title: 'Before We Knew It: An Empirical Study of Zero-Day Attacks in the Real World (ACM CCS 2012, author copy)',
+    date: '2012-10',
+    url: 'https://users.umiacs.umd.edu/~tdumitra/papers/CCS-2012.pdf',
+    archive: 'https://web.archive.org/web/20260709041704/https://users.umiacs.umd.edu/~tdumitra/papers/CCS-2012.pdf',
+    kind: 'peer-reviewed',
   },
   {
     id: 'hutchings-holt-2015',
@@ -59,6 +86,7 @@ export const PAPER_SOURCES = [
     title: 'A Large-Scale Empirical Study of Security Patches (ACM CCS 2017, author copy)',
     date: '2017-10-30',
     url: 'https://faculty.cc.gatech.edu/~frankli/papers/li-ccs2017.pdf',
+    archive: 'https://web.archive.org/web/20260515131259/https://faculty.cc.gatech.edu/~frankli/papers/li-ccs2017.pdf',
     kind: 'peer-reviewed',
   },
   {
@@ -67,6 +95,7 @@ export const PAPER_SOURCES = [
     title: 'Artificial Intelligence and the Attack/Defense Balance (IEEE Security & Privacy, March/April 2018, essay copy)',
     date: '2018-03',
     url: 'https://www.schneier.com/essays/archives/2018/03/artificial_intellige.html',
+    archive: 'https://web.archive.org/web/20260725180524/https://www.schneier.com/essays/archives/2018/03/artificial_intellige.html',
     kind: 'primary',
   },
   {
@@ -75,6 +104,7 @@ export const PAPER_SOURCES = [
     title: 'Measuring the Changing Cost of Cybercrime (WEIS 2019)',
     date: '2019-06',
     url: 'https://weis2019.econinfosec.org/wp-content/uploads/sites/6/2019/05/WEIS_2019_paper_25.pdf',
+    archive: 'https://web.archive.org/web/20260906161534/https://weis2019.econinfosec.org/wp-content/uploads/sites/6/2019/05/WEIS_2019_paper_25.pdf',
     kind: 'peer-reviewed',
   },
   {
@@ -91,6 +121,7 @@ export const PAPER_SOURCES = [
     title: 'Booting the Booters: Evaluating the Effects of Police Interventions in the Market for Denial-of-Service Attacks (IMC 2019, author copy)',
     date: '2019-10-21',
     url: 'https://www.cl.cam.ac.uk/~ah793/papers/2019booting.pdf',
+    archive: 'https://web.archive.org/web/20250903051629/https://www.cl.cam.ac.uk/~ah793/papers/2019booting.pdf',
     kind: 'peer-reviewed',
   },
   {
@@ -117,6 +148,7 @@ export const PAPER_SOURCES = [
     title: 'Cybercrime is (often) boring: infrastructure and alienation in a deviant subculture (British Journal of Criminology 61(5), accepted manuscript)',
     date: '2021-04-15',
     url: 'https://strathprints.strath.ac.uk/76156/1/Collier_etal_BJC_2021_Cybercrime_is_often_boring_infrastructure_and_alientation.pdf',
+    archive: 'https://web.archive.org/web/20260610064751/https://strathprints.strath.ac.uk/76156/1/Collier_etal_BJC_2021_Cybercrime_is_often_boring_infrastructure_and_alientation.pdf',
     kind: 'peer-reviewed',
   },
   {
@@ -125,6 +157,7 @@ export const PAPER_SOURCES = [
     title: 'Will AI Make Cyber Swords or Shields?',
     date: '2022-08',
     url: 'https://cset.georgetown.edu/publication/will-ai-make-cyber-swords-or-shields/',
+    archive: 'https://web.archive.org/web/20260814085019/https://cset.georgetown.edu/publication/will-ai-make-cyber-swords-or-shields/',
     kind: 'primary',
   },
   {
@@ -141,6 +174,7 @@ export const PAPER_SOURCES = [
     title: 'Enhancing Vulnerability Prioritization: Data-Driven Exploit Predictions with Community-Driven Insights, arXiv:2302.14172',
     date: '2023-02-27',
     url: 'https://arxiv.org/abs/2302.14172',
+    archive: 'https://web.archive.org/web/20260812225412/https://arxiv.org/abs/2302.14172',
     kind: 'preprint',
   },
   {
@@ -149,6 +183,7 @@ export const PAPER_SOURCES = [
     title: 'Thousands of AI Authors on the Future of AI (survey of 2,778 researchers), arXiv:2401.02843',
     date: '2024-01-05 (v1; v3 revised 2025-10-08)',
     url: 'https://arxiv.org/abs/2401.02843',
+    archive: 'https://web.archive.org/web/20260930182942/https://arxiv.org/abs/2401.02843',
     kind: 'primary',
   },
   {
@@ -157,6 +192,7 @@ export const PAPER_SOURCES = [
     title: 'On the Societal Impact of Open Foundation Models, arXiv:2403.07918',
     date: '2024-02-27',
     url: 'https://arxiv.org/abs/2403.07918',
+    archive: 'https://web.archive.org/web/20260922085255/https://arxiv.org/abs/2403.07918',
     kind: 'preprint',
   },
   {
@@ -165,6 +201,7 @@ export const PAPER_SOURCES = [
     title: 'Malla: Demystifying Real-world Large Language Model Integrated Malicious Services (USENIX Security 2024), arXiv:2401.03315',
     date: '2024-01-06',
     url: 'https://arxiv.org/abs/2401.03315',
+    archive: 'https://web.archive.org/web/20260928161139/https://arxiv.org/abs/2401.03315',
     kind: 'peer-reviewed',
   },
   {
@@ -173,6 +210,7 @@ export const PAPER_SOURCES = [
     title: 'The near-term impact of AI on the cyber threat',
     date: '2024-01-24',
     url: 'https://www.ncsc.gov.uk/report/impact-of-ai-on-cyber-threat',
+    archive: 'https://web.archive.org/web/20261005114714/https://www.ncsc.gov.uk/report/impact-of-ai-on-cyber-threat',
     kind: 'primary',
   },
   {
@@ -189,6 +227,7 @@ export const PAPER_SOURCES = [
     title: 'Staying ahead of threat actors in the age of AI',
     date: '2024-02-14',
     url: 'https://www.microsoft.com/en-us/security/blog/2024/02/14/staying-ahead-of-threat-actors-in-the-age-of-ai/',
+    archive: 'https://web.archive.org/web/20260910112933/https://www.microsoft.com/en-us/security/blog/2024/02/14/staying-ahead-of-threat-actors-in-the-age-of-ai/',
     kind: 'primary',
   },
   {
@@ -197,6 +236,7 @@ export const PAPER_SOURCES = [
     title: 'LLM Agents can Autonomously Exploit One-day Vulnerabilities, arXiv:2404.08144',
     date: '2024-04-11',
     url: 'https://arxiv.org/abs/2404.08144',
+    archive: 'https://web.archive.org/web/20261003121441/https://arxiv.org/abs/2404.08144',
     kind: 'preprint',
   },
   {
@@ -205,6 +245,7 @@ export const PAPER_SOURCES = [
     title: 'Teams of LLM Agents can Exploit Zero-Day Vulnerabilities, arXiv:2406.01637',
     date: '2024-06-02 (v2 2025-03-30)',
     url: 'https://arxiv.org/abs/2406.01637',
+    archive: 'https://web.archive.org/web/20261006082320/https://arxiv.org/abs/2406.01637',
     kind: 'preprint',
   },
   {
@@ -213,6 +254,7 @@ export const PAPER_SOURCES = [
     title: 'Cybench: A Framework for Evaluating Cybersecurity Capabilities and Risks of Language Models (ICLR 2025), arXiv:2408.08926',
     date: '2024-08-15',
     url: 'https://arxiv.org/abs/2408.08926',
+    archive: 'https://web.archive.org/web/20261002061810/https://arxiv.org/abs/2408.08926',
     kind: 'peer-reviewed',
   },
   {
@@ -221,6 +263,7 @@ export const PAPER_SOURCES = [
     title: 'CyberSecEval 3: Advancing the Evaluation of Cybersecurity Risks and Capabilities in Large Language Models, arXiv:2408.01605',
     date: '2024-08-02 (revised 2024-09-06)',
     url: 'https://arxiv.org/abs/2408.01605',
+    archive: 'https://web.archive.org/web/20260905045425/https://arxiv.org/abs/2408.01605',
     kind: 'preprint',
   },
   {
@@ -229,6 +272,7 @@ export const PAPER_SOURCES = [
     title: 'How Low Can You Go? An Analysis of 2023 Time-to-Exploit Trends',
     date: '2024-10-15',
     url: 'https://cloud.google.com/blog/topics/threat-intelligence/time-to-exploit-trends-2023',
+    archive: 'https://web.archive.org/web/20260928035429/https://cloud.google.com/blog/topics/threat-intelligence/time-to-exploit-trends-2023',
     kind: 'primary',
   },
   {
@@ -237,6 +281,7 @@ export const PAPER_SOURCES = [
     title: 'The 2024 Tidelift Maintainer Impact Report',
     date: '2024-11',
     url: 'https://www.sonarsource.com/the-2024-tidelift-maintainer-impact-report.pdf',
+    archive: 'https://web.archive.org/web/20261006031022/https://www.sonarsource.com/the-2024-tidelift-maintainer-impact-report.pdf',
     kind: 'primary',
   },
   {
@@ -245,6 +290,7 @@ export const PAPER_SOURCES = [
     title: 'From Naptime to Big Sleep: Using Large Language Models To Catch Vulnerabilities In Real-World Code',
     date: '2024-11-01',
     url: 'https://projectzero.google/2024/10/from-naptime-to-big-sleep.html',
+    archive: 'https://web.archive.org/web/20261001183454/https://projectzero.google/2024/10/from-naptime-to-big-sleep.html',
     kind: 'primary',
   },
   {
@@ -253,6 +299,7 @@ export const PAPER_SOURCES = [
     title: 'Evaluating Large Language Models\' Capability to Launch Fully Automated Spear Phishing Campaigns, arXiv:2412.00586',
     date: '2024-11-30',
     url: 'https://arxiv.org/abs/2412.00586',
+    archive: 'https://web.archive.org/web/20261004140810/https://arxiv.org/abs/2412.00586',
     kind: 'preprint',
   },
   {
@@ -261,6 +308,7 @@ export const PAPER_SOURCES = [
     title: 'Ransomware payments in the 2025 Crypto Crime Report (data for 2024)',
     date: '2025-02-05',
     url: 'https://www.chainalysis.com/blog/crypto-crime-ransomware-victim-extortion-2025/',
+    archive: 'https://web.archive.org/web/20260905034141/https://www.chainalysis.com/blog/crypto-crime-ransomware-victim-extortion-2025/',
     kind: 'primary',
   },
   {
@@ -269,6 +317,7 @@ export const PAPER_SOURCES = [
     title: 'Adversarial Misuse of Generative AI',
     date: '2025-01-29',
     url: 'https://cloud.google.com/blog/topics/threat-intelligence/adversarial-misuse-generative-ai',
+    archive: 'https://web.archive.org/web/20260926132345/https://cloud.google.com/blog/topics/threat-intelligence/adversarial-misuse-generative-ai',
     kind: 'primary',
   },
   {
@@ -277,6 +326,7 @@ export const PAPER_SOURCES = [
     title: 'Measuring AI Ability to Complete Long Tasks',
     date: '2025-03-19',
     url: 'https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/',
+    archive: 'https://web.archive.org/web/20261007043004/https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/',
     kind: 'primary',
   },
   {
@@ -285,6 +335,7 @@ export const PAPER_SOURCES = [
     title: 'CVE-Bench: A Benchmark for AI Agents\' Ability to Exploit Real-World Web Application Vulnerabilities, arXiv:2503.17332',
     date: '2025-03-21',
     url: 'https://arxiv.org/abs/2503.17332',
+    archive: 'https://web.archive.org/web/20260908185602/https://arxiv.org/abs/2503.17332',
     kind: 'preprint',
   },
   {
@@ -293,6 +344,7 @@ export const PAPER_SOURCES = [
     title: 'AI 2027 (scenario)',
     date: '2025-04-03',
     url: 'https://ai-2027.com/',
+    archive: 'https://web.archive.org/web/20261004160258/https://ai-2027.com/',
     kind: 'primary',
   },
   {
@@ -309,6 +361,7 @@ export const PAPER_SOURCES = [
     title: 'Impact of AI on cyber threat from now to 2027',
     date: '2025-05-07',
     url: 'https://www.ncsc.gov.uk/report/impact-ai-cyber-threat-now-2027',
+    archive: 'https://web.archive.org/web/20261006121731/https://www.ncsc.gov.uk/report/impact-ai-cyber-threat-now-2027',
     kind: 'primary',
   },
   {
@@ -317,6 +370,7 @@ export const PAPER_SOURCES = [
     title: 'CyberGym: Evaluating AI Agents\' Real-World Cybersecurity Capabilities at Scale (ICLR 2026), arXiv:2506.02548',
     date: '2025-06-03 (v3 2026-03-24)',
     url: 'https://arxiv.org/abs/2506.02548',
+    archive: 'https://web.archive.org/web/20261002061809/https://arxiv.org/abs/2506.02548',
     kind: 'peer-reviewed',
   },
   {
@@ -325,6 +379,7 @@ export const PAPER_SOURCES = [
     title: 'A deep critique of AI 2027\'s bad timeline models',
     date: '2025-06-19',
     url: 'https://titotal.substack.com/p/a-deep-critique-of-ai-2027s-bad-timeline',
+    archive: 'https://web.archive.org/web/20260924072101/https://titotal.substack.com/p/a-deep-critique-of-ai-2027s-bad-timeline',
     kind: 'primary',
   },
   {
@@ -333,6 +388,7 @@ export const PAPER_SOURCES = [
     title: 'The road to Top 1: How XBOW did it',
     date: '2025-06-24',
     url: 'https://xbow.com/blog/top-1-how-xbow-did-it/',
+    archive: 'https://web.archive.org/web/20260929040125/https://xbow.com/blog/top-1-how-xbow-did-it',
     kind: 'primary',
   },
   {
@@ -341,6 +397,7 @@ export const PAPER_SOURCES = [
     title: 'AI Cyber Challenge marks pivotal inflection point for cyber defense',
     date: '2025-08-08',
     url: 'https://www.darpa.mil/news/2025/aixcc-results',
+    archive: 'https://web.archive.org/web/20260928173653/https://www.darpa.mil/news/2025/aixcc-results',
     kind: 'primary',
   },
   {
@@ -349,6 +406,7 @@ export const PAPER_SOURCES = [
     title: 'Detecting and countering misuse of AI: August 2025',
     date: '2025-08-27',
     url: 'https://www.anthropic.com/news/detecting-countering-misuse-aug-2025',
+    archive: 'https://web.archive.org/web/20261006021911/https://www.anthropic.com/news/detecting-countering-misuse-aug-2025',
     kind: 'primary',
   },
   {
@@ -357,6 +415,7 @@ export const PAPER_SOURCES = [
     title: 'GTIG AI Threat Tracker: Advances in Threat Actor Usage of AI Tools',
     date: '2025-11-05',
     url: 'https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools',
+    archive: 'https://web.archive.org/web/20261003073450/https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools',
     kind: 'primary',
   },
   {
@@ -365,6 +424,7 @@ export const PAPER_SOURCES = [
     title: 'ETL 2025: EU consistently targeted by diverse yet convergent threat groups (Threat Landscape 2025)',
     date: '2025-10-01',
     url: 'https://www.enisa.europa.eu/news/etl-2025-eu-consistently-targeted-by-diverse-yet-convergent-threat-groups',
+    archive: 'https://web.archive.org/web/20261005220802/https://www.enisa.europa.eu/news/etl-2025-eu-consistently-targeted-by-diverse-yet-convergent-threat-groups',
     kind: 'primary',
   },
   {
@@ -373,6 +433,7 @@ export const PAPER_SOURCES = [
     title: 'Disrupting the first reported AI-orchestrated cyber espionage campaign',
     date: '2025-11-13',
     url: 'https://www.anthropic.com/news/disrupting-AI-espionage',
+    archive: 'https://web.archive.org/web/20261006155654/https://www.anthropic.com/news/disrupting-AI-espionage',
     kind: 'primary',
   },
   {
@@ -381,6 +442,7 @@ export const PAPER_SOURCES = [
     title: 'Frontier AI Trends Report',
     date: '2025-12-18',
     url: 'https://www.aisi.gov.uk/frontier-ai-trends-report',
+    archive: 'https://web.archive.org/web/20261003101703/https://www.aisi.gov.uk/frontier-ai-trends-report',
     kind: 'primary',
   },
   {
@@ -389,6 +451,7 @@ export const PAPER_SOURCES = [
     title: 'Time Horizon 1.1',
     date: '2026-01-29',
     url: 'https://metr.org/blog/2026-1-29-time-horizon-1-1/',
+    archive: 'https://web.archive.org/web/20261007065223/https://metr.org/blog/2026-1-29-time-horizon-1-1/',
     kind: 'primary',
   },
   {
@@ -397,6 +460,7 @@ export const PAPER_SOURCES = [
     title: 'International AI Safety Report 2026',
     date: '2026-02-03',
     url: 'https://internationalaisafetyreport.org/publication/international-ai-safety-report-2026',
+    archive: 'https://web.archive.org/web/20261008120819/https://internationalaisafetyreport.org/publication/international-ai-safety-report-2026',
     kind: 'primary',
   },
   {
@@ -405,6 +469,7 @@ export const PAPER_SOURCES = [
     title: '2026 Global Threat Report (press release)',
     date: '2026-02-24',
     url: 'https://www.crowdstrike.com/en-us/press-releases/2026-crowdstrike-global-threat-report/',
+    archive: 'https://web.archive.org/web/20261005132708/https://www.crowdstrike.com/en-us/press-releases/2026-crowdstrike-global-threat-report/',
     kind: 'primary',
   },
   {
@@ -413,6 +478,7 @@ export const PAPER_SOURCES = [
     title: 'Crypto Ransomware: 2026 Crypto Crime Report (data for 2025)',
     date: '2026-02-26',
     url: 'https://www.chainalysis.com/blog/crypto-ransomware-2026/',
+    archive: 'https://web.archive.org/web/20260921173904/https://www.chainalysis.com/blog/crypto-ransomware-2026/',
     kind: 'primary',
   },
   {
@@ -421,6 +487,7 @@ export const PAPER_SOURCES = [
     title: 'M-Trends 2026: Data, Insights, and Strategies From the Frontlines',
     date: '2026-03-23',
     url: 'https://cloud.google.com/blog/topics/threat-intelligence/m-trends-2026',
+    archive: 'https://web.archive.org/web/20261007182723/https://cloud.google.com/blog/topics/threat-intelligence/m-trends-2026/',
     kind: 'primary',
   },
   {
@@ -429,6 +496,7 @@ export const PAPER_SOURCES = [
     title: 'FTC Testifies before the Joint Economic Committee on Agency’s Efforts to Combat Fraud',
     date: '2026-03-25',
     url: 'https://www.ftc.gov/news-events/news/press-releases/2026/03/ftc-testifies-joint-economic-committee-agencys-efforts-combat-fraud',
+    archive: 'https://web.archive.org/web/20261005235603/https://www.ftc.gov/news-events/news/press-releases/2026/03/ftc-testifies-joint-economic-committee-agencys-efforts-combat-fraud',
     kind: 'primary',
   },
   {
@@ -437,6 +505,7 @@ export const PAPER_SOURCES = [
     title: 'Q1 2026 Timelines Update',
     date: '2026-04-02',
     url: 'https://www.lesswrong.com/posts/XLLjqMxETva3ABtsK/q1-2026-timelines-update',
+    archive: 'https://web.archive.org/web/20260810100222/https://www.lesswrong.com/posts/XLLjqMxETva3ABtsK/q1-2026-timelines-update',
     kind: 'primary',
   },
   {
@@ -445,6 +514,7 @@ export const PAPER_SOURCES = [
     title: 'Project Glasswing: Securing critical software for the AI era',
     date: '2026-04-07',
     url: 'https://www.anthropic.com/glasswing',
+    archive: 'https://web.archive.org/web/20261007054829/https://www.anthropic.com/glasswing',
     kind: 'primary',
   },
   {
@@ -453,6 +523,7 @@ export const PAPER_SOURCES = [
     title: "Claude Mythos Preview's cybersecurity capabilities",
     date: '2026-04-07',
     url: 'https://www.anthropic.com/research/mythos-preview',
+    archive: 'https://web.archive.org/web/20261006181539/https://www.anthropic.com/research/mythos-preview',
     kind: 'primary',
   },
   {
@@ -461,6 +532,7 @@ export const PAPER_SOURCES = [
     title: 'NIST Updates NVD Operations to Address Record CVE Growth',
     date: '2026-04-15',
     url: 'https://www.nist.gov/news-events/news/2026/04/nist-updates-nvd-operations-address-record-cve-growth',
+    archive: 'https://web.archive.org/web/20260921181013/https://www.nist.gov/news-events/news/2026/04/nist-updates-nvd-operations-address-record-cve-growth',
     kind: 'primary',
   },
   {
@@ -469,6 +541,7 @@ export const PAPER_SOURCES = [
     title: '2025 Internet Crime Report',
     date: '2026-04 (PDF dated 2026-04-16)',
     url: 'https://www.ic3.gov/AnnualReport/Reports/2025_IC3Report.pdf',
+    archive: 'https://web.archive.org/web/20261006011108/https://www.ic3.gov/AnnualReport/Reports/2025_IC3Report.pdf',
     kind: 'primary',
   },
   {
@@ -477,6 +550,7 @@ export const PAPER_SOURCES = [
     title: 'Frontier Risk Report (February to March 2026)',
     date: '2026-05-19',
     url: 'https://metr.org/blog/2026-05-19-frontier-risk-report/',
+    archive: 'https://web.archive.org/web/20261006062717/https://metr.org/blog/2026-05-19-frontier-risk-report/',
     kind: 'primary',
   },
   {
@@ -485,6 +559,7 @@ export const PAPER_SOURCES = [
     title: '2026 Data Breach Investigations Report (PDF dated 2026-05-19)',
     date: '2026-05',
     url: 'https://www.verizon.com/business/resources/reports/dbir/',
+    archive: 'https://web.archive.org/web/20261005040029/https://www.verizon.com/business/resources/reports/dbir/',
     kind: 'primary',
   },
   {
@@ -493,6 +568,7 @@ export const PAPER_SOURCES = [
     title: 'Project Glasswing: An initial update',
     date: '2026-05-22',
     url: 'https://www.anthropic.com/research/glasswing-initial-update',
+    archive: 'https://web.archive.org/web/20261005152534/https://www.anthropic.com/research/glasswing-initial-update',
     kind: 'primary',
   },
   {
@@ -501,6 +577,7 @@ export const PAPER_SOURCES = [
     title: 'Expanding Project Glasswing',
     date: '2026-06-02',
     url: 'https://www.anthropic.com/news/expanding-project-glasswing',
+    archive: 'https://web.archive.org/web/20261006094746/https://www.anthropic.com/news/expanding-project-glasswing',
     kind: 'primary',
   },
   {
@@ -509,6 +586,7 @@ export const PAPER_SOURCES = [
     title: 'CISA Issues New Directive Improving How Federal Agencies Prioritize the Mitigation of Cyber Vulnerabilities (BOD 26-04)',
     date: '2026-06-10',
     url: 'https://www.cisa.gov/news-events/news/cisa-issues-new-directive-improving-how-federal-agencies-prioritize-mitigation-cyber-vulnerabilities',
+    archive: 'https://web.archive.org/web/20260926120311/https://www.cisa.gov/news-events/news/cisa-issues-new-directive-improving-how-federal-agencies-prioritize-mitigation-cyber-vulnerabilities',
     kind: 'primary',
   },
   {
@@ -517,6 +595,7 @@ export const PAPER_SOURCES = [
     title: 'Patch Smarter, Not Harder',
     date: '2026-06-10',
     url: 'https://www.cisa.gov/news-events/news/patch-smarter-not-harder',
+    archive: 'https://web.archive.org/web/20260928114054/https://www.cisa.gov/news-events/news/patch-smarter-not-harder',
     kind: 'primary',
   },
   {
@@ -525,6 +604,7 @@ export const PAPER_SOURCES = [
     title: "CAISI's Assessment of Z.ai's GLM-5.3 Cyber Capabilities",
     date: '2026-09-17',
     url: 'https://www.nist.gov/news-events/news/2026/09/caisis-assessment-zais-glm-53-cyber-capabilities',
+    archive: 'https://web.archive.org/web/20261007143820/https://www.nist.gov/news-events/news/2026/09/caisis-assessment-zais-glm-53-cyber-capabilities',
     kind: 'primary',
   },
   {
@@ -533,6 +613,7 @@ export const PAPER_SOURCES = [
     title: 'GLM-5.3 and the spread of advanced cyber capabilities',
     date: '2026-09-29',
     url: 'https://anthropic.com/research/glm-5-3-and-the-spread-of-advanced-cyber-capabilities',
+    archive: 'https://web.archive.org/web/20261008035243/https://www.anthropic.com/research/glm-5-3-and-the-spread-of-advanced-cyber-capabilities',
     kind: 'primary',
   },
   {
@@ -541,11 +622,16 @@ export const PAPER_SOURCES = [
     title: 'Known Exploited Vulnerabilities catalog, JSON feed version 2026.10.04 (counts are mine)',
     date: '2026-10-04',
     url: 'https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json',
+    archive: 'https://web.archive.org/web/20261004232346/https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json',
     kind: 'primary',
   },
 ] as const satisfies ReadonlyArray<PaperSource>;
 
-export type PaperSourceId = (typeof PAPER_SOURCES)[number]['id'];
+export type PaperSourceId = (typeof SOURCES_BY_DATE)[number]['id'];
+
+export const PAPER_SOURCES = [...SOURCES_BY_DATE].sort(
+  (a, b) => a.author.localeCompare(b.author, 'en') || a.date.localeCompare(b.date),
+);
 
 export function sourceNumber(id: PaperSourceId): number {
   return PAPER_SOURCES.findIndex((s) => s.id === id) + 1;

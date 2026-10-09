@@ -1,15 +1,18 @@
 import type { ReactNode } from 'react';
 import { Cite } from './PaperApparatus';
 
-export const PAPER_VERSION = { label: 'v2.5', date: '2026-10-08' } as const;
+export const PAPER_VERSION = { label: 'v2.8', date: '2026-10-08' } as const;
 
 type Effect = 'strengthens' | 'narrows' | 'reverses';
+
+type ClaimOrigin = '2025 paper' | 'October 2026 draft';
 
 type Amendment = {
   id: string;
   date: string;
   topic: string;
   effect: Effect;
+  from: ClaimOrigin;
   before: ReactNode;
   now: ReactNode;
   evidence: ReactNode;
@@ -21,11 +24,12 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     date: '2026-10-07',
     topic: 'Who closes the repair window',
     effect: 'narrows',
-    before: 'The 2025 paper implied that AI is what collapses the time defenders have to patch.',
+    from: '2025 paper',
+    before: 'AI-driven attacks will come at a speed and scale that human defenders cannot counter.',
     now: 'AI arrives into a repair window that was already closing. My forecast is about whether AI makes it close faster, and how much repair can speed up in response.',
     evidence: (
       <>
-        Mandiant&rsquo;s average time from disclosure to first exploitation fell from 63 days to 5 between 2018 and 2023,
+        Mandiant&rsquo;s average time from patch release to first exploitation fell from 63 days to 5 between 2018 and 2023,
         before AI agents existed,<Cite ids={['gtte-2024']} /> and sat at minus 7 days for 2025.<Cite ids={['mtrends-2026']} /> Older
         work had already found that attackers watching open-source repositories can get weeks to months of head start
         before disclosure.<Cite ids={['li-2017']} />
@@ -37,7 +41,8 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     date: '2026-10-07',
     topic: 'Is AI the first deskilling',
     effect: 'narrows',
-    before: 'AI removes the need to understand the tools, a new kind of democratization.',
+    from: '2025 paper',
+    before: 'Earlier tools democratized access but not skill; AI now democratizes the skill itself.',
     now: 'This is the second wave. Crime-as-a-service already rented some attacks to buyers with no technical skill. AI extends that market to work services did not cover well, such as fluent, personal lures and routine code.',
     evidence: (
       <>
@@ -57,7 +62,8 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     date: '2026-10-07',
     topic: 'When expert vulnerability work arrives',
     effect: 'strengthens',
-    before: 'Stage 3 (then called Superhuman Coder) between 2027 and 2032; Stage 4 between 2030 and 2047.',
+    from: '2025 paper',
+    before: 'Stage 3 (then called Superhuman Coder) from 2027; Stage 4 (Superhuman Attacker) from late 2027.',
     now: 'Stage 3 abilities at the gated frontier in April 2026; Stage 4 forecast for 2028, low confidence. Independent benchmarks show lower success than the developer reports, so the frontier claims carry less weight than the dates suggest.',
     evidence: (
       <>
@@ -75,7 +81,8 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     date: '2026-10-07',
     topic: 'The barrier scores',
     effect: 'narrows',
-    before: 'Six attacks scored 1 to 10 from tables in another paper, with no rubric.',
+    from: '2025 paper',
+    before: 'Five capabilities scored 1 to 10 before and after AI, each with a rationale but no rubric.',
     now: 'My ratings on a five-question rubric. The phishing rating has a controlled study behind it. Intrusion and new-flaw work stay low.',
     evidence: (
       <>
@@ -89,7 +96,8 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     date: '2026-10-07',
     topic: 'Is AI already making cybercrime worse',
     effect: 'reverses',
-    before: 'The 2025 version said the pool of plausible attackers grows by orders of magnitude, and read as if harm was already rising.',
+    from: '2025 paper',
+    before: 'The pool of potential attackers becomes nearly infinite, and sophisticated attacks become more frequent.',
     now: 'I found no sign of an AI-driven crime wave in the harm data so far. That is a statement about what official counts can show, which is a small and lopsided share of cybercrime, so it is not proof that no wave exists. The paper forecasts capability and access. It does not claim current harm.',
     evidence: (
       <>
@@ -111,7 +119,8 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     date: '2026-10-07',
     topic: 'What actually limits fraud',
     effect: 'narrows',
-    before: 'When AI writes the lure and fakes the voice, fraud becomes open to anyone.',
+    from: '2025 paper',
+    before: 'Once AI industrializes deception, a significant threat can come from almost anyone.',
     now: 'AI cheapens the lure, the script and the call. The fraud networks studied most closely were limited by trusted people to move the money and to work on the inside, and AI does not supply those people.',
     evidence: (
       <>
@@ -127,6 +136,7 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     date: '2026-10-07',
     topic: 'Voice impersonation before AI',
     effect: 'narrows',
+    from: 'October 2026 draft',
     before: 'Voice or video impersonation scored 0 before AI: no tools were on offer.',
     now: 'Generic voice impersonation was already for sale, so Q3 is now yes before AI and the row scores 2 before, 8 now. What was not for sale was the face or voice of a specific person the victim would recognize, which is what the Hong Kong case used.',
     evidence: (
@@ -142,6 +152,7 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     date: '2026-10-08',
     topic: 'What the open-weight lag means',
     effect: 'narrows',
+    from: 'October 2026 draft',
     before: 'A shrinking gap between downloadable models and the frontier is a direct risk signal.',
     now: 'The lag measures how fast capability spreads. Whether a downloadable model adds risk beyond the tools attackers already have is a separate question that has not been answered yet, so I read the lag as a precondition for Ending A and nothing more.',
     evidence: (
@@ -149,6 +160,24 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
         A broad review of open foundation models found current research insufficient to pin down their marginal risk,
         cyberattacks included.<Cite ids={['kapoor-2024']} /> Government measures of the lag itself: about four months from
         CAISI,<Cite ids={['caisi-2026-09']} /> four to eight months in the UK AI Security Institute&rsquo;s report, drawing on outside indexes.<Cite ids={['aisi-2025']} />
+      </>
+    ),
+  },
+  {
+    id: 'am-9',
+    date: '2026-10-08',
+    topic: 'What minus 7 days measures',
+    effect: 'narrows',
+    from: 'October 2026 draft',
+    before: 'The average time from disclosure to first exploitation reached minus 7 days, so repair now starts, on average, after the attack has.',
+    now: 'Mandiant counts from patch release, not disclosure, and only zero-days can push that average below zero. Zero-days already ran for months before disclosure in 2008 to 2011, and in that data most attacks came after a flaw went public. The negative average says more about zero-days than about the typical attack.',
+    evidence: (
+      <>
+        Field data from 11 million hosts found zero-day attacks lasting a median of 8 months before disclosure, and
+        attacks on those flaws rising between 2 and 100,000 times once they were public.<Cite ids={['bilge-2012']} /> Mandiant
+        defines its measure as time to exploitation before or after a patch is released, and zero-days were 70% of its 2023
+        set, up from 62% in 2021 and 2022.<Cite ids={['gtte-2024']} /> Its 2026 report reads minus 7 days as exploitation
+        before a patch exists.<Cite ids={['mtrends-2026']} />
       </>
     ),
   },
@@ -181,7 +210,7 @@ export function AmendmentsLog() {
           <h3 className="mt-2 font-serif text-lg text-[color:var(--fg)]">{a.topic}</h3>
           <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
             <div>
-              <dt className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)]">claim before</dt>
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)]">claim before, {a.from}</dt>
               <dd className="mt-1 text-[color:var(--fg-muted)] line-through decoration-[color:var(--fg-subtle)] decoration-1">{a.before}</dd>
             </div>
             <div>

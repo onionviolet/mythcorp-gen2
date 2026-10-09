@@ -79,6 +79,18 @@ export function reportVisibleClick() {
   timer = setTimeout(decay, TICK_MS);
 }
 
+/** A gather moves the whole installation, so it lifts the bar toward SURGE
+ *  while held and leaves the normal exponential release to bring it home. */
+export function reportGather(amount: number) {
+  const target = Math.max(0, Math.min(1, amount)) * 0.92;
+  if (target <= level) return;
+  release(performance.now());
+  level = Math.max(level, target);
+  publish(level);
+  if (timer) clearTimeout(timer);
+  timer = setTimeout(decay, TICK_MS);
+}
+
 function stop() {
   if (timer) clearTimeout(timer);
   timer = null;

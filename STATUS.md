@@ -1,5 +1,316 @@
 # STATUS
 
+## Paper halo, cat demo, share card and phone perf deployed, 2026-10-09
+
+Pushed c8095b5, 429d0a9 and 75ce8e0; deployed from a clean worktree as
+Cloudflare version 28b00979 (the banner work in the primary checkout stayed
+out). The first deploy (965f6fab) rendered the share card per request and
+every production request failed with Cloudflare error 1102; making the route
+"static" did not help because OpenNext still renders it in the Worker without
+an incremental cache. The card is now a committed PNG at
+`/share/mythcorp-card.png`. Wrangler's first upload also failed with a
+transient `fetch failed`; the retry succeeded.
+
+Verified on mythcorp.org: og:image and twitter:image point at the card, which
+returns 200 image/png 1200x630 and matches the committed file; `/api/sky` 200;
+headless Chrome renders light and dark at 1440x900 and light at 390x844 with
+the slider present, the 24px touch cat, and no page errors.
+
+## E2E Chrome channel and Installation coverage, 2026-10-08
+
+Use `PLAYWRIGHT_CHANNEL=chrome npm run test:smoke` locally; CI still defaults
+to bundled Chromium. Added night sun/viewer rows, private sky response shapes,
+keyboard horizon return, quick-click versus hold/cat crouch, and locked
+OG/Twitter PNG coverage. Scene/sun pins stabilize unrelated tests; the old
+click-SURGE assertion now belongs to the strict quick-click regression test.
+
+Verified: `npm run check` passed; final targeted lint and diff whitespace passed.
+Full suite: 44 tests, 3 HTTP passes, 41 browser launch failures (Chrome SIGABRT
+before pages opened in this restricted environment). No browser assertions or
+screenshots verified. Source conflict: `reportVisibleClick` sets 0.78, above
+SURGE's 0.65 threshold; the new quick-click peak assertion requires `< 0.65`.
+App/MAP edits preserved. Port 3100 stopped; test results and traces removed.
+No commits, staging, push or deployment. Scratch evidence: `scratchpad/e2e/`.
+
+Follow-up by the merging session: Codex's sandbox could not launch Chrome, so the suite was run outside it. First run: 40 passed, 4 failed. Fixed one app regression (the horizon drag band painted over the readout after `.stage` lost its z-index, so it swallowed the phone "Full readout" tap; the readout dock is now `z-[1]`) and three test issues (the acknowledgement was read at `animationstart`, which can land after the 620ms clear on a slow frame; it now reads at the attribute change via MutationObserver, a click-peak bound below the designed 0.78, and a 4.5s cat-settle window too tight for the larger specimen). Rerun: 44 passed with `PLAYWRIGHT_CHANNEL=chrome`.
+
+## Halo on paper, 2026-10-08
+
+Cause of the light-scheme mound: where html-in-canvas exists (production
+Chrome), Laser's shimmer branch sampled the empty Installation content and
+wrote its transparent black at the reveal band's alpha, a black dome up to
+400px above the beam. Black paper hid it. The beam itself is emitted light
+(white core, ink-coloured glow), so on white it nearly vanished.
+
+Decision: Laser gains `paper` and `dash` options. Paper mode is a separate
+shader branch that draws graphite coverage in the ink colour: the core
+becomes a rule, the glow a soft grey haze capped at 35%, the heat a faint
+smoke at 10%, and content shimmer is skipped. `horizonFor(sky, paper)` maps
+the same sun to a heavier, higher rule at noon, a thin solid hairline at
+dawn and dusk, and a dotted hairline at night. `HoldOverlay` turns it on
+when the scheme resolves to light. The dark path is untouched; its shimmer
+still samples transparent black, harmless on black paper.
+
+Verified: `npm run check` green. Headless Chrome with
+`--enable-blink-features=CanvasDrawElement` reproduced the mound at HEAD in
+all four light sun states on signal and surface; after the change light shows
+the rule, dark matches HEAD side by side, and `system` resolves to light.
+Also checked 390x844 night and noon, and noon light without html-in-canvas.
+## The cat shows the horizon, 2026-10-08
+
+Unstaged in the `cat` worktree, not committed or deployed.
+- Once per page load the cat demonstrates the horizon with no copy. It walks from where it is to the halo line, pads 26px right while it nudges the sky clock +30 min (smoothstep over 900ms), lets go so the offset eases home with HorizonDrag's own 1200ms cubic release, then walks back and settles. That takes about 4.4s at 60fps. While pushing it leans 7deg with a paw out. On the walk it pads with a small bob and faces the way it moves.
+- Trigger. Fine pointers: 2.5s after the cat settles, with the mouse quiet for 2s. Touch: 4s after load. If the cat hasn't approached yet it walks in from its waiting spot, and the demo replaces the approach. It never runs under reduced motion, while hidden, during a gather, outside the Installation (it needs `[data-horizon-drag]`), or after the visitor has swept the horizon (`markSkyTouched` in `skyTime.ts`).
+- Cancel. Any pointerdown or keydown (capture) stops it at once. Touching the horizon hands the current offset to HorizonDrag. Anything else eases the offset home, and the cat walks back. Blur, resize and scroll park it.
+- Decision: the ease lives in `skyTime.ts` (`easeSkyOffset`, `easeSkyHome`, `stopSkyEase`), so the demo and HorizonDrag share one owner and a grab always stops whichever ease is running.
+- Decision: the demo timeline advances by frame time clamped to 50ms, not wall time. Under a janky load (seen in headless), wall time skipped the push stage and the clock never moved.
+- Decision: the path is planned once. It prefers a spot 80px left of home and searches outward for one where the cat, the push and both curved walks stay clear of every link and button. At 390x844, when the halo sits behind the contact stack, the cat uses the empty left side.
+- Decision: no hold hint. Nothing on screen anchors a hold, and faking a gather would drive the whole installation, which is not subtle. A crouch with no field response would read as a twitch.
+- Coarse pointers get a 24px cat (`@media (pointer: coarse)`). Desktop stays 19px.
+- Verified with headless Chrome (swiftshader), `/api/sky` blocked so the viewer's sun is a Bangkok morning, at 1440x900 and in a 390x844 touch context. In each the clock rose about +30 min, the halo moved about 12px and the clock returned to real time with offset 0. No sample overlapped a link or button. Pinned `?sun=dusk` and `?sun=night` on the phone found clear paths too. A click mid-push stopped it: gait cleared on the next frame, offset peaked at the press value and was 0 within 1s, then the cat settled. A touch tap did the same. Reduced motion never entered the demo and the offset stayed 0. No page errors. `npm run check` passes. The existing e2e cat test was not rerun.
+## Front page perf audit and three safe fixes, 2026-10-08
+
+Measured the production build in headless Chrome at 390x844 with 4x CPU throttling and slow 4G. Report: `docs/audits/FRONT_PAGE_PERF_2026-10-08.md`.
+- The main thread holds 60 fps in every scene. On slow 4G the specimen shows at about 9.1 s because `spectre.glb` carries a 1 MB, 2048 px texture. A 512 px test copy, served by route, brought that to 4.5 s. The asset is not changed; that is recommendation 1.
+- GPU fill is the phone risk. The halo `Laser` and the specimen are the costly layers, and pixel ratio is the lever.
+- Shipped: particle clouds sleep at rest and skip the position upload; the gather jitter is computed once; and a new `canvasui/adaptivePixelRatio.ts` steps the specimen and title pixel ratio from 2 to 1.5 to 1.25 on touch devices that cannot hold about 45 fps. It never steps back up, and fine pointers are untouched. Renderer edits are marked `// perf`.
+- Decision: the governor is per renderer and coarse-pointer only, so desktop output is unchanged. The halo should adopt it next; `Laser.tsx` belonged to another track this pass.
+
+Verification: `npm run check` passed. Interleaved before/after A/B (Metal, 4x CPU): Signal's main-thread busy time fell from 27-28% to 20-21% under touch, and from 9% to 6-7% at idle. The other scenes were within noise. The governor stepped to 1.25 under SwiftShader, raising fps from 15.5 to about 19.5, and stayed at 2.0 on Metal at phone and desktop sizes. Not tested on a real device.
+## Link preview verified locally, 2026-10-08
+
+Added a shared 1200x630 OG/Twitter PNG at `/opengraph-image`: WORK IN PROGRESS,
+the actual spectre mesh sampled as dust, and a thin halo. Dynamic ImageResponse
+works in OpenNext 1.20.6's local Workers runtime. The day's `dailyComposition`
+changes the dust treatment; Chicago's hourly solar position sets lighting and
+the halo. Five-minute browser and hourly shared-cache directives; no ISR cache
+binding needed. Uses existing plain dark tokens and Geist Mono, embedded to
+avoid runtime font fetches. Only the exact image path was added to the lock
+allowlist. Root metadata now has metadataBase, warm OG/Twitter copy and a large
+Twitter card. Asset and adapter notes: `docs/SHARE_PREVIEW.md`.
+
+Verified: `npm run check` passed; `npx opennextjs-cloudflare build` passed;
+`npx opennextjs-cloudflare preview --port 3204` served both card URLs as PNGs.
+Dev and Workers fetches were each 1200x630 and 79,263 bytes. Production HTML
+contains absolute `https://mythcorp.org` image URLs; Next dev's generated OG
+URL uses localhost. Both environments retain 307 redirects for `/about`, `/og`
+and `/opengraph-image-extra`. Four daily treatments rendered at 65,611 to
+93,550 bytes; same-hour bytes match and day/night bytes differ. Generator,
+targeted lint, text policy and diff whitespace checks passed. Visually inspected
+the dev and Workers PNGs. Local servers stopped. Nothing staged or deployed.
+
+Artifacts: assigned `scratchpad/og` folder, including `dev-og-image.png`,
+`preview-og-image.png`, fetched HTML, logs and scene variants. Open: requested
+headless Chrome launch aborted with SIGABRT, so browser screenshots are
+unavailable; HTTP probes and saved PNG inspection completed. An earlier disk
+ENOSPC interrupted dev compilation; verification passed after space recovered.
+
+## Awe pass deployed, 2026-10-08
+
+Pushed main to e7e51d2 and deployed it as Cloudflare version fa8defed from a
+clean detached worktree, because the primary checkout still holds the
+uncommitted banner work (PR #42). Verified on mythcorp.org with cache-busting
+queries: `/api/sky` returns 200 with `private, no-store` and only rounded
+angles, zone and moon phase; headless Chrome at 1440x900 and 390x844 shows
+the large specimen, the `sun` and `you` rows (night), and no page errors.
+Seen live: in the light scheme at night the halo draws as a heavy dark mound.
+
+## The cat and the cursor echo join the sky and the gather, 2026-10-08
+
+Small touches that reward a second look:
+- The specimen watches the cursor echo. `setGazeLure` in `useSpecimenGaze.ts` overrides the pointer while the echo pulls toward LinkedIn and is cleared when it returns or hides, so the body turns toward the exit.
+- The resting cat sleeps when Chicago's sun is below -6 degrees: closed eyes, lower opacity. It wakes when it starts following. A horizon drag into night puts it to sleep live.
+- The cat crouches with an ear flick when a gather passes 0.4. No crouch under reduced motion.
+- The cat and the echo cast a 1-bit drop shadow away from Chicago's sun (`--sun-shadow-*` on the invite), up to 6px at a low sun and none at night. Monochrome.
+
+Verification: `npm run check` passed. Headless Chrome against the dev server: `sun=night` cat settled asleep and woke on follow; `sun=dawn` shadow `6px 3.5px 18%`; echo pull turned the specimen toward LinkedIn (screenshots); a hold set the crouch and release cleared it; no page errors.
+
+## Awe pass merged: two suns, gaze, horizon drag, gather, 2026-10-08
+
+Three parallel agents built the entries below in separate worktrees off the
+same uncommitted baseline; merged here file by file with `git merge-file`.
+Shared seam: `specimenPose.ts` (key/ambient = sun, gaze = pointer, gather =
+hold) and `skyTime.ts` (`skyNow`, drag offset). Merge fixes:
+- Renderers read the live pose only when their canvas sits inside `[data-specimen-layer]`, otherwise `DEFAULT_SPECIMEN_POSE`, so the Signal dust title and `/wc/lab/canvas` no longer turn or shade. The title's gather scatter still reads `specimenPose.gather` directly.
+- `HorizonDrag` follows the Halo's sun-driven offset (`useViewerHorizon`) instead of a fixed 160px.
+- At 700px+ wide and 700px+ tall, the specimen box reaches 6% from the stage bottom, so tablets and small laptops get the full body too.
+
+Verification: `npm run check` passed after the merge. Dev server, built-in browser: Signal at dusk (gaze faces pointer, hold reaches SURGE and recovers, title stays flat), Surface at noon at 1100x800, Drift at dusk at 375x812, Suspension keyboard sweep (+6h moved the clock 19:45 to 01:45 and both suns to night, band followed the Halo). No console errors. Playwright not run. Not committed.
+
+Open for the owner: warm dusk accent (not added); the 375px header wraps `system light dark` over the title (seen, not compared to baseline); the halo is faint in the light scheme.
+
+## Bigger specimen and two suns, 2026-10-08
+
+The specimen is now a body behind the title, about 2.5x its old size, and two
+real suns drive the installation: Chicago's lights the specimen, the viewer's
+own is the halo line.
+
+Decisions:
+- Scale: `.specimen` gets `z-index: -1` and `.stage` loses its `z-index`, so the specimen joins the lander's stacking context above the halo (-10) and below the words and readout. Box is taller (desktop `top -40px / bottom -100px`, phones `top -56px / bottom 48%` so it ends above the compact readout); `HoldStage` multiplies every model frame by `SPECIMEN_ZOOM = 1.2` and drops it `SPECIMEN_DROP = 0.6` world units.
+- Sun math lives in `plain/sky/` (NOAA-style, no deps). Chicago is 41.88, -87.63. The view faces south: east screen left, west screen right, elevation up. The sun's depth component is fixed toward the viewer (`SUN_DEPTH`), because a true south-facing view would backlight the specimen at noon. Night blends to a fixed moon direction with intensity scaled by phase.
+- Pose contract: `ambient = 1` means no directional shading, so the defaults are exact. Day writes ambient 0.45, night 0.28. ASCII and liquid add a `DirectionalLight` at intensity `(1 - ambient) * key.intensity * 10` and scale environment intensity by `ambient`; particles fade alpha by `ambient + (1 - ambient) * key * lambert` using the offset from the cloud centre as the normal; liquid also rotates its flow sheen toward the key. All edits are marked `// sun: key light`.
+- Horizon: `HoldOverlay`'s `scan` Laser takes offset, core, glow and thickness from the viewer's sun (`horizonFor`), quantised to 0.25 degrees so it re-renders only on change. Monochrome, no warm accent.
+- Viewer location: first frame uses the browser zone (standard UTC offset as longitude, latitude 40). `/api/sky` returns only the rounded sun, zone and moon phase; the client recovers a coarse site in memory (`siteFromSun`) so a horizon drag can time-lapse it. Coordinates never leave the server response.
+- Everything reads `skyNow()` and `subscribeSky` (minute tick, visibilitychange, `subscribeSkyOffset`, site refinement), so a `setSkyOffset` drag updates the readout, the halo and the light at once. No rAF loop of its own, so reduced motion adds no animation.
+- Readout: `sun` (Chicago, `38° S`, `2° dusk`, `−12° night`) and `you` (viewer zone HH:MM plus elevation or dawn/dusk/night) rows, both hidden on short compact screens; the `chicago` clock now reads `skyNow()`.
+- `?sun=dawn|noon|dusk|night` pins both suns (moon phase 0.5) and skips the network.
+
+Open for the owner: the halo in the light scheme is barely visible (as before); at noon the raised halo crosses the specimen's legs; at 1440x900 the liquid specimen's head can pass under the room switch.
+
+Verification: `npm run check` passed. Screenshots taken with headless Chrome (Playwright script) of all four scenes at 1440x900 and 390x844, Signal and Surface at 320x568, light and dark, `?sun=dawn|noon|dusk|night`; no console errors. Phone full-readout check: readout stays 16px+ below the specimen at 390x844 and 320x568, no horizontal scroll. The e2e suite was not run. Not committed, pushed or deployed.
+## Specimen gaze and horizon drag, 2026-10-08
+
+The first touch now pays off: the specimen turns to look at the pointer, and
+dragging the Halo line sweeps the sky clock.
+
+Decisions:
+- Gaze lives in `specimenPose.gaze`, written by `useSpecimenGaze` (mounted in HoldInstallation) with an exact critically damped spring (rate 3/s, no overshoot). Pointer offset from the specimen box centre, normalised by half the viewport, maps to ±35° yaw and ±15° pitch. A released touch or a cursor that left the window holds its point for 3s, then drifts home. Reduced motion keeps gaze at 0.
+- Gaze vs turntable: `gaze.face` (new field, 0..1, eased at 2.2/s) is engagement. The renderers scale OrbitControls' `autoRotateSpeed` by `1 - face` and add `face × camera azimuth` to the model's yaw, so an engaged specimen stops and turns to face the viewer from wherever the turntable left it; idle, it turns back and the turntable resumes. At the default pose nothing changes.
+- Renderers: `canvasui/specimenGazeRig.ts` adds a group between the float group and the fitted model (so the float rock still plays) and is called once per frame before `controls.update()`. Each edit in AsciiObject, ParticleObject and LiquidObject is marked `// gaze`; these are deliberate hand edits to otherwise vendored files.
+- Horizon drag: `HorizonDrag` is a 64px invisible `role="slider"` band centred on the Halo line, following its sun-driven `offset` (`useViewerHorizon`). One viewport width is 24h, rightward is later, clamped to ±24h; release eases home over 1.2s (snaps under reduced motion). Arrows sweep an hour and ease home 1.5s after the last key; Home returns at once. `touch-action: pan-y`, `cursor: ew-resize`, a faint line on hover and focus, and a mono `+6h 40m` hint while active.
+- Stacking: the band sits above the overlays and below the stage (z 1) and the footer row, so the readout, links and operator keep their hits. The footer row is now `pointer-events-none` with its children re-enabled, so its empty gaps reach the band on phones. `isHoldControl` now includes `[role="slider"]`, so drags raise no click ring and no field press.
+- The readout's `chicago` row reads `skyNow()` and re-renders on offset changes.
+
+Verification: `npm run check` passed. Dev server on 3102, headless Chrome via Playwright (scratch script, not committed): gaze reached about ±0.59 rad yaw with face 1 on all four scenes (ascii, particle, swarm, liquid) and screenshots show the specimen turned toward each side; band click raised no ring while an empty click did; a half-width drag showed `+12h 00m` and the clock 12h ahead, then returned to 0; 390x844 touch drag worked with `pan-y`; reduced motion kept gaze 0 and snapped back; no console errors. Not committed.
+## Press-and-hold gather, 2026-10-08
+
+Holding on empty field pulls the whole Installation in toward the specimen and
+lets it spring back on release. Visitor-caused only; no idle gather.
+
+Decisions:
+- `holdGather.ts` owns `specimenPose.gather`. Threshold 250ms, 10px slop before it cancels (so a scroll or drag never gathers), controls excluded via `isHoldControl`. A quick click is untouched: the ring and field burst still fire on pointerdown as before.
+- Easing is a spring: critically damped toward 1 while held (about 95% at 1.5s), underdamped toward 0 on release (zeta 0.62, about 7% overshoot below rest, settled in about 1.2s).
+- Field: `asciiFluid` gained a `pull` option (sink with a slight spiral at the specimen centre, plus dye seeded on seven rotating arms at the rim so the inflow is visible). The same amount loosens the source floor and the field message pass, so the Suspension title erodes into the flow and re-inks on release.
+- Specimen: each renderer scales `floatGroup` by up to 1.35x (Liquid multiplies its squash). Particles also pull their homes 14% tighter with less drift, and get an inward kick on gather and an outward burst on release. Edits are marked `// gather`.
+- Title: solid (Drift, Surface) erodes through `DisturbedText`'s ramp and throws glyphs outward from the specimen (new `gather` prop, only on the message lines). Dust (Signal) scatters each particle by a stable offset tied directly to gather, so it re-forms exactly on release. A ParticleObject counts as the specimen only inside `[data-specimen-layer]`. Decode has no gather response.
+- MOVEMENT: `reportGather` lifts the level to 0.92 x gather (SURGE above about 0.7), then the normal release brings it home.
+- Touch: the Installation root has `select-none` and `-webkit-touch-callout: none`; `contextmenu` is prevented only while a press is pending or gathering. Scrolling is untouched (no `touch-action` change).
+- Reduced motion: no gather at all. A frozen half-gathered state read as a stuck frame, not calm.
+
+Verification: `npm run check` passed. Browser check on a dev server (hidden pane, about 1.5fps, so timings were not judged): all four scenes gathered (field, specimen, title, MOVEMENT SURGE) and recovered fully; at 390x844 a touch hold gathered, a 20px move before the threshold cancelled, a quick click did not gather, and contextmenu was prevented during the hold. The click ring could not be observed at that frame rate; its code path is unchanged. Not committed.
+
+## Shared daily scene and Chicago clock, 2026-10-08
+
+Every cold load used to rotate from a locally stored last scene, so a first
+visit always saw Signal and nobody shared a scene. Now the first load each
+Chicago day opens the day's scene, and later loads continue the rotation.
+
+Decisions:
+- Daily scene is the Chicago day index mod 4 (`chicagoTime.ts`, `dailyComposition`). 2026-10-07 Suspension, 10-08 Drift, 10-09 Surface, 10-10 Signal.
+- New storage key `mythcorp:hold-cold-day` records the day last seen; the old scene key is kept. A new day, or a missing scene key, resets to the daily scene.
+- Blocked storage gets the daily scene on every load. `?scene=` pins and writes nothing.
+- A first visit is no longer guaranteed Signal. That is a compromise on audit Q4, accepted so everyone shares the day's scene. `DEFAULT_HOLD_COMPOSITION` (Signal) stays as the pre-pick placeholder so hydration matches.
+- Readout gains a `chicago` row (HH:MM, `useSyncExternalStore`, minute tick plus a visibilitychange refresh, server snapshot `--:--`), hidden on short compact screens. The console boot line uses the same formatter; `your time` is unchanged.
+- Existing e2e specs that assumed Signal are pinned with `scene=signal`; `tests/e2e/daily-scene.spec.ts` is new.
+- Story copy in `storyData.ts` and DESIGN.md updated to match.
+
+Phone pass (390x844, 320x568, dev server, coarse pointer): added `pointer-coarse:` 44px targets on the scheme picker, Let go buttons, Calhoun and star buttons, and the contact links (links only when the viewport is 700px tall or more, because at 568px tall they shrank the Console and Tour panes). Open for the owner: at 320x568 the Console pane is 161px and Tour/Let go 205px tall; the installation ghost backdrop overlaps the compact readout by about 51px there.
+
+Verification: `npm run check:roll` and `npm run check` run locally. Playwright was not run (Chromium not installed), so the new and edited specs are untested. Not committed, pushed or deployed.
+
+## Paper v2.8 deployed, 2026-10-08
+
+Pushed main to 8acd8c3 and deployed it as Cloudflare version cd4103b1 from a
+clean detached worktree, because the primary checkout held another session's
+uncommitted banner work (LinkedInBanner, PlainHold, MAP, STATUS) that must not
+ship. No Workers Build appeared for the push within a few minutes. Verified on
+mythcorp.org with a cache-busting query: v2.8, "from patch release", A9, 57
+archive links, no grade. The grade was removed from Appendix B in 8acd8c3.
+
+## Paper v2.8: amendments checked against the 2025 original, archived references, 2026-10-08
+
+Found the 2025 Pioneer paper in Google Drive (account waybao666@gmail.com,
+Google Doc "The_AI-Driven_Democratization_of_Cybercrime__A_Forecast_of_Emergent_Threats_-_josh_lee",
+id 16RTC1gWjfMliVJdAhpRSYqprSwJdl7TUDP2z36nKc1c; a shorter draft id 1SspgTz8... has the same tables). Read it
+in the browser. Several amendment "claim before" lines described the May 2026
+web version (commit 4eef19f: six barrier rows, a 2027 to 2032 Stage 3 band,
+"orders of magnitude") or earlier drafts of this revision, not the 2025 text.
+The 2025 paper: five capabilities scored 1 to 10 with no rubric, Stage 3 from
+2027 and Stage 4 from late 2027, an attacker pool "nearly infinite", no
+discussion of patching. Each amendment now carries a `from` label and an
+accurate earlier claim. References are numbered alphabetically (ACM style) and
+57 web sources link to Internet Archive snapshots; Hong Kong Free Press blocks
+archiving and Knight Columbia timed out.
+
+Checks: `npm run check` passed; dev server showed v2.8, 69 references, 57
+archive links and both origin labels. Not deployed; live is still v2.5.
+
+## LinkedIn banner preview completed locally, 2026-10-08
+
+`/?banner=linkedin` is a screenshot-focused still of the installation: an
+ascending, folded ASCII ribbon leads from the portrait's upward/rightward gaze
+into particle lettering from the existing WORK IN / PROGRESS message. The
+lower-left area stays quiet for photo overlap. Light and dark use the existing
+plain theme and Geist Mono tokens. No dependency or production lock change.
+
+Fixed the draft's blank canvas: `linkedinBanner.ts` collided with
+`LinkedInBanner.tsx` during extension resolution on this case-insensitive
+filesystem. The renderer now lives at `bannerDrawing.ts`. The header uses Next
+Link. The first pale lettering pass was strengthened after checking it at
+profile size. The canvas is deterministic and its PNG download contains no
+workshop controls or overlap guide.
+
+Observed evidence: `npm run check` passed (lint, text policy, production build,
+TypeScript); `git diff --check` passed. The built app was served locally on
+3012, and the real browser showed both schemes and downloaded both PNGs.
+Each is exactly 1584 x 396, below 8 MB. Default `/` still shows Installation,
+its ASCII spectre, status controls and contact links; its browser error log was
+empty. Both portrait composition previews were inspected in the browser.
+Approximate desktop photo placement clears the message and points toward the
+ribbon; actual LinkedIn/device cropping and human acceptance remain unverified.
+
+Outputs are local in `/Users/weiwei/Downloads/LinkedIn/`: light/dark banner PNGs,
+light/dark profile-composition PNGs, `composition-preview.html`, and page JPG
+screenshots. The portrait and composition HTML are outside the repo. The HTML
+can reopen beside its local assets; a loopback-only preview runs on 3013.
+The original dev server on 3012 was replaced with the built app after checks.
+Source edited and browser checked, not committed, pushed, deployed or uploaded.
+
+## LinkedIn banner draft handed to a separate chat, 2026-10-08
+
+User requested a dedicated webpage to screenshot as a LinkedIn banner, composed
+so the portrait's upward/rightward gaze points toward a feature in the banner.
+Initial local draft adds `/?banner=linkedin` inside the holding screen, with
+light/dark scheme selection, a deterministic 1584-by-396 canvas export, and an
+approximate profile-photo overlap guide. Files: `LinkedInBanner.tsx`, its CSS
+module, `linkedinBanner.ts`, plus `PlainHold.tsx` and MAP.md. This is an unverified
+starting point, not an accepted final design. `git diff --check` passed; lint,
+build and browser/export checks have not run. No commit, push or deployment.
+The follow-up chat owns these paths from here and should adapt to the user's
+latest request for a screenshot-focused page rather than expanding tooling.
+The edited portrait is local at
+`/Users/weiwei/Downloads/LinkedIn/weibao-linkedin-collar-v2.png`; do not commit or
+publish it. Final banner exports should be saved alongside it. The parent
+started a dev process on port 3012; verify its state before reuse.
+
+
+## Paper v2.7: Methods, Limitations and a plain print view, 2026-10-08
+
+Codex (codex exec, workspace-write) added a Methods section before Part I, a
+Limitations section (3.2; falsification is now 3.3), removed citations from
+the abstract, replaced repeated 63-days figures in the thesis and 60-second
+summary with pointers to 1.3, and made print labels and boxes plain. Claude
+reviewed the diff, checked Methods and Limitations against existing text and
+the barrier rubric, and reverted one Codex change that would have printed the
+vignettes (they stay out of print, as in v2.5). Checks: `npm run check`
+passed; a headless Chrome print of the dev server gave a 26-page PDF with the
+new sections and no vignettes. Not deployed.
+
+## Paper v2.6: disclosure studies and a Mandiant correction, 2026-10-08
+
+Read Bilge and Dumitraș (2012) in full from the author's open copy, and the
+two Arora et al. disclosure papers as abstracts only: W&L's OpenAthens proxy
+signs in, but INFORMS returns 403 "purchase" for both. Added them to 1.3 and
+3.1 and wrote amendment A9 ("What minus 7 days measures"). While checking,
+found that Mandiant measures time-to-exploit from patch release, not
+disclosure, and never says the fall came from zero-days; the paper said both.
+Fixed in five places and noted in the revision notes. Notes in
+`docs/plans/PAPER_READING_NOTES_2026-10-07.md` sections 9 to 11.
+
+Checks: `npm run check` passed; the paper rendered on the locked dev server
+with v2.6, nine amendments, the three new references and no console errors.
+Not deployed. Still open: the original 2025 PDF, Playwright's Chromium.
+
 ## Banner v2 checked against the real LinkedIn screenshot, 2026-10-08
 
 Inspected the supplied 2964 x 1668 profile screenshot. It shows the existing

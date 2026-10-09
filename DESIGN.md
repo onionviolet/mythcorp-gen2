@@ -223,17 +223,19 @@ opposite: calm, legible, and the place where rigor lives.
 The held front page has four rooms: Installation (the signature room), Tour (a
 scroll through the projects, each with a live figure), Let go (the words fall
 and can be thrown) and Console (a lock-aware terminal). Every load opens the
-Installation, whose four scenes still rotate per load, so a reload always
-looks different without leaving the signature room. The other rooms are one
+Installation, which opens on the day's shared scene and then rotates its four
+scenes per load, so a reload always looks different without leaving the signature room. The other rooms are one
 click away on the room switch, and `?room=<id>` links straight to one. Every
 room keeps the wordmark, the room switch, the scheme picker and the contact
 links through `HoldRoomFrame`.
 
 ## Current lander defaults, 2026-09-13
 
-A first visit begins with Signal: the ASCII spectre and dust lettering. Each
-later load opens on the next authored scene, so a reload always shows a new
-room; `?scene=<name>` pins one for sharing. Halo is a
+The first load each Chicago day opens on that day's shared scene, the same for
+everyone (Signal is the ASCII spectre and dust lettering). Later loads open on
+the next authored scene, so a reload always shows a new room; `?scene=<name>`
+pins one for sharing. The readout also has a `chicago` row: real America/Chicago
+time, ticking each minute, hidden on short compact screens. Halo is a
 separate atmospheric background that remains active across every scene, while
 the `over` control adds one optional secondary background. Scene cycling remains
 available. The old budgeted randomizer is retained for its existing consumers,

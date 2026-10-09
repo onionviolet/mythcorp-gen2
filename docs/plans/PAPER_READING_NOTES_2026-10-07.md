@@ -57,3 +57,27 @@
 - Patching every CVSS 7+ flaw: 6.2% efficiency (most effort goes to flaws never exploited), 62.7% coverage. EPSS matches coverage with 29% to 86% less effort depending on threshold.
 - Strong predictors: weaponized exploit (37.1% of those exploited), proof-of-concept published (16.5%), vendor.
 - Use: (a) correct the paper's "about 5% exploited" (2023 preprint) to the journal's 3.7% (2016-2018, within 12 months, IDS-visible), or show both with dates; (b) repair is partly a prioritization problem, not only capacity: Figure 6's backlog treats all flaws alike; note that only a small, partly predictable share gets exploited; (c) AI-found flaws raise volume, which raises the value of prioritization.
+
+## 9. Bilge and Dumitraș (2012), ACM CCS 2012, 833-844. doi:10.1145/2382196.2382284 (read 2026-10-08)
+- OPEN author copy at Dumitraș's UMD page; the library was not needed. Read in full.
+- Data: Symantec WINE, 11 million Windows hosts running Symantec products, binary-reputation and antivirus telemetry, February 2008 to 2011, about 300 million files.
+- Found 18 flaws exploited before disclosure, 11 not previously known as zero-days. Duration before disclosure: 19 days to 30 months, median 8 months, mean about 10 months (312 days). Authors call durations lower bounds (data start in Feb 2008).
+- After disclosure: malware variants up 183 to 85,000 times, attacks up 2 to 100,000 times ("up to 5 orders of magnitude"). Exploits for 42% of flaws used in host-based threats seen in field data within 30 days of disclosure.
+- Limits stated by the authors: selection bias (Symantec customers only), misses web-based, polymorphic, non-executable (pdf, doc) and highly targeted exploits; their method missed 24 of 31 zero-days Symantec analysts reported for the period.
+- Discussion: frames full disclosure as a trade of more attacks for faster patching; cites Arora et al. and Cavusoglu et al. reaching opposite game-theory conclusions.
+- Use: 1.3 (pre-disclosure exploitation is old; volume follows disclosure), 3.1 (cost of disclosure pressure), A9.
+
+## 10. Arora, Krishnan, Telang and Yang (2010), Information Systems Research 21(1), 115-132. doi:10.1287/isre.1080.0226 (2026-10-08)
+- NOT AVAILABLE in full through W&L: the OpenAthens proxy signs in, but INFORMS returns 403 "purchase" for the PDF and reader. Telang's old self-hosted copies return 404; the ICIS 2006 version on AIS eLibrary sits behind a bot check. Abstract only. Cite only abstract claims.
+- Abstract: CERT/CC and SecurityFocus data; disclosure raises the instantaneous probability of a patch release by nearly 2.5 times; open-source vendors patch faster; vendors respond faster to more severe flaws and slower to flaws not disclosed by CERT; results replicated on a second public data set.
+- The ICIS 2006 abstract (AIS eLibrary page) gives 137% more likely and about 29 days faster; not cited, earlier version.
+- Use: 3.1, pressure has sped vendor patching. Caveat added in text: paid vendors, not volunteer maintainers.
+
+## 11. Arora, Telang and Xu (2008), Management Science 54(4), 642-656. doi:10.1287/mnsc.1070.0771 (2026-10-08)
+- NOT AVAILABLE in full through W&L (same INFORMS 403). Abstract only.
+- Abstract: model with a social planner setting the protected period and a vendor choosing patch timing; vendors typically patch less quickly than socially optimal, so the planner shrinks the protected period; sometimes patch release coincides with disclosure. A longer protected period does not always give better patch quality; workarounds can give the planner more leverage and sometimes raise social cost.
+- The reading list asked whether CISA's 3-day deadline fits this model. It does not map: Arora models the vendor's protected period before disclosure, while CISA's deadline is for agencies installing patches. Not used for the CISA claim.
+
+## Correction found while reading (2026-10-08)
+- Mandiant's time-to-exploit is measured relative to patch release ("before or after a patch is released"), not disclosure; M-Trends 2026 reads minus 7 days as exploitation before a patch is released. The paper had said "from disclosure" in five places. Fixed in v2.6.
+- Mandiant does not say the fall in its average comes from the rising zero-day share; it says the share shift (n-day:zero-day 38:62 in 2021-22 to 30:70 in 2023) reflects more zero-day use and detection. Figure caption fixed. Arithmetic point kept: only zero-days can make the average negative.

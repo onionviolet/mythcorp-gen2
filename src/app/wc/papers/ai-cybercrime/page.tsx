@@ -29,6 +29,7 @@ import { PrintPrep } from './_components/PrintPrep';
 
 const SECTIONS = [
   { id: 'abstract', eyebrow: 'Abstract', title: 'Abstract' },
+  { id: 'methods', eyebrow: 'Methods', title: 'Methods' },
   { id: 'act-1', eyebrow: 'Part I', title: 'I. What changed' },
   { id: 'act-2', eyebrow: 'Part II', title: 'II. What comes next' },
   { id: 'act-3', eyebrow: 'Part III', title: 'III. What to do' },
@@ -64,7 +65,7 @@ export default function AiCybercrimePaper() {
         <p className="mt-3 font-mono text-xs text-[color:var(--fg-muted)]">
           {PAPER_VERSION.label} · {PAPER_VERSION.date} ·{' '}
           <a href="#amendments" className="text-[color:var(--accent)] underline underline-offset-4">
-            {AMENDMENTS.length} amendments since the 2025 paper
+            {AMENDMENTS.length} amendments
           </a>
           <span className="print:hidden">
             {' '}·{' '}
@@ -82,16 +83,16 @@ export default function AiCybercrimePaper() {
             the skill needed for attacks built on writing and impersonation, but crime-as-a-service had already removed the
             skill requirement for some attacks before it. Expert-level vulnerability discovery appeared in 2026 in models
             withheld from public release, and the best downloadable model trailed them by about four
-            months.<Cite ids={['glasswing-2026-04', 'caisi-2026-09']} /> Over the same period the average time from disclosure
+            months. Over the same period the average time from patch release
             to first observed exploitation fell from 63 days in 2018 to 2019 to minus 7 days in
-            2025,<Cite ids={['gtte-2024', 'mtrends-2026']} /> and only 75 of 530 AI-found flaws reported to open-source maintainers
-            had patches in May 2026.<Cite ids={['glasswing-2026-05']} /> Harm data show no measurable AI-driven increase so far.
+            2025, and only 75 of 530 AI-found flaws reported to open-source maintainers
+            had patches in May 2026. Harm data show no measurable AI-driven increase so far.
             I forecast that whether repair can speed up as fast as discovery decides the outcome for 2027 to 2030, and I list
             the measurements that would falsify that forecast.
           </p>
         </section>
 
-        <figure className="mt-10 border-l-0 border border-[color:var(--border)] p-5 break-inside-avoid" style={{ borderRadius: 'var(--radius)' }}>
+        <figure className="mt-10 border-l-0 border border-[color:var(--border)] p-5 break-inside-avoid print:border-0 print:p-0" style={{ borderRadius: 'var(--radius)' }}>
           <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-[color:var(--fg-subtle)]">Case: the 2024 Hong Kong video call</p>
           <p className="mt-3 text-base leading-relaxed text-[color:var(--fg)]">
             In early 2024 a finance employee at a multinational company in Hong Kong joined a video conference with people
@@ -102,7 +103,7 @@ export default function AiCybercrimePaper() {
           </p>
         </figure>
 
-        <div className="mt-10 border-y border-[color:var(--border)] py-6">
+        <div className="mt-10 border-y border-[color:var(--border)] py-6 print:border-0">
           <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-[color:var(--accent)]">thesis</p>
           <p className="mt-3 font-serif text-xl leading-snug text-[color:var(--fg)] sm:text-2xl">
             AI is moving the hard part of cybercrime from skill to access, for the second time. Crime-as-a-service
@@ -114,7 +115,8 @@ export default function AiCybercrimePaper() {
             limited by the people who move the money, which AI does not supply.<Cite ids={['leukfeldt-2017']} /> For
             breaking into systems the shift reached the gated
             frontier in 2026, and <Term k="openWeights">downloadable models</Term> are a few months behind. The time from a
-            flaw going public to its first <Term k="exploit">exploitation</Term> fell from 63 days to 5 before AI agents existed.<Cite ids={['gtte-2024']} /> The harm data
+            patch&rsquo;s release to the first <Term k="exploit">exploitation</Term> of its flaw had already fallen before AI agents existed
+            (section <a href="#repair" className="underline underline-offset-4">1.3</a>). The harm data
             so far show no AI-driven crime wave, though official counts catch only a small share of cybercrime, so read
             this as a forecast about capability and access.<Cite ids={['chainalysis-2026', 'ic3-2025', 'vandeweijer-2019']} /> The
             international consensus leaves the biggest question open too: the 2026 International AI Safety Report says it
@@ -135,6 +137,26 @@ export default function AiCybercrimePaper() {
             <KeyItem kind="fiction">An illustrative scenario, collapsed by default, built only from cited facts. Never evidence.</KeyItem>
           </dl>
         </div>
+
+        <Section id="methods" number="" eyebrow="methods" title="Methods" lead={<>
+          I built the review around public threat reports and academic studies, adding primary reports and datasets from
+          outside AI companies to check the repair and harm claims. A literature sweep looked for work that could support
+          or test the thesis, including arguments against it. I read paywalled journal articles through Washington and Lee
+          University&rsquo;s library and used open author copies where available. Two cited disclosure studies were read as
+          abstracts only; I cite only claims in those abstracts.
+        </>}>
+          <p>
+            Every sourced number comes from a source opened during the revision and checked against the claim it supports.
+            I distinguish <ClaimTag kind="evidence" /> for dated reports, <ClaimTag kind="forecast" /> for my projections,
+            <ClaimTag kind="rating" /> for my judgments on a stated rubric, and <ClaimTag kind="fiction" /> for illustrative
+            scenes built from cited facts. Projections and model assumptions are labelled as mine.
+          </p>
+          <p>
+            The barrier scores are my ratings, not measurements. Figure {FIGURE.barrier} gives the five yes or no questions,
+            the scoring rule and my reasons for each answer. The dated scenario is illustrative. Its fictional characters
+            show what a stage could mean for one person; they are not evidence.
+          </p>
+        </Section>
 
         <PaperAct
           id="act-1"
@@ -205,11 +227,20 @@ export default function AiCybercrimePaper() {
             sources outside the AI companies measure on that side.
           </p>
           <p>
-            The window between a flaw going public and its first exploitation has been closing for years. Mandiant
+            The window between a patch&rsquo;s release and the first exploitation of its flaw has been closing for years. Mandiant
             measured an average of 63 days in 2018 to 2019 and 5 days in 2023.<Cite ids={['gtte-2024']} /> Its report on
-            2025 puts the figure at minus 7 days, meaning exploitation on average began before disclosure.<Cite ids={['mtrends-2026']} /> Most
+            2025 puts the figure at minus 7 days, meaning exploitation on average began before a patch existed.<Cite ids={['mtrends-2026']} /> Only zero-days can push the average below zero, and they were 70% of Mandiant&rsquo;s 2023 set.<Cite ids={['gtte-2024']} /> Most
             of that fall came before AI agents existed, so AI did not start it. What AI can do is push a trend that was
             already running.
+          </p>
+          <p>
+            An older measurement shows what a negative average can hide. On 11 million Windows hosts running
+            Symantec&rsquo;s products from 2008 to 2011, 18 flaws were exploited before they were disclosed, for between 19
+            days and 30 months, with a median of 8 months; the authors call these durations lower bounds. After
+            disclosure, attacks on those flaws rose between 2 and 100,000 times, and exploits for 42% of the flaws used
+            in host-based attacks showed up in the field within 30 days of disclosure.<Cite ids={['bilge-2012']} /> Exploitation
+            before disclosure is not new, and most attacks still came after it. The data cover only customers of one
+            antivirus vendor and miss web-based and highly targeted attacks.
           </p>
           <ExploitWindow />
           <p>
@@ -413,7 +444,7 @@ export default function AiCybercrimePaper() {
             get fixed, which is the one number from 2026 that looks worst.
           </p>
           <EndingsBranch />
-          <div className="border border-dotted border-[color:var(--border-strong)] p-4 text-sm" style={{ borderRadius: 'var(--radius)' }}>
+          <div className="border border-dotted border-[color:var(--border-strong)] p-4 text-sm print:border-0 print:p-0" style={{ borderRadius: 'var(--radius)' }}>
             <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)]">a third possibility, theory</p>
             <p className="mt-2">
               The endings may not be a choice at all. Garfinkel and Dafoe argue that as investment grows, the balance tends
@@ -439,7 +470,13 @@ export default function AiCybercrimePaper() {
             <li>
               <strong className="text-[color:var(--fg)]">Pay for fixing, not only finding.</strong>{' '}
               The measured bottleneck in 2026 is human capacity to triage and patch.<Cite ids={['glasswing-2026-05']} /> Automated
-              patching already works in competition at low cost, and the systems are open source.<Cite ids={['aixcc-2025']} />
+              patching already works in competition at low cost, and the systems are open source.<Cite ids={['aixcc-2025']} /> Pressure
+              has sped fixes before. In data from CERT/CC and SecurityFocus, public disclosure made vendors nearly two and
+              a half times more likely to release a patch at any given moment.<Cite ids={['arora-2010']} /> A model of
+              disclosure policy finds that vendors patch more slowly than is best for society, so the body that sets the
+              deadline should shorten it.<Cite ids={['arora-2008']} /> The cost is the surge of attacks that follows
+              disclosure.<Cite ids={['bilge-2012']} /> Those studies measured companies with paid staff; whether deadlines
+              speed up volunteer maintainers, who wrote the 2026 fixes, is untested.
             </li>
             <li>
               <strong className="text-[color:var(--fg)]">Keep measuring diffusion on a schedule.</strong>{' '}
@@ -479,7 +516,53 @@ export default function AiCybercrimePaper() {
             </p>
           </ForecastFrame>
         </Section>
-        <Section id="wrong" number="3.2" eyebrow="falsification" lead={<>Six regularly published measurements would falsify parts of the forecast; each is listed with its latest value.</>} title="What would prove me wrong">
+        <Section id="limitations" number="3.2" eyebrow="limitations" title="Limitations" lead={<>These limits apply to the evidence and to my ratings and model. I keep them beside the claims too.</>}>
+          <ul className="ml-5 list-disc space-y-3">
+            <li>
+              <strong className="text-[color:var(--fg)]">Verizon&rsquo;s sample.</strong>{' '}
+              Its data comes from partners, not a random sample, and Verizon sells security services. I read the direction
+              more than the exact values.<Cite ids={['dbir-2026']} />
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">The older zero-day record.</strong>{' '}
+              Bilge and Dumitraș studied Windows hosts running Symantec products. Their durations are lower bounds, and
+              their data miss web-based and highly targeted attacks.<Cite ids={['bilge-2012']} />
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Abstract-only readings.</strong>{' '}
+              I read the two Arora disclosure studies only as abstracts because the library did not carry their full text.
+              I cite only abstract claims.<Cite ids={['arora-2008', 'arora-2010']} />
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">The backlog model.</strong>{' '}
+              Figure {FIGURE.backlog} covers one program&rsquo;s open-source queue, not all software. Its growth rates are my
+              guesses. It counts flaws alike and stops at the patch, leaving prioritization and installation outside the
+              model.<Cite ids={['glasswing-2026-05', 'epss-2021', 'lohn-2022']} />
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">The Mandiant series.</strong>{' '}
+              The 2023 and 2025 values in Figure {FIGURE.exploitWindow} come from different reports and may not be measured
+              the same way.<Cite ids={['gtte-2024', 'mtrends-2026']} />
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Official crime counts.</strong>{' '}
+              They catch a small, lopsided share of cybercrime. The Dutch reporting study predates AI and measures police
+              reports, while the FBI and FTC collect complaints and consumer reports. The FBI&rsquo;s AI-tagged share also
+              depends on victims noticing AI.<Cite ids={['vandeweijer-2019', 'ic3-2025', 'ftc-2026']} />
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Tidelift&rsquo;s stake.</strong>{' '}
+              Tidelift sells maintainer funding, so it has a stake in its finding about unpaid
+              maintenance.<Cite ids={['tidelift-2024']} />
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">My barrier ratings.</strong>{' '}
+              The answers and the line between groups in Figure {FIGURE.barrier} are my choices. The scores rate how
+              reachable an attack is for a non-expert, not how often it happens or how much harm it causes.
+            </li>
+          </ul>
+        </Section>
+        <Section id="wrong" number="3.3" eyebrow="falsification" lead={<>Six regularly published measurements would falsify parts of the forecast; each is listed with its latest value.</>} title="What would prove me wrong">
           <p>
             Each row is a reading someone else publishes on a schedule, the latest value, and what would count against
             me.
@@ -515,17 +598,19 @@ export default function AiCybercrimePaper() {
             How the argument has changed, what the original reviewer said, how the page has changed, and where every claim
             comes from.
           </p>
-        <Section id="amendments" number="Appendix A" eyebrow="amendments" lead={<>The argument has changed {AMENDMENTS.length} times since the 2025 paper; each change is listed with the evidence that moved it.</>} title="Amendments log">
+        <Section id="amendments" number="Appendix A" eyebrow="amendments" lead={<>The argument has changed {AMENDMENTS.length} times; each change is listed with where the earlier claim came from and the evidence that moved it.</>} title="Amendments log">
           <p>
-            Where the argument itself changed since the 2025 paper, the change is logged here with its date, what I
-            claimed before, what I claim now and the evidence that moved it. Each entry says whether it strengthens,
-            narrows or reverses the original. Presentation changes are in the revision notes further down.
+            Where the argument itself changed, the change is logged here with its date, what I claimed before, what I
+            claim now and the evidence that moved it. Each earlier claim names its source: the 2025 paper or an earlier
+            draft of this October 2026 revision. Each entry says whether it
+            strengthens, narrows or reverses the earlier claim. Presentation changes are in the revision notes further
+            down.
           </p>
           <AmendmentsLog />
         </Section>
-        <Section id="reviewer-feedback" number="Appendix B" eyebrow="review" lead={<>The 2025 paper received a B+; this appendix records the reviewer&rsquo;s three critiques and the response to each.</>} title="What the reviewer flagged">
+        <Section id="reviewer-feedback" number="Appendix B" eyebrow="review" lead={<>This appendix records the 2025 reviewer&rsquo;s three critiques and the response to each.</>} title="What the reviewer flagged">
           <p>
-            The original paper was a first-time research project graded B+. The reviewer (Prof. Suleyman Uludag,
+            The original paper was a first-time research project. The reviewer (Prof. Suleyman Uludag,
             U. Michigan-Flint CS) liked the taxonomy and the use of expert-survey grounding, and flagged three
             problems. Here is what I did about each.
           </p>
@@ -551,6 +636,19 @@ export default function AiCybercrimePaper() {
         <Section id="revision-notes" number="Appendix C" eyebrow="revisions" lead={<>These notes record changes to presentation; changes to the argument are in Appendix A.</>} title="Revision notes, October 2026">
           <ul className="ml-5 list-disc space-y-2">
             <li>
+              <strong className="text-[color:var(--fg)]">Amendments checked against the 2025 paper (v2.8).</strong>{' '}
+              I reread the 2025 paper and found that several &ldquo;claim before&rdquo; lines described the first web
+              version or an earlier draft of this revision, not the 2025 text. Each now quotes or closely paraphrases its
+              actual source and names it. Three, on voice impersonation, the open-weight lag and the minus 7 days reading,
+              amend earlier drafts of this revision, not the 2025 paper, and are marked that way. References are now numbered alphabetically, with Internet Archive
+              copies for web sources. No current claim, number or source changed.
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Methods, limitations and presentation (v2.7).</strong>{' '}
+              Added Methods and Limitations, removed abstract citations and repeated repair-window figures, and made
+              print labels and boxes plain text. No claim, number or source changed.
+            </li>
+            <li>
               <strong className="text-[color:var(--fg)]">Written with AI help.</strong>{' '}
               This revision was researched and drafted with Claude, an AI model, working from my 2025 paper and under my
               direction. Every source below was opened and checked against the claim it supports. The 2025 paper was my
@@ -560,6 +658,14 @@ export default function AiCybercrimePaper() {
               <strong className="text-[color:var(--fg)]">Independent data added.</strong>{' '}
               Time-to-exploit, vulnerability-database, CISA, maintainer, ransomware-payment and FTC figures from outside
               the AI companies, a section on what cuts against the thesis, and a list of readings that would prove me wrong.
+            </li>
+            <li>
+              <strong className="text-[color:var(--fg)]">Disclosure studies and a correction (v2.6).</strong>{' '}
+              Added a field study of zero-day attacks and two studies of disclosure and vendor patching; the two
+              disclosure studies were read as abstracts only, because the library does not carry their full text. They
+              added amendment A9. Corrected the Mandiant measure throughout: it counts days from patch release, not from
+              disclosure, and the figure caption no longer says the fall came from zero-days, which Mandiant does not
+              claim.
             </li>
             <li>
               <strong className="text-[color:var(--fg)]">Paper and website separated (v2.5).</strong>{' '}
@@ -608,11 +714,13 @@ export default function AiCybercrimePaper() {
             as they arrive.
           </p>
         </Section>
-        <Section id="sources" number="" eyebrow="references" lead={<>All {PAPER_SOURCES.length} sources cited in the paper, numbered by publication date.</>} title="References">
+        <Section id="sources" number="" eyebrow="references" lead={<>All {PAPER_SOURCES.length} sources cited in the paper, numbered alphabetically by first author.</>} title="References">
           <p className="text-sm">
             Each source was opened and read for this revision. Entries marked library copy are paywalled journal
-            articles read in full through Washington and Lee University&rsquo;s library; the rest are open copies. Dates
-            are publication dates.
+            articles read in full through Washington and Lee University&rsquo;s library; entries marked abstract only were
+            read as their published abstract, and only claims from the abstract are cited; the rest are open copies. Dates
+            are publication dates. Web sources were accessed on 7 or 8 October 2026, and each links to an Internet Archive
+            copy where one exists; journal articles link to their DOI.
             Entries marked peer-reviewed passed a conference or journal review; preprints have not. Entries marked
             reporting are news accounts of an official statement I could not find in the original.
           </p>
@@ -628,7 +736,16 @@ export default function AiCybercrimePaper() {
                   . <span className="font-mono text-xs">{s.date}</span>
                   {s.kind !== 'primary' && <span className="font-mono text-xs"> · {s.kind}</span>}
                   {'library' in s && s.library && <span className="font-mono text-xs"> · library copy</span>}
+                  {'archive' in s && s.archive && (
+                    <>
+                      {' · '}
+                      <a href={s.archive} target="_blank" rel="noreferrer" className="font-mono text-xs underline underline-offset-4 hover:text-[color:var(--accent)]">
+                        archived
+                      </a>
+                    </>
+                  )}
                   <span className="hidden break-all font-mono text-[10px] print:block">{s.url}</span>
+                  {'archive' in s && s.archive && <span className="hidden break-all font-mono text-[10px] print:block">Archived: {s.archive}</span>}
                 </span>
               </li>
             ))}
@@ -704,7 +821,7 @@ const WRONG_ROWS: ReadonlyArray<{ reading: string; latest: ReactNode; against: s
     against: 'Ending A, if both keep falling through 2027 while AI tools spread. Defenses against extortion would be holding.',
   },
   {
-    reading: 'Mean time from disclosure to exploitation',
+    reading: 'Mean time from patch release to exploitation',
     latest: <>minus 7 days, 2025<Cite ids={['mtrends-2026']} /></>,
     against: 'Ending B, if it keeps falling. Repair would be starting later each year, however fast it runs.',
   },
