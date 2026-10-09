@@ -39,6 +39,10 @@
   position: relative;
   z-index: 1;
   display: inline-block;
+  /* The specimen stands behind the title; a page-coloured stroke painted
+     under each glyph keeps the letters legible where they cross its body. */
+  -webkit-text-stroke: 0.07em var(--bg);
+  paint-order: stroke fill;
 }
 
 .solidLine::before,

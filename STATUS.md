@@ -1,5 +1,11 @@
 # STATUS
 
+## Untextured liquid and a knockout edge on the title and readout, 2026-10-09
+
+- Surface (liquid) drops the spectre's colour texture (`untextured` on LiquidObject, edits marked `// untextured`): the spotted skin and painted eye made it read as a game asset. Dark mode tints it pure white, so it reads as a white faceted body that mirrors light mode's black.
+- The solid title (Drift, Surface) and the readout get a page-coloured stroke painted under each glyph (`-webkit-text-stroke` in `--bg` with `paint-order: stroke fill`), so letters stay legible where the larger specimen sits behind them. Before this, "IN" and "ESS" and the compact readout on tablets and phones vanished into the body.
+- Checked with the desktop GPU at 1440x900, 1280x720, 1100x800 and 390x844 in both schemes. `npm run check` passed and the e2e suite passed 44 of 44 on the production build.
+
 ## Card angle, lighter model, location note and CI deployed, 2026-10-09
 
 Pushed main to 8e4b69b and deployed it as Cloudflare version 1997761a from the

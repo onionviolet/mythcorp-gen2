@@ -56,6 +56,10 @@
 
 .readout {
   background: transparent;
+  /* Same knockout as the solid title: the readout can sit on the specimen's
+     body on tablets and phones. */
+  -webkit-text-stroke: 3px var(--bg);
+  paint-order: stroke fill;
 }
 
 .operator > summary {
