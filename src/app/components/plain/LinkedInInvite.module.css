@@ -91,6 +91,22 @@
   display: block;
   width: 100%;
   height: 100%;
+  transform-origin: 50% 100%;
+  transition: transform 220ms var(--motion-ease);
+}
+
+.pet svg,
+.magneticCursor svg {
+  filter: drop-shadow(var(--sun-shadow-x, 0) var(--sun-shadow-y, 0) 0
+    color-mix(in srgb, var(--fg) var(--sun-shadow-opacity, 0%), transparent));
+}
+
+.pet[data-pet-asleep] {
+  opacity: 0.5;
+}
+
+.pet[data-pet-crouch] svg {
+  transform: scale(1.08, 0.8);
 }
 
 .petReaction {

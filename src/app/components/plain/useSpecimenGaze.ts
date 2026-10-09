@@ -15,6 +15,17 @@ const LINGER_MS = 3000;
 const REST = 1e-4;
 
 type Spring = { x: number; v: number };
+type Point = { x: number; y: number };
+
+/** A decoy the specimen watches instead of the pointer: the cursor echo on
+ *  its way to LinkedIn. `null` hands the gaze back to the real pointer. */
+let lure: Point | null = null;
+let wakeGaze: (() => void) | null = null;
+
+export function setGazeLure(point: Point | null) {
+  lure = point;
+  wakeGaze?.();
+}
 
 /** Exact critically damped step, stable at any frame time. */
 function settle(spring: Spring, target: number, rate: number, dt: number) {
@@ -51,10 +62,23 @@ export function useSpecimenGaze(specimen: RefObject<HTMLElement | null>) {
     let frame = 0;
     let lastTime = 0;
 
+    const aimAt = (point: Point) => {
+      const box = specimen.current?.getBoundingClientRect();
+      if (!box) return;
+      aim = {
+        x: clamp((point.x - (box.left + box.width / 2)) / (window.innerWidth / 2)),
+        y: clamp(((box.top + box.height / 2) - point.y) / (window.innerHeight / 2)),
+      };
+    };
+
     const step = (time: number) => {
       const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.1) : 0;
       lastTime = time;
-      const engaged = getPointer().active || performance.now() - lastSeen < LINGER_MS;
+      if (lure) {
+        aimAt(lure);
+        lastSeen = performance.now();
+      }
+      const engaged = lure !== null || getPointer().active || performance.now() - lastSeen < LINGER_MS;
       settle(yaw, engaged ? aim.x * MAX_YAW : 0, TURN_RATE, dt);
       settle(pitch, engaged ? aim.y * MAX_PITCH : 0, TURN_RATE, dt);
       settle(face, engaged ? 1 : 0, FACE_RATE, dt);
@@ -73,21 +97,17 @@ export function useSpecimenGaze(specimen: RefObject<HTMLElement | null>) {
 
     const unsubscribe = subscribePointer(() => {
       const pointer = getPointer();
-      const box = specimen.current?.getBoundingClientRect();
-      if (pointer.active && box) {
-        const cx = box.left + box.width / 2;
-        const cy = box.top + box.height / 2;
-        aim = {
-          x: clamp((pointer.x - cx) / (window.innerWidth / 2)),
-          y: clamp((cy - pointer.y) / (window.innerHeight / 2)),
-        };
-      }
+      if (pointer.active && !lure) aimAt(pointer);
       lastSeen = performance.now();
       if (!frame) frame = requestAnimationFrame(step);
     });
+    wakeGaze = () => {
+      if (!frame) frame = requestAnimationFrame(step);
+    };
 
     return () => {
       unsubscribe();
+      wakeGaze = null;
       if (frame) cancelAnimationFrame(frame);
       reset();
     };

@@ -1,9 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import type { CSSProperties } from 'react';
 import styles from './LinkedInInvite.module.css';
 import { reportVisibleMovement } from './fieldActivity';
 import { HOLD_SCENE_CHANGE_EVENT } from './holdSceneEvents';
+import { getGatherAmount, subscribeGather } from './holdGather';
+import { chicagoSky, subscribeSky } from './sky/skyState';
+import { setGazeLure } from './useSpecimenGaze';
 
 const IDLE_DELAY = 5000;
 const APPROACH_DURATION = 2400;
@@ -20,6 +24,30 @@ const INTERACTIVE_SELECTOR =
   'a, button, input, textarea, select, summary, [role="button"], [role="link"]';
 
 type PetPhase = 'waiting' | 'approaching' | 'settled' | 'following';
+
+/** Civil twilight: below this, Chicago is dark and a resting cat sleeps. */
+const NIGHT_ELEVATION = -6;
+/** Gather amount past which the cat crouches with its ears back. */
+const CROUCH_GATHER = 0.4;
+
+/** Chicago's sun as a tiny cast shadow, quantised so it only re-renders on a
+ *  visible change. Longer when the sun is low, gone at night. */
+function sunShadowKey(): string {
+  const { elevation, azimuth } = chicagoSky();
+  if (elevation <= 0) return '0|0|0';
+  const length = Math.min(6, 1 / Math.tan(Math.max(elevation, 8) * Math.PI / 180));
+  const x = Math.sin(azimuth * Math.PI / 180) * length;
+  const strength = Math.min(1, elevation / 6);
+  return `${Math.round(x * 2) / 2}|${Math.round(length * 0.6 * 2) / 2}|${Math.round(strength * 4) / 4}`;
+}
+
+function isNight(): boolean {
+  return chicagoSky().elevation < NIGHT_ELEVATION;
+}
+
+function isCrouching(): boolean {
+  return getGatherAmount() > CROUCH_GATHER;
+}
 type CursorMode = 'hidden' | 'pulling' | 'returning';
 type MotionProfile = { reduced: boolean; canFollow: boolean };
 type Point = { x: number; y: number };
@@ -57,8 +85,10 @@ function followerPoint(pointer: Point, invite: HTMLAnchorElement): Point {
   return candidates.find(clearOfControls) ?? restingPoint(invite);
 }
 
-function LinkedInPet({ phase, petRef, reactionActive, reactionSequence, onReactionEnd }: {
+function LinkedInPet({ phase, petRef, reactionActive, reactionSequence, onReactionEnd, asleep, crouching }: {
   phase: PetPhase;
+  asleep: boolean;
+  crouching: boolean;
   petRef: React.RefObject<HTMLSpanElement | null>;
   reactionActive: boolean;
   reactionSequence: number;
@@ -67,6 +97,8 @@ function LinkedInPet({ phase, petRef, reactionActive, reactionSequence, onReacti
   return (
     <span ref={petRef} aria-hidden data-linkedin-pet data-pet-phase={phase}
       data-pet-reaction={reactionActive ? 'active' : 'idle'}
+      data-pet-asleep={asleep ? 'true' : undefined}
+      data-pet-crouch={crouching ? 'true' : undefined}
       className={`${styles.pet} ${styles[phase]}`}>
       <svg viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
@@ -78,7 +110,9 @@ function LinkedInPet({ phase, petRef, reactionActive, reactionSequence, onReacti
           <path d="m7.25 7.1-.5-3.6 3.15 2.55M18.45 6.55l1.55-3.05.95 3.8"
             stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </g>
-        <path d="M20.55 12.2h.01M14.35 12.2h.01M4.5 12.5c-1.5-.1-2.55-.75-3-1.8"
+        <path d={asleep
+          ? 'M19.7 12.4c.4.35.9.35 1.3 0M13.5 12.4c.4.35.9.35 1.3 0M4.5 12.5c-1.5-.1-2.55-.75-3-1.8'
+          : 'M20.55 12.2h.01M14.35 12.2h.01M4.5 12.5c-1.5-.1-2.55-.75-3-1.8'}
           stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
         />
       </svg>
@@ -114,6 +148,9 @@ export function LinkedInInvite() {
   const cursorRef = useRef<HTMLSpanElement>(null);
   const phaseRef = useRef<PetPhase>('waiting');
   const hasSettled = useRef(false);
+  const night = useSyncExternalStore(subscribeSky, isNight, () => false);
+  const crouching = useSyncExternalStore(subscribeGather, isCrouching, () => false);
+  const shadow = useSyncExternalStore(subscribeSky, sunShadowKey, () => '0|0|0');
 
   useEffect(() => {
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -153,6 +190,12 @@ export function LinkedInInvite() {
       document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, [motionProfile]);
+
+  useEffect(() => {
+    if (!crouching || !motionProfile || motionProfile.reduced) return;
+    setReactionSequence((current) => current + 1);
+    setReactionActive(true);
+  }, [crouching, motionProfile]);
 
   useEffect(() => {
     if (!motionProfile) return;
@@ -275,6 +318,7 @@ export function LinkedInInvite() {
       cursorPoint = null;
       cursorReturnTarget = null;
       cursorRef.current?.style.removeProperty('transform');
+      setGazeLure(null);
       setCursorMode('hidden');
     };
     const stopPull = () => {
@@ -287,6 +331,7 @@ export function LinkedInInvite() {
       stopPull();
       if (!cursorPoint) return;
       cursorReturnTarget = target;
+      setGazeLure(null);
       setCursorMode('returning');
       if (returnFrame !== undefined) return;
       const drawReturn = (time: number) => {
@@ -345,6 +390,7 @@ export function LinkedInInvite() {
         };
         cursorPoint = point;
         cursor.style.setProperty('transform', `translate3d(${point.x}px, ${point.y}px, 0)`);
+        setGazeLure(point);
         reportVisibleMovement('cursor-echo', point.x, point.y, time);
         applyGlow(point);
         if (progress < 1) pullFrame = window.requestAnimationFrame(draw);
@@ -457,6 +503,12 @@ export function LinkedInInvite() {
   const following = phase === 'following' && motionProfile?.canFollow === true
     && !motionProfile.reduced;
   const cursorVisible = cursorMode !== 'hidden';
+  const [shadowX, shadowY, shadowStrength] = shadow.split('|').map(Number);
+  const sunShadow = {
+    '--sun-shadow-x': `${shadowX}px`,
+    '--sun-shadow-y': `${shadowY}px`,
+    '--sun-shadow-opacity': `${Math.round(shadowStrength * 35)}%`,
+  } as CSSProperties;
 
   return (
     <a ref={inviteRef} href="https://www.linkedin.com/in/0w0/" target="_blank"
@@ -466,6 +518,7 @@ export function LinkedInInvite() {
       data-following={following ? 'true' : 'false'}
       data-magnetic-pull={cursorMode === 'pulling' ? 'true' : 'false'}
       data-magnetic-return={cursorMode === 'returning' ? 'true' : 'false'}
+      style={sunShadow}
       className={`${styles.invite} mb-2 flex min-h-11 w-fit items-center gap-3 px-3
                   text-[13px] normal-case font-medium tracking-normal text-[color:var(--fg)]`}>
       <LinkedInPet
@@ -474,6 +527,8 @@ export function LinkedInInvite() {
         reactionActive={reactionActive}
         reactionSequence={reactionSequence}
         onReactionEnd={() => setReactionActive(false)}
+        asleep={night && phase === 'settled'}
+        crouching={crouching && motionProfile?.reduced === false}
       />
       <MagneticCursor cursorRef={cursorRef} visible={cursorVisible} />
       <span className={styles.linkedInMark} aria-hidden data-linkedin-mark>in</span>

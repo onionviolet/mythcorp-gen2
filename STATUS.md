@@ -1,5 +1,15 @@
 # STATUS
 
+## The cat and the cursor echo join the sky and the gather, 2026-10-08
+
+Small touches that reward a second look:
+- The specimen watches the cursor echo. `setGazeLure` in `useSpecimenGaze.ts` overrides the pointer while the echo pulls toward LinkedIn and is cleared when it returns or hides, so the body turns toward the exit.
+- The resting cat sleeps when Chicago's sun is below -6 degrees: closed eyes, lower opacity. It wakes when it starts following. A horizon drag into night puts it to sleep live.
+- The cat crouches with an ear flick when a gather passes 0.4. No crouch under reduced motion.
+- The cat and the echo cast a 1-bit drop shadow away from Chicago's sun (`--sun-shadow-*` on the invite), up to 6px at a low sun and none at night. Monochrome.
+
+Verification: `npm run check` passed. Headless Chrome against the dev server: `sun=night` cat settled asleep and woke on follow; `sun=dawn` shadow `6px 3.5px 18%`; echo pull turned the specimen toward LinkedIn (screenshots); a hold set the crouch and release cleared it; no page errors.
+
 ## Awe pass merged: two suns, gaze, horizon drag, gather, 2026-10-08
 
 Three parallel agents built the entries below in separate worktrees off the
