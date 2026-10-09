@@ -17,7 +17,7 @@ export function HoldRoomSwitch({ room, onRoom }: { room: LanderRoomId; onRoom: (
                  uppercase tracking-[0.18em] text-[color:var(--fg-subtle)] transition-colors
                  hover:text-[color:var(--fg)] focus-visible:text-[color:var(--fg)] sm:min-h-0"
     >
-      <span>{index}/{LANDER_ROOMS.length}</span>
+      <span className="max-[379px]:hidden">{index}/{LANDER_ROOMS.length}</span>
       <span className="text-[color:var(--fg)]">{roomName(room)}</span>
       <span aria-hidden className="hidden transition-transform group-hover:translate-x-0.5 sm:inline">
         → {roomName(upcoming)}

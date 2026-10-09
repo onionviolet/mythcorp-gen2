@@ -211,7 +211,8 @@ function ResolvedHoldStage({
           className={REACTIVE}
           onError={handleModelError}
           onLoad={onLoad}
-          tint={ink}
+          tint={scheme === 'dark' ? '#ffffff' : ink}
+          untextured
           saturation={0}
           iridescence={0}
           aberration={0}

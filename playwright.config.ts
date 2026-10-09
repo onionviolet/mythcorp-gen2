@@ -10,6 +10,9 @@ export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: false,
   workers: 1,
+  // GitHub's runners have no GPU and two cores; WebGL-heavy timing specs
+  // get one-off stalls there, so CI retries before failing.
+  retries: process.env.CI ? 2 : 0,
   timeout: 30_000,
   expect: {
     timeout: 10_000,
@@ -20,7 +23,9 @@ export default defineConfig({
     trace: 'retain-on-failure',
     // PLAYWRIGHT_CHANNEL=chrome uses installed Chrome locally; CI defaults to bundled Chromium.
     channel: process.env.PLAYWRIGHT_CHANNEL,
-    launchOptions: process.env.CI ? undefined : {
+    // Software WebGL everywhere: without these flags the runners' WebGL
+    // contexts crash the page ("session closed").
+    launchOptions: {
       args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
     },
   },

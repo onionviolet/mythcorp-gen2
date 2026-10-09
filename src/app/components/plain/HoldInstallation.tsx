@@ -99,12 +99,12 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
         <HoldContact />
       </div>
 
-      <div className={`${entrance.identity} relative flex items-start justify-between gap-4 font-mono text-xs`}>
+      <div className={`${entrance.identity} relative flex items-center justify-between gap-4 font-mono text-xs`}>
         <DisturbedText
           text={wordmark}
-          className="tracking-[0.45em] text-[color:var(--fg)]"
+          className="tracking-[0.3em] text-[color:var(--fg)] min-[380px]:tracking-[0.45em]"
         />
-        <div className="flex flex-wrap items-start justify-end gap-x-6 gap-y-1">
+        <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 min-[380px]:gap-x-6 [-webkit-text-stroke:3px_var(--bg)] [paint-order:stroke_fill]">
           {roomSwitch}
           <SchemePicker choice={schemeChoice} onPick={onSchemeChoice} />
         </div>

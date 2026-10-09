@@ -1,5 +1,47 @@
 # STATUS
 
+## Phone header fits on one row, 2026-10-09
+
+The header wrapped `system light dark` onto the title on phones: three 44px
+scheme targets beside the wordmark and room switch did not fit. Below `sm` the
+picker is one button that shows the current scheme and cycles (`Colour scheme,
+system. Activate for light`), like the readout rows. Below 380px the room
+counter hides and the wordmark tracking and control gap tighten. The header
+controls get the same page-coloured knockout stroke as the title, since the
+specimen's head can rise behind them; the active-scheme marker is a border on
+the text, because the stroke hid the underline. The header rows are centre
+aligned, so touch-sized targets no longer sit lower than their neighbours.
+Measured one row with no horizontal scroll at 320, 360, 375, 390 and 412 wide,
+Installation, Tour, Let go and Console. `npm run check` passed; e2e 44 of 44 on
+the production build.
+
+## CI gate is the check; e2e there is informational, 2026-10-09
+
+The first CI runs failed different WebGL timing specs each time (software
+WebGL flags, two retries and longer cat waits did not settle it; one run took
+15 minutes with 3 failed and 2 flaky). GitHub's free runners have no GPU and two
+cores, so the scenes draw a few frames a second. `npm run check` is now the
+blocking CI gate; the Playwright suite still runs in CI with
+`continue-on-error` and uploads traces on failure. The pre-ship e2e gate is
+local: `PLAYWRIGHT_SERVER=start PLAYWRIGHT_CHANNEL=chrome npm run test:smoke`
+after `npm run build` (44 of 44 on the last ship).
+
+## Untextured liquid and a knockout edge on the title and readout, 2026-10-09
+
+- Surface (liquid) drops the spectre's colour texture (`untextured` on LiquidObject, edits marked `// untextured`): the spotted skin and painted eye made it read as a game asset. Dark mode tints it pure white, so it reads as a white faceted body that mirrors light mode's black.
+- The solid title (Drift, Surface) and the readout get a page-coloured stroke painted under each glyph (`-webkit-text-stroke` in `--bg` with `paint-order: stroke fill`), so letters stay legible where the larger specimen sits behind them. Before this, "IN" and "ESS" and the compact readout on tablets and phones vanished into the body.
+- Checked with the desktop GPU at 1440x900, 1280x720, 1100x800 and 390x844 in both schemes. `npm run check` passed and the e2e suite passed 44 of 44 on the production build.
+
+## Card angle, lighter model, location note and CI deployed, 2026-10-09
+
+Pushed main to 8e4b69b and deployed it as Cloudflare version 1997761a from the
+primary checkout, which is clean now (banner copies stashed). Verified on
+mythcorp.org: the share card and spectre.glb are byte-identical to the commit
+(110,559 and 556,148 bytes), the `you` row carries the location note, `/api/sky`
+returns 200, and light, dark and phone renders show no page errors. main was
+merged into `codex/linkedin-banner` (22e12ee, `npm run check` passed) and
+pushed; PR #42 is mergeable and not merged. First CI runs started for both.
+
 ## Card angle, lighter model, location note and CI, 2026-10-09
 
 - Share card: `scripts/generate-share-spectre.mjs` now samples the spectre at a -35 degree yaw (`SHARE_YAW` overrides) so the card shows a three-quarter creature with its head toward the title; head-on it read as a block on legs. `shareImage` fits the sampled body to the right side of the card with its feet on the halo. Regenerated `public/share/mythcorp-card.png`.

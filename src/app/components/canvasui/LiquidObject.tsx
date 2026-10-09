@@ -46,6 +46,8 @@ export interface LiquidObjectOptions {
   metallic?: number;
   /** Tint multiplied over the asset colors. Empty string keeps the original colors. */
   tint?: string;
+  /** Drop the model's own color textures so it reads as a solid in the tint. */
+  untextured?: boolean;
   /** Extrusion depth of 2D assets (SVG or image) as a fraction of their longest side. */
   depth?: number;
   /** Edge rounding of extruded 2D assets (0 to 1). Higher values melt the edges into a liquid lip. */
@@ -123,6 +125,7 @@ const DEFAULTS: Required<LiquidObjectOptions> = {
   gloss: 0.65,
   metallic: 0.15,
   tint: "",
+  untextured: false,
   depth: 0.05,
   bevel: 0.5,
   highlight: "#ffffff",
@@ -1162,7 +1165,7 @@ export function createLiquidObject(
 
   const baseLooks = new Map<
     THREE.Material,
-    { color: THREE.Color; metalness: number; roughness: number }
+    { color: THREE.Color; metalness: number; roughness: number; map: THREE.Texture | null }
   >();
 
   function rememberLook(material: THREE.Material) {
@@ -1174,6 +1177,7 @@ export function createLiquidObject(
         typeof standard.metalness === "number" ? standard.metalness : 0,
       roughness:
         typeof standard.roughness === "number" ? standard.roughness : 0.5,
+      map: standard.map ?? null, // untextured
     });
   }
 
@@ -1793,6 +1797,12 @@ export function createLiquidObject(
     for (const [material, base] of baseLooks) {
       const standard = material as THREE.MeshStandardMaterial;
       if (standard.color) standard.color.copy(base.color).multiply(tintColor);
+      // untextured
+      const map = config.untextured ? null : base.map;
+      if (standard.map !== undefined && standard.map !== map) {
+        standard.map = map;
+        standard.needsUpdate = true;
+      }
       if (typeof standard.metalness === "number") {
         standard.metalness = base.metalness + (1 - base.metalness) * metallic;
       }
