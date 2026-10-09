@@ -1,5 +1,18 @@
 # STATUS
 
+## LinkedIn banner merged and live, 2026-10-09
+
+Merged PR #42 as 736a31a after bringing it up to date with main and hiding
+the Banner link below `sm` (beside the room switch and scheme control it
+wrapped the phone header again). Deployed as Cloudflare version 0e460100.
+Pre-ship: `npm run check` passed; the production-build e2e run hit 4 timing
+failures while the machine's load average was 13 to 17, and all 4 passed 3 of 3
+on rerun. Verified on mythcorp.org: the Banner link shows at 1280 and is hidden
+at 390 (header one row), opens `/?banner=linkedin`, exports
+`mythcorp-linkedin-light-1584x396.png` at 1584x396, and back returns to the
+Installation; no page errors; `/api/sky` and the share card return 200. The
+older local banner copies remain in `stash@{0}` and are now obsolete.
+
 ## Phone header fits on one row, 2026-10-09
 
 The header wrapped `system light dark` onto the title on phones: three 44px
