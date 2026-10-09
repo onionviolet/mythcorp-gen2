@@ -92,7 +92,7 @@ export function PlainHold() {
           roomSwitch={<div className="flex flex-wrap items-center gap-x-6">
             <HoldRoomSwitch room={room} onRoom={switchRoom} />
             <Link href="/?banner=linkedin" onClick={event => { event.preventDefault(); openBanner(true); }}
-              className="pointer-events-auto min-h-11 content-center font-mono text-[11px] uppercase tracking-[0.18em] text-[color:var(--fg-subtle)] hover:text-[color:var(--fg)] sm:min-h-0">Banner</Link>
+              className="pointer-events-auto hidden min-h-11 content-center font-mono text-[11px] uppercase tracking-[0.18em] text-[color:var(--fg-subtle)] hover:text-[color:var(--fg)] sm:block sm:min-h-0">Banner</Link>
           </div>}
           onRoom={switchRoom}
         />
