@@ -364,6 +364,78 @@ Checks: `npm run check` passed; the paper rendered on the locked dev server
 with v2.6, nine amendments, the three new references and no console errors.
 Not deployed. Still open: the original 2025 PDF, Playwright's Chromium.
 
+## Banner v2 checked against the real LinkedIn screenshot, 2026-10-08
+
+Inspected the supplied 2964 x 1668 profile screenshot. It shows the existing
+banner and an orange W placeholder, not the portrait. Its concrete CS/student
+headline supports the WORK IN PROGRESS perspective; no profile text changed.
+Measured orange-circle bounds: x 294 to 597, y 354 to 657, a 304px diameter.
+The banner mockup uses x 238, y 142, width 1584, height 396; circle center is
+207.5, 363.5 relative to that banner, with radius 152. The screenshot-based
+preview replaces only the banner and placeholder with the local portrait at
+its existing full-square crop, without extra zoom or face/collar edits.
+
+Candidate changes: ribbon origin moves 50px right and 18px up, with its upper
+endpoint preserved, modestly stronger glyph opacity, and lettering core
+particles enlarged from 1.45 to 1.65px with slightly less erosion. Wording,
+wordmark/domain and light monochrome composition remain. The on-page desktop
+photo guide now reflects measured width/overlap rather than the first estimate.
+
+Observed: final `npm run check` and `git diff --check` passed. Built candidate
+served on localhost:3014. Browser inspected before/after at screenshot geometry
+and at 390px, plus banner phone view and photo guide. Main wording reads more
+clearly; the domain stays secondary. Browser error log empty. Downloaded light
+v2 PNG is exactly 1584 x 396, below 8 MB. Files are versioned in
+Downloads/LinkedIn: `mythcorp-linkedin-light-v2-1584x396.png`,
+`mythcorp-profile-after-v2.png`, `mythcorp-profile-before-v2.png`,
+`mythcorp-profile-comparison-v2.png`, `mythcorp-profile-banners-v2.png`,
+`profile-geometry-v2.html`, and phone/page JPG evidence. Local screenshot and
+portrait assets stay outside Git. This is a recommendation pending human
+acceptance and LinkedIn's final crop/compression, not a profile upload.
+Updates target existing PR #42 on codex/linkedin-banner. No merge or manual
+deployment; the original primary checkout and unrelated paper work are intact.
+
+
+## Banner publishing scope, 2026-10-08
+
+User authorized pushing the banner work and sending its evidence to the
+planning chat for a whole-profile review. Prepared `codex/linkedin-banner`
+from `origin/main`, following README branch rules, so the three unrelated
+local paper commits are excluded. Portrait and preview assets remain outside
+the repo in Downloads/LinkedIn. Deployment and LinkedIn upload are outside
+this publishing step. The local main checkout retains its original changes.
+
+
+## Banner navigation and LinkedIn format research, 2026-10-08
+
+Added a Banner tab beside the front-page room switch, with an Installation
+return link and browser back/forward support. The original four rooms and
+cold-load Installation remain. The banner page now includes a 390px legibility
+view and source-linked format guidance; neither affects the PNG export.
+
+Recommendation for this portrait: one light still, whose fixed composition
+keeps the gaze connected to the ASCII ribbon. The website carries the live
+installation. This is a design recommendation, not human acceptance.
+LinkedIn supports JPG/PNG covers below 8 MB, with 1584 x 396 recommended;
+GIF covers are unsupported. Certain paid plans offer up to five still images
+rotating every three seconds. A LinkedIn Live broadcaster's cover temporarily
+shows the live stream during a broadcast. Subscription availability was not
+checked on the user's account. Sources checked today:
+[cover rules and live stream behavior](https://www.linkedin.com/help/linkedin/answer/a568217),
+[slideshow](https://www.linkedin.com/help/linkedin/answer/a7145577),
+[GIF restriction](https://www.linkedin.com/help/linkedin/answer/a564109/).
+
+Observed: `npm run check` passed. Built app at localhost:3012 verified in the
+browser: Banner/Installation links, back/forward, both scheme controls,
+phone-size view, overlap guide and expanded guidance. Main message reads at
+390px; the tiny URL is secondary. Download still measures 1584 x 396 and
+154250 bytes; browser error log empty. `git diff --check` passed. Page images
+saved in Downloads/LinkedIn as `banner-tab-preview.jpg` and
+`banner-phone-check.jpg`. Actual LinkedIn crop and compression remain untested.
+No commit, push, deployment or LinkedIn upload.
+
+
+
 ## Front page restored to its spectacle, paper made public, 2026-10-08
 
 Decision: the front page's goal is awe (DESIGN.md, "The front page's job").

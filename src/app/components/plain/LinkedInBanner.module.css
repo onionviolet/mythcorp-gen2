@@ -1,0 +1,62 @@
+.workshop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  overflow: auto;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 2rem;
+  font-size: 0.75rem;
+}
+.header a { letter-spacing: 0.4em; }
+.content { max-width: 1648px; margin: 4vh auto; padding: 0 2rem 2rem; }
+.content h1 { font-size: clamp(1.7rem, 4vw, 3rem); font-weight: 600; }
+.content p { margin: 1rem 0 2rem; color: var(--fg-muted); }
+.preview { position: relative; border: 1px solid var(--border); }
+.preview canvas { width: 100%; height: auto; display: block; }
+.safeArea {
+  position: absolute;
+  left: 3.5%;
+  bottom: -29%;
+  width: 19.2%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px dashed var(--fg-muted);
+  background: var(--bg-elevated);
+  color: var(--fg-muted);
+  display: grid;
+  place-content: center;
+  text-align: center;
+  font-size: clamp(7px, 1vw, 13px);
+}
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; margin-top: 3rem; font-size: 0.8rem; }
+.controls button { padding: 0.8rem 1rem; border: 1px solid var(--border-strong); cursor: pointer; }
+.controls button:disabled { opacity: 0.4; cursor: wait; }
+.controls button:hover:not(:disabled) { background: var(--bg-elevated); }
+.controls button:focus-visible, .header a:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
+.controls label { display: flex; align-items: center; gap: 0.5rem; }
+.controls input { accent-color: var(--fg); }
+.content .note { margin-bottom: 0; font-size: 0.75rem; }
+@media (max-width: 600px) {
+  .header { padding: 1.25rem; }
+  .content { padding: 0 1.25rem 2rem; }
+}
+
+.tabs { display: flex; gap: 2rem; }
+.tabs a { letter-spacing: 0.12em; color: var(--fg-muted); }
+.tabs [aria-current] { text-decoration: underline; text-underline-offset: 4px; }
+.views { display: flex; gap: 1.5rem; margin: 0 0 1.5rem; font-size: 0.8rem; }
+.views button { padding: 0.5rem 0; cursor: pointer; color: var(--fg-muted); }
+.views button[aria-pressed='true'] { color: var(--fg); text-decoration: underline; text-underline-offset: 4px; }
+.views button:focus-visible, .guidance a:focus-visible, .guidance summary:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
+.phone { max-width: 390px; }
+.guidance { max-width: 780px; margin-top: 2rem; font-size: 0.8rem; line-height: 1.7; }
+.guidance summary { cursor: pointer; }
+.guidance a { text-decoration: underline; text-underline-offset: 3px; }
+.content .guidance p { margin: 1rem 0; }

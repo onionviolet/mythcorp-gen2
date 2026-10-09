@@ -2,6 +2,7 @@
 
 // Walkthrough: /wc/learn/plain-mode
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
@@ -12,6 +13,8 @@ import { HoldInstallation } from './HoldInstallation';
 import { HoldRoomSwitch } from './HoldRoomSwitch';
 import type { HoldRoomProps } from './HoldRoomFrame';
 import { rememberRoom, takeLanderRoom, type LanderRoomId } from './landerRooms';
+
+const LinkedInBanner = dynamic(() => import('./LinkedInBanner').then(m => m.LinkedInBanner), { ssr: false });
 
 const TourRoom = dynamic(() => import('./rooms/TourRoom').then(m => m.TourRoom), { ssr: false });
 const LetGoRoom = dynamic(() => import('./rooms/LetGoRoom').then(m => m.LetGoRoom), { ssr: false });
@@ -32,6 +35,7 @@ export function PlainHold() {
   const { theme, ready } = useTheme();
   const pathname = usePathname() ?? '/';
   const held = isHeld(theme, pathname);
+  const [banner, setBanner] = useState(false);
   const [room, setRoom] = useState<LanderRoomId | null>(null);
   const { choice, scheme, setChoice } = usePlainScheme();
 
@@ -50,10 +54,25 @@ export function PlainHold() {
   }, [held, ready]);
 
   useEffect(() => {
-    if (held) setRoom(takeLanderRoom());
-  }, [held]);
+    const readBanner = () => {
+      if (!held) return;
+      const exportBanner = pathname === '/' && new URLSearchParams(window.location.search).get('banner') === 'linkedin';
+      setBanner(exportBanner);
+      if (!exportBanner) setRoom(takeLanderRoom());
+    };
+    readBanner();
+    window.addEventListener('popstate', readBanner);
+    return () => window.removeEventListener('popstate', readBanner);
+  }, [held, pathname]);
+
+  const openBanner = (next: boolean) => {
+    window.history.pushState(null, '', next ? '/?banner=linkedin' : '/');
+    setBanner(next);
+    if (!next) setRoom(takeLanderRoom());
+  };
 
   if (!held) return null;
+  if (banner) return <LinkedInBanner scheme={scheme} schemeChoice={choice} onSchemeChoice={setChoice} onExit={() => openBanner(false)} />;
 
   const Room = room ? ROOMS[room] : null;
   const switchRoom = (next: LanderRoomId) => {
@@ -70,7 +89,11 @@ export function PlainHold() {
           scheme={scheme}
           schemeChoice={choice}
           onSchemeChoice={setChoice}
-          roomSwitch={<HoldRoomSwitch room={room} onRoom={switchRoom} />}
+          roomSwitch={<div className="flex flex-wrap items-center gap-x-6">
+            <HoldRoomSwitch room={room} onRoom={switchRoom} />
+            <Link href="/?banner=linkedin" onClick={event => { event.preventDefault(); openBanner(true); }}
+              className="pointer-events-auto hidden min-h-11 content-center font-mono text-[11px] uppercase tracking-[0.18em] text-[color:var(--fg-subtle)] hover:text-[color:var(--fg)] sm:block sm:min-h-0">Banner</Link>
+          </div>}
           onRoom={switchRoom}
         />
       )}
