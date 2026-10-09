@@ -1,5 +1,15 @@
 # STATUS
 
+## Card angle, lighter model, location note and CI deployed, 2026-10-09
+
+Pushed main to 8e4b69b and deployed it as Cloudflare version 1997761a from the
+primary checkout, which is clean now (banner copies stashed). Verified on
+mythcorp.org: the share card and spectre.glb are byte-identical to the commit
+(110,559 and 556,148 bytes), the `you` row carries the location note, `/api/sky`
+returns 200, and light, dark and phone renders show no page errors. main was
+merged into `codex/linkedin-banner` (22e12ee, `npm run check` passed) and
+pushed; PR #42 is mergeable and not merged. First CI runs started for both.
+
 ## Card angle, lighter model, location note and CI, 2026-10-09
 
 - Share card: `scripts/generate-share-spectre.mjs` now samples the spectre at a -35 degree yaw (`SHARE_YAW` overrides) so the card shows a three-quarter creature with its head toward the title; head-on it read as a block on legs. `shareImage` fits the sampled body to the right side of the card with its feet on the halo. Regenerated `public/share/mythcorp-card.png`.
