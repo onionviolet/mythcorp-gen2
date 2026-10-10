@@ -1,5 +1,14 @@
 # STATUS
 
+## DESIGN.md caught up; merged banner branch removed, 2026-10-09
+
+DESIGN.md gains "The Installation's body, sky and touch": scale and the
+knockout stroke, the two suns, theme reinterpretation (graphite halo,
+untextured liquid), first touch, the cat's horizon demo, monochrome and the
+one-row phone header. Removed the merged `codex/linkedin-banner` branch
+(local and remote) and its Codex worktree, which held only ignored build
+output.
+
 ## LinkedIn banner merged and live, 2026-10-09
 
 Merged PR #42 as 736a31a after bringing it up to date with main and hiding

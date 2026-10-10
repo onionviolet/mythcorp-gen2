@@ -229,6 +229,43 @@ click away on the room switch, and `?room=<id>` links straight to one. Every
 room keeps the wordmark, the room switch, the scheme picker and the contact
 links through `HoldRoomFrame`.
 
+## The Installation's body, sky and touch, 2026-10-09
+
+Visitors play for a short while and then leave, so the first glance and the
+first touch carry the awe. Rare or idle-only events are not worth building.
+
+- **Scale.** The specimen is a full body standing behind the title, not a
+  figurine under it. The title, the readout and the header controls carry a
+  page-coloured knockout stroke (`--bg`, `paint-order: stroke fill`) so they
+  stay legible wherever the body passes behind them. Do not shrink the body to
+  solve an overlap; extend the knockout instead.
+- **Two suns.** Chicago's real sun lights the specimen through `specimenPose`
+  (key direction and ambient); at night a moon light scaled by phase takes
+  over. The halo is the viewer's own sun: its height, weight and brightness
+  follow local solar elevation. Location comes from Cloudflare's IP lookup on
+  the server, and only rounded angles reach the page; the `you` row says so.
+  `?sun=dawn|noon|dusk|night` pins both.
+- **Theme reinterprets, never recolours.** Dark draws the halo as emitted
+  light. Light draws it as a graphite rule, dotted at night, never a glow.
+  Liquid drops the model's colour texture in both schemes: a black faceted
+  body on paper, a pure white one on black. Painted skin and eyes read as a
+  game asset beside the other scenes.
+- **First touch.** The specimen turns toward the pointer and stops its
+  turntable while engaged, and turns to watch the cursor echo on its way to
+  LinkedIn. Dragging the horizon, or arrowing it, sweeps the day: clock, both
+  suns and light together, easing home on release. Press and hold gathers the
+  field, swells the specimen, scatters the title and drives MOVEMENT to SURGE.
+  A quick click stays a click.
+- **The cat teaches.** Once per load it walks to the horizon, nudges the day
+  forward 30 minutes and lets go, so the drag is discoverable without copy.
+  Any input cancels it; reduced motion and visitors who already swept skip
+  it. It sleeps while Chicago is dark, crouches at a gather, casts a faint
+  shadow away from Chicago's sun, and is 24px on touch.
+- **Monochrome holds.** No warm dusk accent has been approved.
+- **Phones.** The header is one row: below `sm` the scheme picker is a single
+  cycling button and the Banner link is hidden; below 380px the room counter
+  hides. Every control keeps a 44px touch target.
+
 ## Current lander defaults, 2026-09-13
 
 The first load each Chicago day opens on that day's shared scene, the same for
