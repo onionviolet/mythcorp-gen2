@@ -1,5 +1,43 @@
 # STATUS
 
+## /og/specimen-docent study, 2026-10-20
+
+Built the brief in `docs/plans/SPECIMEN_DOCENT_PROMPT_2026-10-19.md` as an
+`/og` study. The spectre stands left of the Tour acts and looks at what you
+are reading. What it looks at, in priority order: a figure control you just
+touched, the mouse if it moved in the last 1.5s, a keyboard-focused act, then
+the figure passing the reading line. It aims from the viewer and swings by the
+target's screen offset; the turn is split 30/30/40 across `neck_1`, `neck_2`
+and `hed` (GLTFLoader renames `neck 1` to `neck_1`), and the body follows only
+past a 55 degree neck clamp. The front page, TourRoom and HoldInstallation are
+untouched.
+
+- Clips: only `Armature.002Action.002` (2.9s, a front paw lift) has any
+  length; the other three are empty or one frame. It plays once, when the
+  paper figure comes into view, so the brief's two reactions became one.
+- Framing: the model is about 2.3 units long against 0.9 tall, so the camera
+  frames by length. It stands three-quarter on with its nose at the column
+  edge, which is the page's one oddity.
+- Phone: the figures sit straight below the head, so a head-on look hid the
+  head behind the body. Narrow screens add a 40 degree three-quarter turn, and
+  pitch rests at its down clamp, so on phones the docent mostly looks down at
+  the act rather than moving between acts.
+- The readout owns the 8 Hz telemetry state (`DocentReadout.tsx`), so the acts
+  and their live figures only re-render when the active act changes.
+- Themes: faceted `--fg` body on paper and plain, a faint accent emissive on
+  cyberpunk, clearcoat on luxury. Plain holds the route like the other `/og`
+  pages.
+- Cuts: no gaze line, which would have been a second effect. No per-act stills,
+  so without WebGL the page is text only.
+- Checks: `npm run check` passed. Checked in the browser pane on the unlocked
+  dev server: paper, cyberpunk and luxury at 1440x900, and paper at 390x844
+  with a one-row readout. Playwright on system Chrome rendered cyberpunk at
+  390x844 with no horizontal scroll. Playwright with system Chrome checked the gaze order
+  (scroll, focus, pointer, stale pointer, glance), and with reduced motion on,
+  the gaze snaps per act and holds while you scroll. Adding the sketch to
+  `sketches.ts` also adds a node to `/og/orbit`'s helix. Not checked: plain light
+  and dark on an open route, and a real phone. No e2e spec added.
+
 ## DESIGN.md caught up; merged banner branch removed, 2026-10-09
 
 DESIGN.md gains "The Installation's body, sky and touch": scale and the

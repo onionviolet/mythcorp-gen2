@@ -38,6 +38,7 @@ Single-screen index of where things live. Read this first; grep second.
 | `POST /api/delete` | `src/app/api/delete/route.ts` | Redeems a delete token. POST only, so unfurlers and prefetch cannot destroy an image |
 | `/og/chat` | `src/app/og/chat/page.tsx` | Local-only chat sandbox |
 | `/og/specimen-story` | `src/app/og/specimen-story/page.tsx` | Scrollytelling study: a sticky R3F stage beside five acts on how the holding installation works; scroll scrubs the camera between act poses. Data in `storyData.ts`, scroll in `useStoryScroll.ts` |
+| `/og/specimen-docent` | `src/app/og/specimen-docent/page.tsx` | Scroll study: the spectre watches the Tour acts. Attention priority in `attention.ts` (touched control, recent mouse, focused act, reading line); neck-chain gaze and the one real clip in `DocentStage.tsx`; act copy in `docentData.ts`. Reuses specimen-story's `useStoryScroll` and the Tour figures |
 | `/og/orbit` | `src/app/og/orbit/page.tsx` | Navigable-world study: the sketches orbit the spectre on a descending helix, scroll or arrow keys turn it, list view is the fallback. `OrbitGallery.tsx` + `SpectreCore.tsx` |
 | `/og/gravity` | `src/app/og/gravity/page.tsx` | Playful-system study: the holding words fall, pile and can be thrown. Pure 2D solver in `letterSolver.ts`, canvas and input in `GravityLab.tsx` |
 | 404 | `src/app/not-found.tsx` | Whimsical 404 |
