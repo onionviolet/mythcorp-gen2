@@ -2,6 +2,7 @@ import { SKETCHES } from '../../../../og/sketches';
 import { CONTACT } from '../../HoldContact';
 import { chicagoClock } from '../../chicagoTime';
 import { LANDER_ROOMS, nextRoom, roomName, type LanderRoomId } from '../../landerRooms';
+import { anomalyName, getLedger, isLedgerOn } from '../../anomalyLedger';
 
 
 type Entry = { name: string; line: string; href?: string };
@@ -86,9 +87,17 @@ export function run(input: string, current: LanderRoomId): Result {
     }
     case 'clear':
       return { lines: [], action: 'clear' };
+    case 'anomalies': {
+      if (!isLedgerOn()) break;
+      const { found } = getLedger();
+      return { lines: found.length
+        ? ['Logged, in the order you found them:', ...found.map(id => `  ${anomalyName(id)}`)]
+        : ['Nothing logged yet.'] };
+    }
     default:
-      return { lines: [`I do not know "${cmd}". help lists what I do know.`] };
+      break;
   }
+  return { lines: [`I do not know "${cmd}". help lists what I do know.`] };
 }
 
 export function complete(buffer: string): string {

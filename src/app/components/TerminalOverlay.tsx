@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { THEMES, useTheme, type ThemeName } from '../contexts/ThemeContext';
 import { TERMINAL_OPEN_EVENT } from './terminalEvents';
+import { logAnomaly } from './plain/anomalyLedger';
 import terminal from './terminalOverlay.module.css';
 
 /**
@@ -61,6 +62,7 @@ export function TerminalOverlay() {
   // Focus the input and keep the log scrolled to the bottom when open.
   useEffect(() => {
     if (!open) return;
+    logAnomaly('operator');
     const previousFocus = document.activeElement;
     inputRef.current?.focus();
     return () => {
@@ -103,6 +105,7 @@ export function TerminalOverlay() {
         break;
       case 'cat':
         if (arg.toLowerCase() === 'readme' || arg.toLowerCase() === 'readme.md') {
+          logAnomaly('file');
           print([{ kind: 'out', text: 'MYTHCORP, a personal site built as a sandbox. The codebase is annotated at /wc/learn. Front is theatre, /wc is the workshop.' }]);
         } else {
           print([{ kind: 'err', text: `cat: ${arg || 'missing operand'}: no such file` }]);

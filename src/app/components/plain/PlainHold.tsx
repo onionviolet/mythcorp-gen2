@@ -13,6 +13,7 @@ import { HoldInstallation } from './HoldInstallation';
 import { HoldRoomSwitch } from './HoldRoomSwitch';
 import type { HoldRoomProps } from './HoldRoomFrame';
 import { rememberRoom, takeLanderRoom, type LanderRoomId } from './landerRooms';
+import { noteRoom } from './anomalyLedger';
 
 const LinkedInBanner = dynamic(() => import('./LinkedInBanner').then(m => m.LinkedInBanner), { ssr: false });
 
@@ -64,6 +65,10 @@ export function PlainHold() {
     window.addEventListener('popstate', readBanner);
     return () => window.removeEventListener('popstate', readBanner);
   }, [held, pathname]);
+
+  useEffect(() => {
+    if (room) noteRoom(room);
+  }, [room]);
 
   const openBanner = (next: boolean) => {
     window.history.pushState(null, '', next ? '/?banner=linkedin' : '/');

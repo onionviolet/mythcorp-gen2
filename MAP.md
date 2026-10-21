@@ -215,6 +215,8 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/usePlainScheme.ts` | Owns the scheme (`usePlainScheme`) and follows it (`useResolvedScheme`) |
 | `src/app/components/plain/HoldContact.tsx` | `CONTACT`, the single source for contact values, and the corner contact links |
 | `src/app/components/plain/LinkedInInvite.tsx` | Distinct profile control with a responsive external arrow, continuous two-ring proximity glow, idle cursor echo and a cat that follows movement then eases home, and once per load walks to the halo line and nudges the sky clock (choreography in catHorizonDemo.ts); styling in LinkedInInvite.module.css |
+| `src/app/components/plain/anomalyLedger.ts` | Prototype behind `?ledger=1` (session flag; a no-op without it): counts the first find of 8 existing hidden behaviours (sweep, surge, scene, rewire, operator, back-room file, every room, throw) in localStorage, never sent. Each behaviour calls `logAnomaly` where it succeeds |
+| `src/app/components/plain/useAnomalyReveal.ts` | The readout's `anomalies` row: count, a 1.6s scrambled reveal of each unannounced find (including finds made in other rooms), and a polite live-region line |
 | `src/app/components/plain/catHorizonDemo.ts` | Pure path planning and timeline for the cat's one-time horizon demo: walk to the halo line clear of every control, push +30 min, let go, walk home |
 | `src/app/components/plain/HoldOperator.tsx` | Quiet `0w0` disclosure with console access and robot notes; LinkedIn stays visible in HoldContact |
 | `src/app/components/terminalEvents.ts` | Shared console-open event for the operator disclosure and terminal listener |
