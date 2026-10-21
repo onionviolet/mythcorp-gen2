@@ -4,6 +4,11 @@ A ready-to-run brief for an `/og` study where the spectre watches the Tour as
 you scroll. Below it: what the strongest Opus 5.5 builds teach, and what else
 this repo could try. These are proposals, not accepted decisions.
 
+For a rerun, use the revised brief in
+[SPECIMEN_DOCENT_PROMPT_COMPARISON_2026-10-20.md](SPECIMEN_DOCENT_PROMPT_COMPARISON_2026-10-20.md).
+The block below is kept as the record of what ac51f98 was built from; its
+asset facts (four clips) turned out wrong.
+
 ## The prompt
 
 Paste this into a fresh session at high effort. It assumes the session reads
@@ -83,26 +88,31 @@ several admit follow-up passes.
   title sequence; a springy player). Their prompts follow a fixed order:
   deliverable, audience, mood plus a "not" clause, the one memorable thing,
   sections, motion spec with named libraries, quality bar, output limits, and a
-  "do not use" ban list. [Muzli](https://muz.li/blog/claude-opus-5-5-for-designers/)
+  "do not use" ban list. Each demo ran under a standing instruction to check
+  in a browser and fix, and took 2 to 4 self-correction rounds.
+  [Muzli](https://muz.li/blog/claude-opus-5-5-for-designers/)
 - **The input is the explanation.** The lens lab (turn a focus ring, watch the
   focal plane move) and the data center (overload a rack, watch heat leave the
   roof) are the strongest entries because a control causes a physical
   consequence. That is DESIGN.md's "inputs create visible consequences" rule.
-  [showcase list](https://github.com/OpenVGLab/awesome-opus5.5-frontend-showcases)
+  Their prompts are unpublished, and the one-shot tag is the list's, not the
+  author's. [showcase list](https://github.com/OpenVGLab/awesome-opus5.5-frontend-showcases)
 - **Scale as story.** Anthropic's Oct 3 thread reportedly featured a site that
   flies from outside the Milky Way down to Jupiter's moons. Prompts unpublished.
   [explainx summary](https://explainx.ai/blog/claude-opus-5-5-community-showcase-watermill-jupiter-water-2026)
 - **Short brief, long leash, verify the finish.** The Invisible Cities build used
-  three lines (task, no questions, a 6 hour budget) and six subagents. It stopped
-  at about half the budget, so "done" needs a concrete checklist, not a time.
+  three lines (task, no questions, a 6 hour budget) and six subagents. By its
+  own account it stopped at about half the budget, so "done" needs a concrete
+  checklist, not a time. The post describes no verification step.
   [Quesma](https://quesma.com/blog/invisible-cities-one-shot/)
 - **Scroll as rooms, not reveals.** The scroll-driven Three.js sites people cite
   move a camera between staged places: Cartier's six alcoves, Primland's terrain
   flythrough, Sleep Well's narrative beats.
   [Utsubo](https://www.utsubo.com/blog/best-threejs-websites-2026)
-- **Self-critique with screenshots.** Every useful write-up has the agent
-  screenshot desktop and phone and compare against the brief. This repo already
-  has the browser pane and e2e for that.
+- **Self-critique with screenshots.** The Muzli builds screenshot desktop and
+  phone because the author told them to; Quesma's post describes no such step.
+  Open-ended critique tends to over-verify, so make the check concrete: fixed
+  frames, named pass conditions, one bounded fix pass. See the comparison doc.
 
 ## What else MYTHCORP could do
 

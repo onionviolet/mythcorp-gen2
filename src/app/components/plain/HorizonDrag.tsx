@@ -6,6 +6,7 @@ import {
   easeSkyHome, getSkyOffset, markSkyTouched, setSkyOffset, skyNow, stopSkyEase, subscribeSkyOffset,
 } from './skyTime';
 import { chicagoClock } from './chicagoTime';
+import { logAnomaly } from './anomalyLedger';
 import { useReducedMotion } from './useReducedMotion';
 import { useViewerHorizon } from './sky/sunLight';
 
@@ -74,7 +75,9 @@ export function HorizonDrag() {
     const current = drag.current;
     if (!current || current.id !== e.pointerId) return;
     const dx = e.clientX - current.startX;
-    setSkyOffset(clampOffset(current.startOffset + (dx / window.innerWidth) * DAY_MS));
+    const swept = (dx / window.innerWidth) * DAY_MS;
+    setSkyOffset(clampOffset(current.startOffset + swept));
+    if (Math.abs(swept) >= HOUR_MS) logAnomaly('sweep');
     setHintX(e.clientX);
   };
 
@@ -94,6 +97,7 @@ export function HorizonDrag() {
     markSkyTouched();
     stopReturn();
     setSkyOffset(clampOffset(getSkyOffset() + step));
+    logAnomaly('sweep');
     setHintX(null);
     keyTimer.current = setTimeout(returnHome, KEY_SETTLE_MS);
   };

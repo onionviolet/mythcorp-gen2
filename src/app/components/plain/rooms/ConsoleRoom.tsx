@@ -5,6 +5,7 @@ import { HoldRoomFrame, type HoldRoomProps } from '../HoldRoomFrame';
 import { useReducedMotion } from '../useReducedMotion';
 import { CONTACT } from '../HoldContact';
 import { CHIPS, bootLines, complete, run } from './console/commands';
+import { logAnomaly } from '../anomalyLedger';
 
 type Line = { id: number; text: string; echo?: boolean };
 
@@ -57,6 +58,7 @@ export function ConsoleRoom(props: HoldRoomProps) {
     history.current.push(text);
     cursor.current = history.current.length;
     const result = run(text, 'console');
+    if (/^(cat|open)\s+\S/i.test(text)) logAnomaly('file');
     if (result.action === 'clear') {
       setLines([]);
     } else {

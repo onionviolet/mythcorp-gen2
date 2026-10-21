@@ -27,6 +27,7 @@ import { HorizonDrag } from './HorizonDrag';
 import { useSpecimenGaze } from './useSpecimenGaze';
 import { useHoldGather } from './holdGather';
 import { useReducedMotion } from './useReducedMotion';
+import { logAnomaly } from './anomalyLedger';
 
 /** Advance to the next option, wrapping. The readout rows cycle rather than
  *  listing, which is what let fifteen buttons come off the screen. */
@@ -78,6 +79,7 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
     setOverlay(composition.overlay);
     setMessageStyle(composition.message);
     window.dispatchEvent(new Event(HOLD_SCENE_CHANGE_EVENT));
+    logAnomaly('scene');
   };
 
   const wordmark = useScramble('MYTHCORP');
@@ -136,11 +138,12 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
               onModel={HOLD_MODEL_IDS.length > 1 ? () => {
                 setModelNotice('');
                 setModelId(next<string>(HOLD_MODEL_IDS, model.id));
+                logAnomaly('rewire');
               } : undefined}
               onCycle={{
-                render: () => setStyle(next(HOLD_STYLES, style)),
-                words: () => setMessageStyle(next(MESSAGE_STYLES, message)),
-                over: () => setOverlay(nextSecondaryOverlay(overlay)),
+                render: () => { setStyle(next(HOLD_STYLES, style)); logAnomaly('rewire'); },
+                words: () => { setMessageStyle(next(MESSAGE_STYLES, message)); logAnomaly('rewire'); },
+                over: () => { setOverlay(nextSecondaryOverlay(overlay)); logAnomaly('rewire'); },
               }}
             />
             {modelNotice && <p role="status" className="max-w-72 font-mono text-[11px] text-[color:var(--fg-muted)]">{modelNotice}</p>}

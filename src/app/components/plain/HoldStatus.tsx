@@ -7,6 +7,7 @@ import { chicagoClock } from './chicagoTime';
 import { skyNow } from './skyTime';
 import { chicagoSky, subscribeSky, sunReading, viewerReading } from './sky/skyState';
 import { DisturbedText, GENTLE } from './DisturbedText';
+import { useAnomalyReveal } from './useAnomalyReveal';
 import styles from './HoldStatus.module.css';
 import {
   getMetrics,
@@ -69,6 +70,7 @@ export function HoldStatus({
   const chicagoSun = useSyncExternalStore(subscribeSky, getChicagoSun, () => '--');
   const viewer = useSyncExternalStore(subscribeSky, getViewerReading, () => '--:--');
   const wide = useSyncExternalStore(subscribeWide, getWide, () => false);
+  const anomalies = useAnomalyReveal();
   const [expandedChoice, setExpandedChoice] = useState<boolean | null>(null);
   const [hoveredHint, setHoveredHint] = useState<ReadoutHint | null>(null);
   const [focusedHint, setFocusedHint] = useState<ReadoutHint | null>(null);
@@ -135,6 +137,7 @@ export function HoldStatus({
         <Row label="halo" value="active" />
         <Row label="over" value={overlay} onCycle={onCycle?.over} nextValue={nextValues?.over} onHoverHint={setHoveredHint} onFocusHint={setFocusedHint} />
       </>}
+      {anomalies.on && <Row label="anomalies" value={anomalies.value} hideOnShort={anomalies.count === 0} />}
       <Row
         label="movement"
         value={
@@ -151,6 +154,7 @@ export function HoldStatus({
         }
       />
     </dl>
+    {anomalies.on && <p role="status" className="sr-only">{anomalies.announcement}</p>}
     <p aria-hidden className={styles.hintLine} data-readout-hint={hintValue ? activeHint : undefined}>
       {hintValue ? `next: ${hintValue}` : '\u00a0'}
     </p>

@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { isHoldControl } from './holdPress';
 import { specimenPose } from './specimenPose';
 import { reportGather } from './fieldActivity';
+import { logAnomaly } from './anomalyLedger';
 
 /** A press shorter than this stays a click: ring only, no gather. */
 export const GATHER_THRESHOLD_MS = 250;
@@ -88,6 +89,7 @@ function tick(time: number) {
     velocity = 0;
   }
   publish(amount);
+  if (phase === 'holding' && amount >= 0.9) logAnomaly('surge');
   if (settled) {
     frame = 0;
     lastTime = 0;

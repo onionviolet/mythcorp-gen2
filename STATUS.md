@@ -1,5 +1,42 @@
 # STATUS
 
+## Anomaly ledger prototype behind ?ledger=1, 2026-10-21
+
+Built the P2 brief in `docs/plans/COOL_SITES_PLAN_2026-10-21.md`. With
+`?ledger=1` (kept for the session), the Installation readout gains an
+`anomalies 00 / 08` row that counts the first find of eight hidden behaviours
+the front page already had: sweeping the horizon an hour or more, holding
+until the specimen surges, changing the scene, rewiring the render, words,
+over or specimen rows, opening the operator console, reading a back room
+(`cat` or `open` in the Console room, `cat readme` in the overlay), walking
+all four rooms, and throwing a letter (900 px/s, or a keyboard pop). A new
+find scrambles into its name for 1.6s and settles; finds made in other rooms
+reveal on the next Installation visit. The hidden console command `anomalies`
+lists them. Without the flag, nothing renders and nothing is written.
+
+- Decisions: dropped the scheme flip (a visible control) and address pins
+  (they arrive by shared link, not discovery). The hold is off under reduced
+  motion, so the total there is 07. Storage is localStorage
+  `mythcorp:anomalies`; the flag is sessionStorage `mythcorp:ledger`.
+- Checks: `npm run check` passed. New `tests/e2e/anomaly-ledger.spec.ts`
+  (flag off writes nothing; scene plus overlay count, console listing, reload
+  persists) passed. The full suite on the production build ran 43 of 46 at a
+  load average of 52 (other sessions running); the three failures, including
+  the new spec, all passed on rerun. Checked light and dark at 1440x900 and
+  light at 390x844 with no page errors.
+- Not done: promotion to the live front page. The phone row shows from the
+  start on tall phones; it hides before the first find only on short screens,
+  like the other short rows.
+
+## Niche developer scout, 2026-10-21
+
+Saved `docs/plans/NICHE_DEVELOPER_SCOUT_2026-10-21.md`: six program/maker
+leads, separating specialist software from website craft. Read the signed-in
+LinkedIn feed and primary public sources; inspected Manraj, Hypersphere, ryOS,
+Hand Mirror and Sonner on desktop, and verified Sonner's toast button. These
+are research findings, not accepted changes. No installs or implementation;
+phone, reduced motion and software runtime checks remain untested.
+
 ## /og/specimen-docent study, 2026-10-20
 
 Built the brief in `docs/plans/SPECIMEN_DOCENT_PROMPT_2026-10-19.md` as an
