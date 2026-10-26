@@ -1,5 +1,60 @@
 # STATUS
 
+## Local commit consolidation and next gate, 2026-10-26
+
+Weibao explicitly authorized committing completed work from the overnight lanes and planning follow-up from the Codex chats. This checkpoint preserves the pending October 13 to 26 audits, scouting, direct-project story proposal and ideaboard on `codex/checkpoint-research-2026-10-26`. Existing code and the site lock are unchanged. Earlier no-commit statements describe their originating sessions.
+
+Read Codex chat `01a1767d-0e75-7df2-a039-6b91b6636630` and `docs/audits/INTERACTIVE_PROJECT_ARCHIVE_2026-10-26.md` before implementation. The next proposed slice is a private comparison of three Gandalf objects against an editorial page with identical content, ordinary links and the documented clarity, accessibility and loading gates. The cabinet is not selected. The original-profile canvas retest in BACKLOG remains a separate dependency; a local build cannot close it. No implementation, Issue write, unlock, push or deployment is authorized by this commit.
+
+Verification for this source state: `npm run check` passed (lint, text policy, Next build and TypeScript). Documentation receives separate link/whitespace checks.
+
+## Interactive project archive audit, 2026-10-26
+
+Saved [the ranked style audit](docs/audits/INTERACTIVE_PROJECT_ARCHIVE_2026-10-26.md).
+Recommendation, not selected: compare a small object cabinet with a direct
+Gandalf project story using identical content, a clearly labeled scripted
+defense illustration and ordinary links. Includes five ranked directions,
+notebook/cross-site alternatives, a bounded prototype brief and measurable
+access, comprehension, load and growth gates. No prototype was built.
+
+New desktop browser evidence: evanciao video description/transcript sections
+and channel list, UNFOLD object details and URL change, Ciechanowski's watch
+separation slider, Nicky Case's first choice/result, Cameron's World composition.
+Creator project pages and additional primary references were read; full videos,
+downloaded games, reference phone/reduced-motion behavior were not verified.
+Reused October 21 scouting and existing /og studies rather than reopening their
+settled research. Read current Gandalf README/validation and OOPS adoption
+receipts; local tests/install status are kept distinct from public-demo readiness.
+
+The later no-megacorp-role-play direction governs over older DESIGN prose.
+Specimen/rooms remain the identity reference; a new archivist, shared companion
+or three-project lineup is not selected. Province War retains its prior proposal
+and asset gate. Open: authorize the private comparison, choose OOPS's concrete
+public-safe feature/media, then separately decide publication/unlock. Only docs
+changed here; no project source, site lock, build, commit, push or deployment.
+
+## Interactive style audit intake, 2026-10-26
+
+Saved the October 26 intake in `docs/plans/PROJECTS_STORY_2026-10-22.md`.
+Weibao requested a dedicated audit chat comparing unusual interactive styles
+and additional directions, with Gandalf AI recreation and OOPS as proposed
+project content and room for future projects. Preserve direct presentation,
+the no-company-role-play decision, existing site lock and publication gates.
+Research only; no redesign selected, implementation, commit or deployment.
+
+## Projects story proposal, 2026-10-22
+
+Saved `docs/plans/PROJECTS_STORY_2026-10-22.md`: how OOPS and
+Province War could enter the site as one room each, with a proof control
+and a dated revision trail. Revised after feedback: no megacorp role-play,
+and Flight Lab, God's Eye View and GearScope are out. Second revision: show
+the projects directly; OOPS can be hosted without `private_packs/` (a 404
+loads nothing), Province War cannot until its third-party assets are
+separated. Read "OOP" as OOPS.
+Checked repo visibility with `gh`; read the site lock, BACKLOG and the manraj and cool-sites plans.
+Proposal only: no implementation, no commit. Open: the featured shortlist and
+whether a projects page ever opens past the lock.
+
 ## Anomaly ledger prototype behind ?ledger=1, 2026-10-21
 
 Built the P2 brief in `docs/plans/COOL_SITES_PLAN_2026-10-21.md`. With
