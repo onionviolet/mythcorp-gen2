@@ -31,9 +31,9 @@ Single-screen index of where things live. Read this first; grep second.
 | `/og/hero-lab` | `src/app/og/hero-lab/page.tsx` | Experimental title and model composition |
 | `/upload` | `src/app/upload/page.tsx` | Drag-drop image/GIF uploader. POSTs to `/api/upload` with a Bearer key, shows the returned public link |
 | `POST /api/upload` | `src/app/api/upload/route.ts` | Auth -> validate -> caps -> store. Returns `{ url, viewUrl }`. Bytes go to R2 (account B) via S3 |
-| `/a/[id]` | `src/app/a/[id]/page.tsx` | Public image view with safe OpenGraph metadata and direct link. Extensionless id, noindex, embeds still unfurl |
+| `/a/[id]` | `src/app/a/[id]/page.tsx` | Public image view with safe OpenGraph metadata and direct link. Extensionless id, noindex, embeds still unfurl. Passes the site lock |
 | `/i/[key]` | `src/app/i/[key]/page.tsx` | Legacy view route, 308s to `/a/[id]`. Kept so already-shared links survive |
-| `/d/[token]` | `src/app/d/[token]/page.tsx` | Delete-token confirm page. Renders read-only, the delete is a POST from `DeleteConfirm.tsx` |
+| `/d/[token]` | `src/app/d/[token]/page.tsx` | Delete-token confirm page. Renders read-only, the delete is a POST from `DeleteConfirm.tsx`. Passes the site lock |
 | `GET /api/sky` | `src/app/api/sky/route.ts` | Viewer's sun from Cloudflare `request.cf`. Returns only `{ elevation, azimuth, timezone, moonPhase }`, rounded, `private, no-store`; 503 when `cf` has no coordinates (plain `next dev`). Never returns or logs coordinates |
 | `POST /api/delete` | `src/app/api/delete/route.ts` | Redeems a delete token. POST only, so unfurlers and prefetch cannot destroy an image |
 | `/og/chat` | `src/app/og/chat/page.tsx` | Local-only chat sandbox |

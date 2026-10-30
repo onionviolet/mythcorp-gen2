@@ -4,7 +4,7 @@
 
 ## Live site
 
-- The site lock is active: `/` serves the plain holding installation, and only `LOCKED_OPEN_PATHS` stay reachable (see MAP.md). Lifting the lock is a separate decision for Weibao.
+- The site lock is active: `/` serves the plain holding installation, and only `LOCKED_OPEN_PATHS`, the upload links `/a/<id>` and `/d/<token>`, `/api/*` and static files stay reachable (`src/siteLock.ts`). Lifting the lock is a separate decision for Weibao.
 - Deploys go to Cloudflare Workers through `npm run deploy`. Deploying needs Weibao's yes.
 - `npm run check` (lint, text policy, Next build, TypeScript) is the commit gate. The e2e suite on the production build is informational.
 

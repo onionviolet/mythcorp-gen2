@@ -43,7 +43,7 @@
   "scripts": {
     "build": "next build --no-lint",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts",
-    "check": "npm run lint && npm run check:text && npm run build && tsc",
+    "check": "npm run lint && npm run check:text && npm run test:unit && npm run build && tsc",
     "cf:build": "npm run clean && opennextjs-cloudflare build",
     "deploy": "npm run clean && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "dev": "next dev",
@@ -56,6 +56,7 @@
     "clean": "node scripts/clean-build-dirs.mjs",
     "check:roll": "tsx scripts/check-hold-roll.ts",
     "check:text": "node scripts/check-text.mjs",
-    "test:smoke": "playwright test"
+    "test:smoke": "playwright test",
+    "test:unit": "tsx --test \"src/**/*.test.ts\""
   }
 }

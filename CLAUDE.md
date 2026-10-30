@@ -8,7 +8,7 @@ Read **`MAP.md`** first for the file index. This file explains *how* to make cha
 - 3D: `@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`, `three`.
 - Animation: `gsap`.
 - Deployed to Cloudflare Workers via `@opennextjs/cloudflare`.
-- `npm run dev` for local. `npm run check` is lint + text policy + build + tsc, and must stay green before commit.
+- `npm run dev` for local. `npm run check` is lint + text policy + unit tests (`npm run test:unit`, `src/**/*.test.ts` via `tsx --test`) + build + tsc, and must stay green before commit.
 
 ## Style
 
