@@ -5,7 +5,7 @@
 ## Live site
 
 - The site lock is active: `/` serves the plain holding installation, and only `LOCKED_OPEN_PATHS`, the upload links `/a/<id>` and `/d/<token>`, `/api/*` and static files stay reachable (`src/siteLock.ts`). New uploads are closed (`/api/upload` answers 410); existing image, view and delete links work. Lifting the lock is a separate decision for Weibao.
-- Deploys go to Cloudflare Workers through `npm run deploy`. Deploying needs Weibao's yes.
+- Deploys go to Cloudflare Workers through `npm run deploy`. Deploying needs Weibao's yes. `npm run deploy` currently fails: OpenNext refuses Next 15 builds after 2026-10-21 (flag or Next 16 is Weibao's call, see [red-team report](docs/audits/RED_TEAM_2026-10-29.md#applied-2026-10-29)).
 - `npm run check` (lint, text policy, Next build, TypeScript) is the commit gate. The e2e suite on the production build is informational.
 
 ## Branch
