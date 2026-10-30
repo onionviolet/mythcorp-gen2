@@ -21,6 +21,7 @@ export default function ExperiencePage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('mode') === 'calhoun') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- URL is only readable after mount; reading it during render would break hydration
       setView('calhoun');
       setMounted('calhoun');
     }

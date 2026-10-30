@@ -26,6 +26,7 @@ export function SignalInstrument() {
   useEffect(() => {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('webgl2');
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- WebGL support is only detectable after mount; initial false keeps hydration stable
     setWebgl(Boolean(context));
     context?.getExtension('WEBGL_lose_context')?.loseContext();
   }, []);
