@@ -1,6 +1,7 @@
 import { verifyKey } from "@/lib/upload/keys";
 import { readUploadBody } from "@/lib/upload/body";
 import { validateUpload } from "@/lib/upload/validate";
+import { stripMetadata } from "@/lib/upload/strip";
 import { checkCaps, commitUsage } from "@/lib/upload/caps";
 import { newDeleteToken, objectId, randomObjectKey } from "@/lib/upload/ids";
 import { putObject, publicUrl } from "@/lib/upload/r2";
@@ -39,9 +40,13 @@ export async function POST(request: Request): Promise<Response> {
   // Accepts raw binary (ShareX) or multipart/form-data (curl -F, HTML forms).
   const read = await readUploadBody(request);
   if (!read.ok) return json({ error: read.message }, read.status);
-  const body = read.body;
-  const check = validateUpload(body);
+  const check = validateUpload(read.body);
   if (!check.ok) return json({ error: check.message }, check.status);
+  // Location and camera metadata never reach storage. Caps, the record and R2
+  // all see the stripped bytes.
+  const stripped = stripMetadata(read.body, check.type);
+  if (!stripped.ok) return json({ error: "Could not read the image." }, 400);
+  const body = stripped.body;
   const cap = await checkCaps(key.label, body.byteLength);
   if (!cap.ok) return json({ error: cap.message }, cap.status);
   const objectKey = randomObjectKey(check.type);
