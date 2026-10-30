@@ -30,7 +30,7 @@ Single-screen index of where things live. Read this first; grep second.
 | `/og/interactive` | `src/app/og/interactive/page.tsx` | CSS-only isometric WIP type |
 | `/og/hero-lab` | `src/app/og/hero-lab/page.tsx` | Experimental title and model composition |
 | `/upload` | `src/app/upload/page.tsx` | Drag-drop image/GIF uploader. POSTs to `/api/upload` with a Bearer key, shows the returned public link |
-| `POST /api/upload` | `src/app/api/upload/route.ts` | Closed: returns 410 while `UPLOADS_OPEN` is false (2026-10-29). When open: auth -> validate -> caps -> store, returns `{ url, viewUrl }`, bytes go to R2 (account B) via S3 |
+| `POST /api/upload` | `src/app/api/upload/route.ts` | Closed: returns 410 while `UPLOADS_OPEN` is false (2026-10-29). When open: auth -> validate -> strip metadata -> caps -> store, returns `{ url, viewUrl }`, bytes go to R2 (account B) via S3 |
 | `/a/[id]` | `src/app/a/[id]/page.tsx` | Public image view with safe OpenGraph metadata and direct link. Extensionless id, noindex, embeds still unfurl. Passes the site lock |
 | `/i/[key]` | `src/app/i/[key]/page.tsx` | Legacy view route, 308s to `/a/[id]`. Kept so already-shared links survive |
 | `/d/[token]` | `src/app/d/[token]/page.tsx` | Delete-token confirm page. Renders read-only, the delete is a POST from `DeleteConfirm.tsx`. Passes the site lock |
@@ -142,6 +142,7 @@ The "brains" live in `src/lib/upload/` (framework-agnostic). The `route.ts` file
 | `src/lib/upload/objects.ts` | Upload metadata index (who/when/size) as KV list-metadata |
 | `src/lib/upload/validate.ts` | Size cap + magic-byte type sniff (ignores client Content-Type). No SVG (stored-XSS) |
 | `src/lib/upload/caps.ts` | Daily per-user counter (KV TTL) + total-bytes ceiling. NB: KV increment is not atomic |
+| `src/lib/upload/strip.ts` | Removes EXIF/XMP/text metadata (JPEG, PNG, WEBP) without re-encoding; keeps JPEG Orientation, rejects files it cannot walk. Test and Pillow fixtures beside it |
 
 Config: KV binding `UPLOADS_KV` + public var `R2_PUBLIC_BASE_URL` in `wrangler.jsonc`; secrets (`R2_*`, `ADMIN_PASSWORD`) in `.dev.vars` locally / `wrangler secret put` in prod (template: `.dev.vars.example`; types: `src/cloudflare-secrets.d.ts`).
 
