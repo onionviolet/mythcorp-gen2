@@ -22,6 +22,7 @@ export function usePlainScheme(): {
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem(SCHEME_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is read after hydration to match the server render
       if (isSchemeChoice(stored)) setChoiceState(stored);
     } catch {
       /* storage may be disabled; the system preference still works */

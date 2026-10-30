@@ -25,6 +25,7 @@ export function ConsoleRoom(props: HoldRoomProps) {
 
   useEffect(() => {
     const all = bootLines('console');
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- restarts the boot sequence when reduced motion changes
     setLines([]);
     setBooted(false);
     if (reduced) {

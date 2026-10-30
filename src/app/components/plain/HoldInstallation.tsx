@@ -61,6 +61,7 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
 
   useEffect(() => {
     const composition = takeColdComposition();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the cold composition is random, so it is read after hydration
     setStyle(composition.style);
     setOverlay(composition.overlay);
     setMessageStyle(composition.message);

@@ -82,6 +82,7 @@ export function HoldStatus({
     try {
       const stored = window.localStorage.getItem(READOUT_PREFERENCE_KEY);
       if (!preferenceSet.current && (stored === 'full' || stored === 'compact')) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is read after hydration to match the server render
         setExpandedChoice(stored === 'full');
       }
     } catch {

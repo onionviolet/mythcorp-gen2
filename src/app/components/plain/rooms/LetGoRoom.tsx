@@ -119,7 +119,7 @@ export function LetGoRoom(props: HoldRoomProps) {
   }, []);
 
   const frame = useCallback(
-    (now: number) => {
+    function frame(now: number) {
       const w = worldRef.current;
       if (!w || !runningRef.current) return;
       const dt = Math.min((now - lastRef.current) / 1000, 1 / 20);

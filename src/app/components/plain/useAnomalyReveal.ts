@@ -27,6 +27,7 @@ export function useAnomalyReveal() {
 
   useEffect(() => {
     if (!pending) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- starts the timed reveal when a new find appears
     setShowing(pending);
     setAnnouncement(`Anomaly logged: ${anomalyName(pending)}.`);
     const timer = setTimeout(() => {

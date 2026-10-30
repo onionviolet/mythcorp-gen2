@@ -45,6 +45,7 @@ export function HoldClickResponse() {
 }
 
 function WaveRing({ wave }: { wave: Wave }) {
+  // eslint-disable-next-line react-hooks/purity -- the ring animates from wall-clock time on each frame re-render
   const elapsed = Math.min(1, (performance.now() - wave.started) / PRESS_DURATION);
   const radius = 12 + PRESS_RADIUS * elapsed;
   return <div aria-hidden="true" className="pointer-events-none fixed left-0 top-0 z-20 rounded-full border border-[color:var(--fg)]" style={{

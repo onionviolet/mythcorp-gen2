@@ -17,6 +17,7 @@ export function LinkedInBanner({ scheme, schemeChoice, onSchemeChoice, onExit }:
 
   useEffect(() => {
     let live = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resets the banner status whenever the scheme redraws it
     setReady(false);
     setNotice('');
     document.fonts.ready.then(() => {
