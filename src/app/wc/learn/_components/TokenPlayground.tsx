@@ -59,6 +59,7 @@ export function TokenPlayground() {
   // Seed once on mount, and clear our inline overrides when the component
   // unmounts so navigating away never leaves the real site recolored.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- computed styles can only be read after mount
     reseed();
     return clearOverrides;
   }, []);
@@ -68,6 +69,7 @@ export function TokenPlayground() {
   // re-seed from the fresh base palette.
   useEffect(() => {
     clearOverrides();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- re-seed from the fresh base palette once the theme has applied
     reseed();
   }, [theme]);
 

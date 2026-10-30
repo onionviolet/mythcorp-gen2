@@ -58,6 +58,13 @@ export const SKETCHES: ReadonlyArray<Sketch> = [
     status: 'sketch',
   },
   {
+    href: '/og/specimen-docent',
+    label: 'DOCENT',
+    title: 'The Docent',
+    blurb: 'The specimen stands beside the tour and turns to look at whatever you are reading.',
+    status: 'sketch',
+  },
+  {
     href: '/og/orbit',
     label: 'ORBIT',
     title: 'Spiral Index',

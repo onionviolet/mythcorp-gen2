@@ -17,6 +17,7 @@ export function useScramble(text: string, { active = true, frames = 26 } = {}) {
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- snaps to the target text when scrambling is off
     if (!active || reducedMotion) { setOut(text); return; }
 
     let frame = 0;

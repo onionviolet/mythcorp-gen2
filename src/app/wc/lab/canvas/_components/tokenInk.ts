@@ -72,6 +72,7 @@ export function useTokenInk(): TokenInk {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- CSS tokens can only be read from the DOM after the theme has applied
     setInk(readAll());
   }, [theme]);
 

@@ -67,6 +67,7 @@ export default function AnimalsPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- random pick after mount so server and first client render agree
     setIndex(Math.floor(Math.random() * ANIMAL_GIFS.length));
   }, []);
 

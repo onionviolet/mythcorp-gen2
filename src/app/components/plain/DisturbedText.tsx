@@ -116,8 +116,10 @@ export function DisturbedText({
   const tick = useRef(0);
   const pointer = useSyncExternalStore(subscribePointer, getPointer, getServerPointer);
   const [hydrated, setHydrated] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- post-mount flag keeps the server and first client render identical
   useEffect(() => setHydrated(true), []);
 
+  /* eslint-disable react-hooks/refs -- the erosion is sampled from the live layout rect and a per-render tick on purpose */
   tick.current += 1;
 
   const calm = useReducedMotion();
@@ -130,6 +132,7 @@ export function DisturbedText({
     ? [...text].map((ch) => ({ ch, heat: 0 }))
     : erode(text, rect, pointer.x, pointer.y, tick.current, pointer.pulse);
   const cells = active && !calm ? scatter(eroded, rect, gathered) : eroded;
+  /* eslint-enable react-hooks/refs */
 
   // Plain text until hydrated: per-character spans change the child count, which
   // suppressHydrationWarning does not cover (the elapsed clock differs per render).

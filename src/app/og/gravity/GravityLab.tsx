@@ -145,6 +145,7 @@ export function GravityLab() {
         writeReadout();
         return;
       }
+      // eslint-disable-next-line react-hooks/immutability -- the frame loop reschedules itself
       rafRef.current = requestAnimationFrame(frame);
     },
     [draw, writeReadout],

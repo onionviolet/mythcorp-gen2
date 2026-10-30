@@ -76,6 +76,7 @@ export function HoldStage({ style, scheme, modelId, onModelError }: HoldStagePro
 
   useEffect(() => {
     if (!reducedMotion) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- flushes the pending crossfade when motion is reduced
     setLayers(previous => previous.incoming
       ? { visible: previous.incoming, incoming: null, ready: false }
       : previous);

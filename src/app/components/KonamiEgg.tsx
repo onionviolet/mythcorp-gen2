@@ -17,12 +17,26 @@ const QUIPS = [
   'unlocked: a tiny burst of color',
 ];
 
+type Bit = { tx: number; ty: number; r: number };
+
+function makeConfetti(): Bit[] {
+  return Array.from({ length: 24 }, (_, i) => {
+    const angle = (i / 24) * Math.PI * 2;
+    const dist = 180 + Math.random() * 120;
+    return {
+      tx: Math.cos(angle) * dist,
+      ty: Math.sin(angle) * dist,
+      r: (Math.random() - 0.5) * 720,
+    };
+  });
+}
+
 export function KonamiEgg() {
   const { cycleTheme } = useTheme();
   const [position, setPosition] = useState(0);
   const [show, setShow] = useState(false);
   const [quip, setQuip] = useState(QUIPS[0]);
-  const [confetti, setConfetti] = useState<number[]>([]);
+  const [confetti, setConfetti] = useState<Bit[]>([]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -38,7 +52,7 @@ export function KonamiEgg() {
         if (next === SEQUENCE.length) {
           setPosition(0);
           setQuip(QUIPS[Math.floor(Math.random() * QUIPS.length)]);
-          setConfetti(Array.from({ length: 24 }, (_, i) => i));
+          setConfetti(makeConfetti());
           setShow(true);
           cycleTheme();
         } else {
@@ -91,12 +105,7 @@ export function KonamiEgg() {
         </p>
       </div>
 
-      {confetti.map((i) => {
-        const angle = (i / confetti.length) * Math.PI * 2;
-        const dist = 180 + Math.random() * 120;
-        const tx = Math.cos(angle) * dist;
-        const ty = Math.sin(angle) * dist;
-        const r = (Math.random() - 0.5) * 720;
+      {confetti.map(({ tx, ty, r }, i) => {
         const colors = ['var(--accent)', 'var(--accent-soft)', 'var(--accent-warm)'];
         return (
           <span

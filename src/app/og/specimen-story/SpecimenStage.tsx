@@ -77,10 +77,12 @@ function Specimen({ ink, state }: { ink: TokenInk; state: MutableRefObject<Stage
     };
   }, [materials]);
 
+  // eslint-disable-next-line react-hooks/immutability -- per-frame imperative three.js updates
   useFrame(() => {
     const wanted = state.current.treatment;
     if (applied.current === wanted) return;
     applied.current = wanted;
+    // eslint-disable-next-line react-hooks/immutability -- three.js meshes are swapped imperatively
     for (const mesh of meshes) mesh.material = materials[wanted];
   });
 
@@ -129,6 +131,7 @@ function FloorField({ ink, state, reduced }: { ink: TokenInk; state: MutableRefO
       attr.setY(i, FLOOR_Y + amp * Math.sin(r * 6 - t * 1.7) * Math.exp(-r * 0.35));
     }
     attr.needsUpdate = true;
+    // eslint-disable-next-line react-hooks/immutability -- per-frame uniform update on a three.js material
     material.opacity = 0.1 + 0.8 * weight;
     material.size = 0.022 + 0.022 * weight;
   });
@@ -159,12 +162,14 @@ function Actors({ ink, state, reduced }: { ink: TokenInk; state: MutableRefObjec
   );
   useEffect(() => () => { accent.dispose(); linkMaterial.dispose(); fg.dispose(); ringMaterials.forEach((m) => m.dispose()); }, [accent, linkMaterial, fg, ringMaterials]);
 
+  // eslint-disable-next-line react-hooks/immutability -- per-frame imperative three.js updates
   useFrame(({ clock }, delta) => {
     const m = memo.current;
     const weight = state.current.actors;
     if (root.current) root.current.visible = weight > 0.02;
     if (weight <= 0.02) {
       m.level *= Math.exp(-delta / RELEASE_S);
+      // eslint-disable-next-line react-hooks/immutability -- the stage state ref is a shared per-frame mutable record
       state.current.movement = m.level < 0.005 ? 0 : m.level;
       m.primed = false;
       return;
@@ -312,6 +317,7 @@ function CameraRig({
     cam.updateProjectionMatrix();
   }, [camera, size.width, size.height]);
 
+  // eslint-disable-next-line react-hooks/immutability -- per-frame imperative camera updates
   useFrame((_, delta) => {
     const blend = blendAt(stepFloat.current ?? 0, reduced);
     const c = current.current;
@@ -339,6 +345,7 @@ function CameraRig({
     light.current?.position.set(camera.position.x + 1, camera.position.y + 2, camera.position.z + 1);
 
     const s = state.current;
+    // eslint-disable-next-line react-hooks/immutability -- the stage state ref is a shared per-frame mutable record
     s.treatment = STORY_STEPS[blend.nearest].treatment;
     s.field = blend.field;
     s.actors = blend.actors;

@@ -46,6 +46,7 @@ function AppLoader({ children }: { children: React.ReactNode }) {
         // sessionStorage may be unavailable (private mode, etc.); fall through.
       }
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sessionStorage is browser-only; reading it in render would break hydration
     setSkipBoot(alreadyBooted);
     if (alreadyBooted) {
       setIsReady(true);

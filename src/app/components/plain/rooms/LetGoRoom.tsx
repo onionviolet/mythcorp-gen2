@@ -4,12 +4,15 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { HoldRoomFrame, type HoldRoomProps } from '../HoldRoomFrame';
+import { logAnomaly } from '../anomalyLedger';
 import {
   LINES, createWorld, dropAll, grab, impulse, isIdle, letGo, moveHeld, quiesce,
   rehang, release, setBounds, settle, step, wake, type LetterWorld,
 } from '../../../og/gravity/letterSolver';
 
 const MAX_RUN_SECONDS = 9;
+/** px/s at release that counts as a throw for the anomaly ledger, not a nudge. */
+const THROW_SPEED = 900;
 
 const BUTTON =
   'min-h-11 border border-[color:var(--border-strong)] px-3 py-1.5 pointer-coarse:px-4 font-mono text-xs text-[color:var(--fg)] ' +
@@ -116,7 +119,7 @@ export function LetGoRoom(props: HoldRoomProps) {
   }, []);
 
   const frame = useCallback(
-    (now: number) => {
+    function frame(now: number) {
       const w = worldRef.current;
       if (!w || !runningRef.current) return;
       const dt = Math.min((now - lastRef.current) / 1000, 1 / 20);
@@ -292,6 +295,7 @@ export function LetGoRoom(props: HoldRoomProps) {
     dragRef.current = null;
     const b = w.bodies[d.id];
     const stale = e.timeStamp - d.pt > 90;
+    if (!stale && Math.hypot(d.vx, d.vy) >= THROW_SPEED) logAnomaly('throw');
     if (reducedRef.current) {
       b.x = b.tx;
       b.y = b.ty;
@@ -346,6 +350,7 @@ export function LetGoRoom(props: HoldRoomProps) {
       } else {
         wake(w, sel.id);
         impulse(w, sel.id, 0, e.key === 'ArrowUp' ? -820 : 520);
+        logAnomaly('throw');
         say(`${e.key === 'ArrowUp' ? 'Popped' : 'Pushed down'} ${sel.ch}.`);
       }
       touch();

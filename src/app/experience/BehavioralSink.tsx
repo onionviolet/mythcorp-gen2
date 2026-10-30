@@ -62,32 +62,34 @@ function beautifulFracOf(t: number): number {
   return 0.25 + ((t - 0.7) / 0.3) * 0.2; // up to ~0.45
 }
 
+function makePoints() {
+  const positions = new Float32Array(N * 3);
+  const colors = new Float32Array(N * 3);
+  const dirs = new Float32Array(N * 3);
+  const seeds = new Float32Array(N);
+  const phaseOffsets = new Float32Array(N);
+  for (let i = 0; i < N; i++) {
+    // Stable random unit direction per point.
+    const u = Math.random() * 2 - 1;
+    const theta = Math.random() * Math.PI * 2;
+    const s = Math.sqrt(1 - u * u);
+    dirs[i * 3] = s * Math.cos(theta);
+    dirs[i * 3 + 1] = s * Math.sin(theta);
+    dirs[i * 3 + 2] = u;
+    seeds[i] = Math.random();
+    phaseOffsets[i] = Math.random() * Math.PI * 2;
+    positions[i * 3] = dirs[i * 3] * 0.8;
+    positions[i * 3 + 1] = dirs[i * 3 + 1] * 0.8;
+    positions[i * 3 + 2] = dirs[i * 3 + 2] * 0.8;
+  }
+  return { positions, colors, dirs, seeds, phaseOffsets };
+}
+
 export function BehavioralSink({ color, onState }: BehavioralSinkProps) {
   const ref = useRef<Points>(null!);
   const lastReport = useRef(0);
 
-  const { positions, colors, dirs, seeds, phaseOffsets } = useMemo(() => {
-    const positions = new Float32Array(N * 3);
-    const colors = new Float32Array(N * 3);
-    const dirs = new Float32Array(N * 3);
-    const seeds = new Float32Array(N);
-    const phaseOffsets = new Float32Array(N);
-    for (let i = 0; i < N; i++) {
-      // Stable random unit direction per point.
-      const u = Math.random() * 2 - 1;
-      const theta = Math.random() * Math.PI * 2;
-      const s = Math.sqrt(1 - u * u);
-      dirs[i * 3] = s * Math.cos(theta);
-      dirs[i * 3 + 1] = s * Math.sin(theta);
-      dirs[i * 3 + 2] = u;
-      seeds[i] = Math.random();
-      phaseOffsets[i] = Math.random() * Math.PI * 2;
-      positions[i * 3] = dirs[i * 3] * 0.8;
-      positions[i * 3 + 1] = dirs[i * 3 + 1] * 0.8;
-      positions[i * 3 + 2] = dirs[i * 3 + 2] * 0.8;
-    }
-    return { positions, colors, dirs, seeds, phaseOffsets };
-  }, []);
+  const { positions, colors, dirs, seeds, phaseOffsets } = useMemo(() => makePoints(), []);
 
   const base = useMemo(() => new Color(color), [color]);
   const pale = useMemo(() => new Color(color).lerp(new Color('#ffffff'), 0.7), [color]);

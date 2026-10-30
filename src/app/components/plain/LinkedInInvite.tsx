@@ -240,6 +240,7 @@ export function LinkedInInvite() {
 
   useEffect(() => {
     if (!crouching || !motionProfile || motionProfile.reduced) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- starts the reaction when the crouch begins
     setReactionSequence((current) => current + 1);
     setReactionActive(true);
   }, [crouching, motionProfile]);

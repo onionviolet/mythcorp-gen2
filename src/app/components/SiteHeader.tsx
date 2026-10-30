@@ -60,9 +60,11 @@ export function SiteHeader({
   }, [menuOpen]);
 
   // Close on route change.
-  useEffect(() => {
+  const [menuPath, setMenuPath] = useState(pathname);
+  if (menuPath !== pathname) {
+    setMenuPath(pathname);
     setMenuOpen(false);
-  }, [pathname]);
+  }
 
   const LOGO_CLASS =
     'font-serif text-xl font-semibold tracking-wider text-[color:var(--fg)] drop-shadow-[0_0_12px_var(--accent-glow)] sm:text-2xl';

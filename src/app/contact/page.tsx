@@ -12,8 +12,8 @@ export default function ContactPage() {
           </p>
           <h1 className="sr-only">Contact</h1>
           <div className="mt-8 flex flex-col gap-3 font-mono text-sm text-[color:var(--fg-muted)]">
-            <a className="w-fit text-[color:var(--fg)] underline decoration-[color:var(--accent)] underline-offset-4 hover:text-[color:var(--accent)]" href="mailto:info@mythcorp.com">
-              info@mythcorp.com
+            <a className="w-fit text-[color:var(--fg)] underline decoration-[color:var(--accent)] underline-offset-4 hover:text-[color:var(--accent)]" href="mailto:info@mythcorp.org">
+              info@mythcorp.org
             </a>
             <a className="w-fit hover:text-[color:var(--accent)]" href="tel:+16767677676">
               (676) 767-7676

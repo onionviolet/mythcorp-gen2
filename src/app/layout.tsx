@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { preload } from "react-dom";
 import { Geist, Geist_Mono, Cinzel } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -83,6 +84,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // preload() rather than literal <link> tags: React 19.3 hoists a literal
+  // preload link and also renders it in place, so the page shipped two.
+  preload("/spectre.glb", { as: "fetch", type: "model/gltf-binary", crossOrigin: "anonymous" });
+  if (!SITE_LOCKED) {
+    preload("/fonts/Inter_Bold.json", { as: "fetch", crossOrigin: "anonymous" });
+    preload("/chicagoskyline.jpg", { as: "image" });
+  }
   return (
     // The font variables must live on <html>, not <body>: the theme tokens
     // that reference them (--font-display and friends) are declared on
@@ -96,11 +104,6 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="preload" href="/spectre.glb" as="fetch" type="model/gltf-binary" crossOrigin="anonymous" />
-        {!SITE_LOCKED && <>
-          <link rel="preload" href="/fonts/Inter_Bold.json" as="fetch" crossOrigin="anonymous" />
-          <link rel="preload" href="/chicagoskyline.jpg" as="image" />
-        </>}
         {originTrialTokens.map((token) => (
           <meta key={token} httpEquiv="origin-trial" content={token} />
         ))}

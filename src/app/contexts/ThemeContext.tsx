@@ -67,6 +67,7 @@ export function ThemeProvider({
 
   useEffect(() => {
     if (SITE_LOCKED) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- the theme is settled after hydration, then the page is marked ready
       setThemeState('plain');
       document.documentElement.dataset.theme = 'plain';
       setReady(true);

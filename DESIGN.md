@@ -218,6 +218,28 @@ and it is answering the wrong question (see the owner note in
 corner, never a banner or call to action. Interior pages and the paper are the
 opposite: calm, legible, and the place where rigor lives.
 
+## Site goal, 2026-10-29
+
+The owner's goal for Mythcorp is to look cool and to demonstrate visual
+complexity. This sharpens the front page's job above rather than replacing it,
+and it sets a test for new visual work: the visitor should be able to tell the
+site is doing the work.
+
+- Prefer real-time over rendered. A live scene that answers cursor, scroll,
+  theme and state shows the site's own complexity. A clip from a video model
+  shows that model's. Rendered video may support a room but should not carry
+  the claim.
+- Generated media still follows "real content only". A clip built from the
+  site's own subjects, such as the spectre as a reference image, is original;
+  a generic skyline or product shot is stock imagery and stays banned.
+- Complexity counts only if it stays smooth. Heavy work loads on activation,
+  keeps a still fallback and a reduced-motion form, and is checked at phone
+  width. Jank reads as less skill, not more.
+- Interior pages keep their signature-per-room calm; complexity there comes
+  from the signature, not from added layers.
+- When AI built most of a showpiece, a short "how this was made" note keeps the
+  same honesty the paper's AI-assistance disclosure sets.
+
 ## Front-page rooms, 2026-10-08
 
 The held front page has four rooms: Installation (the signature room), Tour (a

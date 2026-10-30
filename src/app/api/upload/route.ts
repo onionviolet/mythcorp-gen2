@@ -1,6 +1,7 @@
 import { verifyKey } from "@/lib/upload/keys";
 import { readUploadBody } from "@/lib/upload/body";
 import { validateUpload } from "@/lib/upload/validate";
+import { stripMetadata } from "@/lib/upload/strip";
 import { checkCaps, commitUsage } from "@/lib/upload/caps";
 import { newDeleteToken, objectId, randomObjectKey } from "@/lib/upload/ids";
 import { putObject, publicUrl } from "@/lib/upload/r2";
@@ -27,15 +28,25 @@ function text(url: string, deleteUrl: string): Response {
     headers: { "content-type": "text/plain; charset=utf-8", "x-url-delete": deleteUrl },
   });
 }
+// Uploads are closed while the site is locked (decided 2026-10-29). Existing
+// links keep working: /a/<id>, /d/<token> and i.mythcorp.org are untouched.
+// Flip this to reopen; the rest of the pipeline below is unchanged.
+const UPLOADS_OPEN = false;
+
 export async function POST(request: Request): Promise<Response> {
+  if (!UPLOADS_OPEN) return json({ error: "Uploads are closed. Existing links still work." }, 410);
   const key = await verifyKey(bearer(request));
   if (!key) return json({ error: "Unauthorized" }, 401);
   // Accepts raw binary (ShareX) or multipart/form-data (curl -F, HTML forms).
   const read = await readUploadBody(request);
   if (!read.ok) return json({ error: read.message }, read.status);
-  const body = read.body;
-  const check = validateUpload(body);
+  const check = validateUpload(read.body);
   if (!check.ok) return json({ error: check.message }, check.status);
+  // Location and camera metadata never reach storage. Caps, the record and R2
+  // all see the stripped bytes.
+  const stripped = stripMetadata(read.body, check.type);
+  if (!stripped.ok) return json({ error: "Could not read the image." }, 400);
+  const body = stripped.body;
   const cap = await checkCaps(key.label, body.byteLength);
   if (!cap.ok) return json({ error: cap.message }, cap.status);
   const objectKey = randomObjectKey(check.type);

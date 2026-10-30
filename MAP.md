@@ -30,14 +30,15 @@ Single-screen index of where things live. Read this first; grep second.
 | `/og/interactive` | `src/app/og/interactive/page.tsx` | CSS-only isometric WIP type |
 | `/og/hero-lab` | `src/app/og/hero-lab/page.tsx` | Experimental title and model composition |
 | `/upload` | `src/app/upload/page.tsx` | Drag-drop image/GIF uploader. POSTs to `/api/upload` with a Bearer key, shows the returned public link |
-| `POST /api/upload` | `src/app/api/upload/route.ts` | Auth -> validate -> caps -> store. Returns `{ url, viewUrl }`. Bytes go to R2 (account B) via S3 |
-| `/a/[id]` | `src/app/a/[id]/page.tsx` | Public image view with safe OpenGraph metadata and direct link. Extensionless id, noindex, embeds still unfurl |
+| `POST /api/upload` | `src/app/api/upload/route.ts` | Closed: returns 410 while `UPLOADS_OPEN` is false (2026-10-29). When open: auth -> validate -> strip metadata -> caps -> store, returns `{ url, viewUrl }`, bytes go to R2 (account B) via S3 |
+| `/a/[id]` | `src/app/a/[id]/page.tsx` | Public image view with safe OpenGraph metadata and direct link. Extensionless id, noindex, embeds still unfurl. Passes the site lock |
 | `/i/[key]` | `src/app/i/[key]/page.tsx` | Legacy view route, 308s to `/a/[id]`. Kept so already-shared links survive |
-| `/d/[token]` | `src/app/d/[token]/page.tsx` | Delete-token confirm page. Renders read-only, the delete is a POST from `DeleteConfirm.tsx` |
+| `/d/[token]` | `src/app/d/[token]/page.tsx` | Delete-token confirm page. Renders read-only, the delete is a POST from `DeleteConfirm.tsx`. Passes the site lock |
 | `GET /api/sky` | `src/app/api/sky/route.ts` | Viewer's sun from Cloudflare `request.cf`. Returns only `{ elevation, azimuth, timezone, moonPhase }`, rounded, `private, no-store`; 503 when `cf` has no coordinates (plain `next dev`). Never returns or logs coordinates |
 | `POST /api/delete` | `src/app/api/delete/route.ts` | Redeems a delete token. POST only, so unfurlers and prefetch cannot destroy an image |
 | `/og/chat` | `src/app/og/chat/page.tsx` | Local-only chat sandbox |
 | `/og/specimen-story` | `src/app/og/specimen-story/page.tsx` | Scrollytelling study: a sticky R3F stage beside five acts on how the holding installation works; scroll scrubs the camera between act poses. Data in `storyData.ts`, scroll in `useStoryScroll.ts` |
+| `/og/specimen-docent` | `src/app/og/specimen-docent/page.tsx` | Scroll study: the spectre watches the Tour acts. Attention priority in `attention.ts` (touched control, recent mouse, focused act, reading line); neck-chain gaze and the one real clip in `DocentStage.tsx`; act copy in `docentData.ts`. Reuses specimen-story's `useStoryScroll` and the Tour figures |
 | `/og/orbit` | `src/app/og/orbit/page.tsx` | Navigable-world study: the sketches orbit the spectre on a descending helix, scroll or arrow keys turn it, list view is the fallback. `OrbitGallery.tsx` + `SpectreCore.tsx` |
 | `/og/gravity` | `src/app/og/gravity/page.tsx` | Playful-system study: the holding words fall, pile and can be thrown. Pure 2D solver in `letterSolver.ts`, canvas and input in `GravityLab.tsx` |
 | 404 | `src/app/not-found.tsx` | Whimsical 404 |
@@ -141,6 +142,7 @@ The "brains" live in `src/lib/upload/` (framework-agnostic). The `route.ts` file
 | `src/lib/upload/objects.ts` | Upload metadata index (who/when/size) as KV list-metadata |
 | `src/lib/upload/validate.ts` | Size cap + magic-byte type sniff (ignores client Content-Type). No SVG (stored-XSS) |
 | `src/lib/upload/caps.ts` | Daily per-user counter (KV TTL) + total-bytes ceiling. NB: KV increment is not atomic |
+| `src/lib/upload/strip.ts` | Removes EXIF/XMP/text metadata (JPEG, PNG, WEBP) without re-encoding; keeps JPEG Orientation, rejects files it cannot walk. Test and Pillow fixtures beside it |
 
 Config: KV binding `UPLOADS_KV` + public var `R2_PUBLIC_BASE_URL` in `wrangler.jsonc`; secrets (`R2_*`, `ADMIN_PASSWORD`) in `.dev.vars` locally / `wrangler secret put` in prod (template: `.dev.vars.example`; types: `src/cloudflare-secrets.d.ts`).
 
@@ -214,6 +216,8 @@ Four files. All other components consume tokens via `var(--name)`.
 | `src/app/components/plain/usePlainScheme.ts` | Owns the scheme (`usePlainScheme`) and follows it (`useResolvedScheme`) |
 | `src/app/components/plain/HoldContact.tsx` | `CONTACT`, the single source for contact values, and the corner contact links |
 | `src/app/components/plain/LinkedInInvite.tsx` | Distinct profile control with a responsive external arrow, continuous two-ring proximity glow, idle cursor echo and a cat that follows movement then eases home, and once per load walks to the halo line and nudges the sky clock (choreography in catHorizonDemo.ts); styling in LinkedInInvite.module.css |
+| `src/app/components/plain/anomalyLedger.ts` | Prototype behind `?ledger=1` (session flag; a no-op without it): counts the first find of 8 existing hidden behaviours (sweep, surge, scene, rewire, operator, back-room file, every room, throw) in localStorage, never sent. Each behaviour calls `logAnomaly` where it succeeds |
+| `src/app/components/plain/useAnomalyReveal.ts` | The readout's `anomalies` row: count, a 1.6s scrambled reveal of each unannounced find (including finds made in other rooms), and a polite live-region line |
 | `src/app/components/plain/catHorizonDemo.ts` | Pure path planning and timeline for the cat's one-time horizon demo: walk to the halo line clear of every control, push +30 min, let go, walk home |
 | `src/app/components/plain/HoldOperator.tsx` | Quiet `0w0` disclosure with console access and robot notes; LinkedIn stays visible in HoldContact |
 | `src/app/components/terminalEvents.ts` | Shared console-open event for the operator disclosure and terminal listener |

@@ -22,12 +22,58 @@ const loadingMessages = [
   'BOOTSTRAPPING MATRIX',
 ];
 
+function randomDigit() {
+  return Math.random() > 0.5 ? '1' : '0';
+}
+
+function makeShapePoints(shapeType: 'sphere' | 'cube' | 'torus') {
+  const temp = [];
+  for (let i = 0; i < pointCount; i++) {
+    let endPos: THREE.Vector3;
+    
+    if (shapeType === 'cube') {
+      // Cube distribution - place points on 6 faces of a cube
+      const side = Math.floor(Math.random() * 6);
+      const u = Math.random() - 0.5;
+      const v = Math.random() - 0.5;
+      const size = shapeRadius;
+      
+      switch(side) {
+        case 0: endPos = new THREE.Vector3(size, u * size * 2, v * size * 2); break;
+        case 1: endPos = new THREE.Vector3(-size, u * size * 2, v * size * 2); break;
+        case 2: endPos = new THREE.Vector3(u * size * 2, size, v * size * 2); break;
+        case 3: endPos = new THREE.Vector3(u * size * 2, -size, v * size * 2); break;
+        case 4: endPos = new THREE.Vector3(u * size * 2, v * size * 2, size); break;
+        default: endPos = new THREE.Vector3(u * size * 2, v * size * 2, -size); break;
+      }
+    } else if (shapeType === 'torus') {
+      // Torus distribution - place points on a donut shape
+      const angle = Math.random() * Math.PI * 2;
+      const tubeAngle = Math.random() * Math.PI * 2;
+      const tubeRadius = 0.6;
+      endPos = new THREE.Vector3(
+        (shapeRadius * 0.7 + tubeRadius * Math.cos(tubeAngle)) * Math.cos(angle),
+        tubeRadius * Math.sin(tubeAngle),
+        (shapeRadius * 0.7 + tubeRadius * Math.cos(tubeAngle)) * Math.sin(angle)
+      );
+    } else {
+      // Sphere distribution - place points randomly on a sphere surface
+      endPos = new THREE.Vector3().randomDirection().multiplyScalar(shapeRadius);
+    }
+    
+    // Start position is far away, then animates to the final position
+    const startPos = endPos.clone().multiplyScalar(5); 
+    temp.push({ start: startPos, end: endPos });
+  }
+  return temp;
+}
+
 // --- A single binary digit component ---
 function BinaryDigit({ startPosition, endPosition, progress }: { startPosition: THREE.Vector3, endPosition: THREE.Vector3, progress: number }) {
   // drei's <Text> renders a troika mesh, so Mesh is the real type. Only
   // .position is touched below, which Object3D provides.
   const textRef = useRef<THREE.Mesh>(null);
-  const digit = useMemo(() => (Math.random() > 0.5 ? '1' : '0'), []);
+  const digit = useMemo(() => randomDigit(), []);
 
   useFrame(() => {
     if (textRef.current) {
@@ -55,47 +101,7 @@ function DataShape({ progress, shapeType }: { progress: number, shapeType: 'sphe
   const groupRef = useRef<THREE.Group>(null!);
 
   // Generate points based on the selected shape type
-  const points = useMemo(() => {
-    const temp = [];
-    for (let i = 0; i < pointCount; i++) {
-      let endPos: THREE.Vector3;
-      
-      if (shapeType === 'cube') {
-        // Cube distribution - place points on 6 faces of a cube
-        const side = Math.floor(Math.random() * 6);
-        const u = Math.random() - 0.5;
-        const v = Math.random() - 0.5;
-        const size = shapeRadius;
-        
-        switch(side) {
-          case 0: endPos = new THREE.Vector3(size, u * size * 2, v * size * 2); break;
-          case 1: endPos = new THREE.Vector3(-size, u * size * 2, v * size * 2); break;
-          case 2: endPos = new THREE.Vector3(u * size * 2, size, v * size * 2); break;
-          case 3: endPos = new THREE.Vector3(u * size * 2, -size, v * size * 2); break;
-          case 4: endPos = new THREE.Vector3(u * size * 2, v * size * 2, size); break;
-          default: endPos = new THREE.Vector3(u * size * 2, v * size * 2, -size); break;
-        }
-      } else if (shapeType === 'torus') {
-        // Torus distribution - place points on a donut shape
-        const angle = Math.random() * Math.PI * 2;
-        const tubeAngle = Math.random() * Math.PI * 2;
-        const tubeRadius = 0.6;
-        endPos = new THREE.Vector3(
-          (shapeRadius * 0.7 + tubeRadius * Math.cos(tubeAngle)) * Math.cos(angle),
-          tubeRadius * Math.sin(tubeAngle),
-          (shapeRadius * 0.7 + tubeRadius * Math.cos(tubeAngle)) * Math.sin(angle)
-        );
-      } else {
-        // Sphere distribution - place points randomly on a sphere surface
-        endPos = new THREE.Vector3().randomDirection().multiplyScalar(shapeRadius);
-      }
-      
-      // Start position is far away, then animates to the final position
-      const startPos = endPos.clone().multiplyScalar(5); 
-      temp.push({ start: startPos, end: endPos });
-    }
-    return temp;
-  }, [shapeType]);
+  const points = useMemo(() => makeShapePoints(shapeType), [shapeType]);
 
   // Rotate the shape slowly over time
   useFrame((state, delta) => {

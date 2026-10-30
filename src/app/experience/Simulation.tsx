@@ -116,25 +116,27 @@ function Model({ position, rotationSpeed, color }: ModelProps) {
   )
 }
 
+function makeParticles(particleCount: number) {
+  const positions = new Float32Array(particleCount * 3)
+  const colors = new Float32Array(particleCount * 3)
+
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 20
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 20
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 20
+    colors[i * 3] = Math.random() * 0.5 + 0.5
+    colors[i * 3 + 1] = Math.random() * 0.5 + 0.5
+    colors[i * 3 + 2] = 1
+  }
+
+  return { positions, colors }
+}
+
 function ParticleField() {
   const meshRef = useRef<Points>(null)
   const particleCount = 1000
 
-  const particles = useMemo(() => {
-    const positions = new Float32Array(particleCount * 3)
-    const colors = new Float32Array(particleCount * 3)
-
-    for (let i = 0; i < particleCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 20
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 20
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 20
-      colors[i * 3] = Math.random() * 0.5 + 0.5
-      colors[i * 3 + 1] = Math.random() * 0.5 + 0.5
-      colors[i * 3 + 2] = 1
-    }
-
-    return { positions, colors }
-  }, [])
+  const particles = useMemo(() => makeParticles(particleCount), [])
 
   useFrame((state) => {
     if (meshRef.current) {

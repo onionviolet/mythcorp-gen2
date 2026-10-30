@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { isRequiredSiteRequest, SITE_LOCKED } from './siteLock';
+import { withSecurityHeaders } from './securityHeaders';
 
 // i.mythcorp.org is the image hostname. It points at this same worker, so the
 // only thing separating it from the main site is the Host header: a request for
@@ -16,6 +17,10 @@ import { isRequiredSiteRequest, SITE_LOCKED } from './siteLock';
 const IMAGE_HOST = 'i.mythcorp.org';
 
 export function middleware(request: NextRequest) {
+  return withSecurityHeaders(route(request));
+}
+
+function route(request: NextRequest) {
   const host = (request.headers.get('host') ?? '').toLowerCase().split(':')[0];
   if (host !== IMAGE_HOST) {
     if (SITE_LOCKED && !isRequiredSiteRequest(request.nextUrl.pathname)) {
