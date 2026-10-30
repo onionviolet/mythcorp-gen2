@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { supportsHtmlInCanvas } from '../../../../components/plain/supportsHtmlInCanvas';
 
 /**
@@ -16,23 +16,27 @@ export { supportsHtmlInCanvas };
  * not know yet, supported, absent. Guessing during the first paint would flash
  * a wrong label at everyone.
  */
+let htmlInCanvasProbe: boolean | undefined;
+const noopSubscribe = () => () => {};
+const readHtmlInCanvas = () => (htmlInCanvasProbe ??= supportsHtmlInCanvas());
+const unknownHtmlInCanvas = () => null;
+
 export function useHtmlInCanvas(): boolean | null {
-  const [ok, setOk] = useState<boolean | null>(null);
-  useEffect(() => setOk(supportsHtmlInCanvas()), []);
-  return ok;
+  return useSyncExternalStore<boolean | null>(noopSubscribe, readHtmlInCanvas, unknownHtmlInCanvas);
 }
+
+const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
+
+function subscribeReduced(onChange: () => void) {
+  const query = window.matchMedia(REDUCED_QUERY);
+  query.addEventListener('change', onChange);
+  return () => query.removeEventListener('change', onChange);
+}
+
+const readReduced = () => window.matchMedia(REDUCED_QUERY).matches;
+const serverReduced = () => false;
 
 /** Live, because the setting can change while the page is open. */
 export function usePrefersReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => setReduced(query.matches);
-    sync();
-    query.addEventListener('change', sync);
-    return () => query.removeEventListener('change', sync);
-  }, []);
-
-  return reduced;
+  return useSyncExternalStore(subscribeReduced, readReduced, serverReduced);
 }

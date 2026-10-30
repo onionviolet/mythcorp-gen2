@@ -25,6 +25,7 @@ export function DocentReadout({
 }) {
   const [telemetry, setTelemetry] = useState<DocentTelemetry | null>(null);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability -- the stage hands telemetry through this ref sink on purpose
     sink.current = setTelemetry;
     return () => {
       sink.current = () => {};

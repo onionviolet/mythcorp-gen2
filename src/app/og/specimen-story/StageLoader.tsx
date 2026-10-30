@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { Component, useEffect, useState } from 'react';
+import { Component, useSyncExternalStore } from 'react';
 import type { ReactNode, RefObject } from 'react';
 import type { StageTelemetry } from './SpecimenStage';
 
@@ -16,18 +16,25 @@ const SpecimenStage = dynamic(() => import('./SpecimenStage').then((m) => m.Spec
 
 export type WebglStatus = 'checking' | 'ready' | 'none';
 
+let webglProbe: WebglStatus | undefined;
+
+function probeWebgl(): WebglStatus {
+  if (webglProbe) return webglProbe;
+  try {
+    const probe = document.createElement('canvas');
+    const ok = Boolean(probe.getContext('webgl2') ?? probe.getContext('webgl'));
+    webglProbe = ok ? 'ready' : 'none';
+  } catch {
+    webglProbe = 'none';
+  }
+  return webglProbe;
+}
+
+const noopSubscribe = () => () => {};
+const checkingWebgl = (): WebglStatus => 'checking';
+
 export function useWebglStatus(): WebglStatus {
-  const [status, setStatus] = useState<WebglStatus>('checking');
-  useEffect(() => {
-    try {
-      const probe = document.createElement('canvas');
-      const ok = Boolean(probe.getContext('webgl2') ?? probe.getContext('webgl'));
-      setStatus(ok ? 'ready' : 'none');
-    } catch {
-      setStatus('none');
-    }
-  }, []);
-  return status;
+  return useSyncExternalStore(noopSubscribe, probeWebgl, checkingWebgl);
 }
 
 class StageBoundary extends Component<{ onFail: () => void; children: ReactNode }, { failed: boolean }> {

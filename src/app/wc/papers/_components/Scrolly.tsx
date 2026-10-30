@@ -1,6 +1,17 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
+
+const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
+
+function subscribeReduced(onChange: () => void) {
+  const mq = window.matchMedia(REDUCED_QUERY);
+  mq.addEventListener?.('change', onChange);
+  return () => mq.removeEventListener?.('change', onChange);
+}
+
+const readReduced = () => window.matchMedia(REDUCED_QUERY).matches;
+const serverReduced = () => false;
 
 export type ScrollyStep = {
   id: string;
@@ -16,15 +27,7 @@ interface ScrollyProps {
 export function Scrolly({ figure, steps, onActiveChange }: ScrollyProps) {
   const [active, setActive] = useState(0);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [reduce, setReduce] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReduce(mq.matches);
-    const onChange = () => setReduce(mq.matches);
-    mq.addEventListener?.('change', onChange);
-    return () => mq.removeEventListener?.('change', onChange);
-  }, []);
+  const reduce = useSyncExternalStore(subscribeReduced, readReduced, serverReduced);
 
   useEffect(() => {
     if (reduce) return;

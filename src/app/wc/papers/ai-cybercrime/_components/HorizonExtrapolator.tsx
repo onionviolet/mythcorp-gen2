@@ -27,9 +27,7 @@ const PAD = { l: 44, r: 12, t: 14, b: 26 };
 export function HorizonExtrapolator() {
   const [days, setDays] = useState(CENTRAL_DOUBLING_DAYS);
   const [ref, width] = useFigureWidth();
-  const entrance = useEntrance<HTMLElement>(0.4);
-  const draw = entrance.animate;
-  const hidden = entrance.pending;
+  const { ref: entranceRef, animate: draw, pending: hidden } = useEntrance<HTMLElement>(0.4);
 
   const r2 = (n: number) => Math.round(n * 100) / 100;
   const x = (t: number) => r2(PAD.l + ((t - X0) / (X1 - X0)) * (width - PAD.l - PAD.r));
@@ -58,7 +56,7 @@ export function HorizonExtrapolator() {
   const years = [2025, 2026, 2027, 2028, 2029];
 
   return (
-    <figure ref={entrance.ref} className="mt-8">
+    <figure ref={entranceRef} className="mt-8">
       <div className="themed-surface p-4 sm:p-5">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>

@@ -63,6 +63,7 @@ function useDocentInk(): { ink: TokenInk; theme: ThemeName } {
   useEffect(() => {
     const next = {} as TokenInk;
     for (const t of COLOR_TOKENS) next[t.token] = readTokenHex(t.token);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- CSS tokens can only be read from the DOM after the theme has applied
     setInk(next);
   }, [theme, scheme]);
   return { ink, theme };
@@ -143,6 +144,7 @@ function Specimen({ ink, theme, inputs, anchors, stepFloat, reduced, reaction, o
 
   const material = useMemo(() => bodyMaterial(theme, ink), [theme, ink]);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability -- three.js meshes are swapped imperatively
     for (const mesh of rig.meshes) mesh.material = material;
     return () => material.dispose();
   }, [rig, material]);

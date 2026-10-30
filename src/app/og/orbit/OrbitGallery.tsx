@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useReducedMotion } from '../../components/plain/useReducedMotion';
 import { SKETCHES, STATUS_CLASS } from '../sketches';
@@ -29,17 +29,24 @@ const pad = (value: number, size: number) => String(value).padStart(size, '0');
 
 type ViewMode = 'orbit' | 'list';
 
-function useWebglSupport() {
-  const [supported, setSupported] = useState<boolean | null>(null);
-  useEffect(() => {
-    try {
-      const probe = document.createElement('canvas');
-      setSupported(Boolean(probe.getContext('webgl2') || probe.getContext('webgl')));
-    } catch {
-      setSupported(false);
-    }
-  }, []);
-  return supported;
+let webglProbe: boolean | undefined;
+
+function probeWebgl(): boolean {
+  if (webglProbe !== undefined) return webglProbe;
+  try {
+    const probe = document.createElement('canvas');
+    webglProbe = Boolean(probe.getContext('webgl2') || probe.getContext('webgl'));
+  } catch {
+    webglProbe = false;
+  }
+  return webglProbe;
+}
+
+const noopSubscribe = () => () => {};
+const unknownWebgl = () => null;
+
+function useWebglSupport(): boolean | null {
+  return useSyncExternalStore<boolean | null>(noopSubscribe, probeWebgl, unknownWebgl);
 }
 
 export function OrbitGallery() {
