@@ -60,9 +60,9 @@ Walkthrough: `/wc/learn/theme-system`.
 
 - **`MAP.md`**, repo navigation. Update when structure shifts.
 - **`CLAUDE.md`**, this file. Conventions and recipes.
-- **`STATUS.md`**, what was last shipped, what's next. Update at the end of every session.
+- **`STATUS.md`**, current state: live site, open decisions, next work. At the end of a session, make it true by replacing lines, not appending; put a dated entry at the top of `docs/STATUS_LOG.md` if the session needs a record. `npm run check` caps it at 120 lines.
 
-If you add a new tool, dependency, or architectural pattern that isn't obvious, write a short "decision" in `STATUS.md` so the next session doesn't re-litigate it.
+If you add a new tool, dependency, or architectural pattern that isn't obvious, record the decision in its owner so the next session doesn't re-litigate it: `MAP.md` for code structure, `DESIGN.md` for taste, or one line under "Decisions worth remembering" in `STATUS.md`.
 
 ## Things that need explicit user confirmation
 
