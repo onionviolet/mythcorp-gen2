@@ -27,7 +27,13 @@ function text(url: string, deleteUrl: string): Response {
     headers: { "content-type": "text/plain; charset=utf-8", "x-url-delete": deleteUrl },
   });
 }
+// Uploads are closed while the site is locked (decided 2026-10-29). Existing
+// links keep working: /a/<id>, /d/<token> and i.mythcorp.org are untouched.
+// Flip this to reopen; the rest of the pipeline below is unchanged.
+const UPLOADS_OPEN = false;
+
 export async function POST(request: Request): Promise<Response> {
+  if (!UPLOADS_OPEN) return json({ error: "Uploads are closed. Existing links still work." }, 410);
   const key = await verifyKey(bearer(request));
   if (!key) return json({ error: "Unauthorized" }, 401);
   // Accepts raw binary (ShareX) or multipart/form-data (curl -F, HTML forms).
