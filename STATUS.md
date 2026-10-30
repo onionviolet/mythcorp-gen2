@@ -5,7 +5,7 @@
 ## Live site
 
 - The site lock is active: `/` serves the plain holding installation, and only `LOCKED_OPEN_PATHS`, the upload links `/a/<id>` and `/d/<token>`, `/api/*` and static files stay reachable (`src/siteLock.ts`). New uploads are closed (`/api/upload` answers 410); existing image, view and delete links work. Lifting the lock is a separate decision for Weibao.
-- Deploys go to Cloudflare Workers through `npm run deploy`. Deploying needs Weibao's yes. `npm run deploy` currently fails: OpenNext refuses Next 15 builds after 2026-10-21 (flag or Next 16 is Weibao's call, see [red-team report](docs/audits/RED_TEAM_2026-10-29.md#applied-2026-10-29)).
+- Deploys go to Cloudflare Workers through `npm run deploy`. Deploying needs Weibao's yes. On `main`, `npm run deploy` still fails because OpenNext 1.20.6 refuses Next 15 after 2026-10-21. Branch `claude/next16-upgrade-plan` (on top of the red-team fixes) fixes it with OpenNext 1.20.14 and moves the site to Next 16.4.3 and React 19.3; it is unmerged and undeployed ([plan](docs/plans/NEXT16_UPGRADE_2026-10-29.md)). Next ships a security release on 2026-11-03; re-pin after it.
 - `npm run check` (lint, text policy, Next build, TypeScript) is the commit gate. The e2e suite on the production build is informational.
 
 ## Branch
@@ -40,6 +40,7 @@ The triaged queue is [BACKLOG.md](BACKLOG.md). The front of it today:
 - TokenPlayground sets CSS variables inline, tracks each one, and removes exactly those on reset, unmount and theme change. It writes no storage.
 - `STARS_PER_UNIT = 1200` and `MAX_STARS = 12000` in Simulation. Benchmark before raising them.
 - `HelpDot` lives in `layout.tsx`, not per page.
+- `src/middleware.ts` stays edge middleware on Next 16. Do not rename it to `proxy.ts`: proxy is Node-only and OpenNext does not support Node middleware on Workers. The build's deprecation warning is expected.
 - FMHY: only `_data/backup-sites.json` remains, and `/fmhy` is a backup-sites directory.
 - Unfinished ideas live in `/og`, soft-hidden from search but reachable by URL.
 

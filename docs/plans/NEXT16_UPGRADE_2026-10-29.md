@@ -4,6 +4,24 @@ Scope only. Nothing here has been installed, built or deployed. The plan is base
 
 Target: **Next 16.4.3** (`latest` on npm today), `eslint-config-next` 16.4.3, `@opennextjs/cloudflare` 1.20.14, wrangler 4.156.0.
 
+## Executed 2026-10-29 (branch `claude/next16-upgrade-plan`, not pushed or deployed)
+
+- `cd6e187` Step 1. On Next 15.5.28, `npm run cf:build` passed with no override flag, which confirms the O1 claim below.
+- `be67567` Steps 2 and 3 as planned: next 16.4.3, React 19.3.1, fiber 9.8.2, drei 10.7.9, postprocessing 3.2.2. The build runs on Turbopack, with no `--webpack` fallback. The first build also changed `tsconfig.json` `jsx` from `preserve` to `react-jsx`, which C12 did not predict.
+- `21d49df`, `1eda4ee`, `1ed600d` fix all 69 react-hooks v7 errors, so `84171b2` returns the four rules to their default errors. L2 was done after all, split across three parallel agents. Most hits are targeted disables with reasons. The real fixes:
+  - module-level generators for the random 3D data, with the same draw frequency
+  - `useSyncExternalStore` for WebGL and reduced-motion probes
+  - SiteHeader closes the menu during render instead of in an effect
+  - KonamiEgg confetti no longer re-randomizes mid-burst
+- `58e4731` fixes a problem the plan missed. React 19.3 rendered the literal `<link rel="preload">` tags in `layout.tsx` twice, which failed `holding-details` "locked homepage loads its own assets". The layout now calls `preload()` from `react-dom`.
+- Verification:
+  - `npm run check` passes.
+  - `npm run cf:build` passes. Its only warning is the expected middleware deprecation, with no Node-middleware warning.
+  - The e2e suite passes 46 of 46 on the production build, run with `PLAYWRIGHT_CHANNEL=chrome` because the bundled Chromium is not installed here.
+  - An earlier full run had 7 multi-minute timeouts. A rerun of the same two specs passed 25 of 25 after the preload fix. A 92ebb02 baseline of those specs also passed 25 of 25.
+  - `npm audit --omit=dev` is down from 13 to 6. What remains is `fflate`, `glob` and `source-map-js`, all non-major `npm audit fix` items.
+- Not done: the V4 manual pass on `npm run preview`, the post-2026-11-03 security re-pin, and the deploy, which needs Weibao's yes.
+
 ## Read this first: deploys can be unblocked without Next 16
 
 `npm run deploy` fails because `@opennextjs/aws` 4.1.4 (pulled in by cloudflare 1.20.6) applies a flat two-year cutoff: Next 15 was released 2024-10-21, so it is refused from 2026-10-21.
