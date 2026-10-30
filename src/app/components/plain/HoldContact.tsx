@@ -8,7 +8,7 @@ import { LinkedInInvite } from './LinkedInInvite';
 
 /** The one place the contact details live. The console room prints them too. */
 export const CONTACT = {
-  email: 'info@mythcorp.com',
+  email: 'info@mythcorp.org',
   phone: '(676) 767-7676',
   tel: '+16767677676',
   place: 'Chicago, IL',
