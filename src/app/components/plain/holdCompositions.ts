@@ -4,8 +4,8 @@ import type { HoldRoll } from './holdRoll';
 export const HOLD_COMPOSITIONS = [
   { name: 'Signal', style: 'ascii', message: 'dust', overlay: 'none' },
   { name: 'Suspension', style: 'particle', message: 'field', overlay: 'none' },
-  { name: 'Drift', style: 'swarm', message: 'solid', overlay: 'fog' },
-  { name: 'Surface', style: 'liquid', message: 'solid', overlay: 'none' },
+  { name: 'Drift', style: 'swarm', message: 'field', overlay: 'none' },
+  { name: 'Surface', style: 'liquid', message: 'field', overlay: 'none' },
 ] as const satisfies readonly (HoldRoll & { name: string })[];
 
 export const DEFAULT_HOLD_COMPOSITION = HOLD_COMPOSITIONS[0];

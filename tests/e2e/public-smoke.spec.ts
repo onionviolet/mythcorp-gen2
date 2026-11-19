@@ -381,20 +381,15 @@ test('LinkedIn glow rises continuously as the pointer approaches', async ({ page
   expect(readings.near.ring).toBeGreaterThan(readings.middle.ring);
 });
 
-test('solid message cycles passively and becomes static for reduced motion', async ({ page }) => {
+test('the words cycle skips the blocked DOM styles', async ({ page }) => {
   await page.goto('/?scene=signal&sun=noon');
   await page.getByRole('button', { name: 'words, dust, activate to change' }).click();
   await page.getByRole('button', { name: 'words, field, activate to change' }).click();
 
-  const solid = page.locator('[data-solid-label]');
-  await expect(solid).toHaveCount(2);
-  await expect.poll(() => solid.first().evaluate(element => getComputedStyle(element).animationName))
-    .not.toBe('none');
+  await expect(page.getByRole('button', { name: 'words, dust, activate to change' })).toBeVisible();
+  await expect(page.locator('[data-solid-label]')).toHaveCount(0);
+  await expect(page.locator('[data-decode-label]')).toHaveCount(0);
   await expect(page.getByRole('heading', { name: /Mythcorp, work in progress/i })).toBeVisible();
-
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect.poll(() => solid.first().evaluate(element => getComputedStyle(element).animationName))
-    .toBe('none');
 });
 
 test('every load opens the Installation and ?room pins one', async ({ page }) => {

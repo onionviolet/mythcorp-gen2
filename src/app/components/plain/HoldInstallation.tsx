@@ -11,7 +11,7 @@ import { HoldOperator } from './HoldOperator';
 import { HoldMessage } from './HoldMessage';
 import { DisturbedText } from './DisturbedText';
 import {
-  MESSAGE_STYLES, getMessageStyle, getServerMessageStyle, setMessageStyle,
+  type MessageStyle, MESSAGE_CYCLE, getMessageStyle, getServerMessageStyle, setMessageStyle,
   subscribeMessageStyle,
 } from './messageStore';
 import { HoldStage, HOLD_STYLES, type HoldStyle } from './HoldStage';
@@ -132,7 +132,7 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
                 scene: nextComposition.name,
                 model: resolveHoldModel(next<string>(HOLD_MODEL_IDS, model.id)).label,
                 render: next(HOLD_STYLES, style),
-                words: next(MESSAGE_STYLES, message),
+                words: next<MessageStyle>(MESSAGE_CYCLE, message),
                 over: nextSecondaryOverlay(overlay),
               }}
               onModel={HOLD_MODEL_IDS.length > 1 ? () => {
@@ -142,7 +142,7 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
               } : undefined}
               onCycle={{
                 render: () => { setStyle(next(HOLD_STYLES, style)); logAnomaly('rewire'); },
-                words: () => { setMessageStyle(next(MESSAGE_STYLES, message)); logAnomaly('rewire'); },
+                words: () => { setMessageStyle(next<MessageStyle>(MESSAGE_CYCLE, message)); logAnomaly('rewire'); },
                 over: () => { setOverlay(nextSecondaryOverlay(overlay)); logAnomaly('rewire'); },
               }}
             />

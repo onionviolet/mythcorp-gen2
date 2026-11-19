@@ -12,6 +12,15 @@ export const MESSAGE_STYLES = ['field', 'solid', 'decode', 'dust'] as const;
 
 export type MessageStyle = (typeof MESSAGE_STYLES)[number];
 
+/** What the WORDS row cycles through. `solid` and `decode` are plain DOM type
+ *  and read as a label laid over the scene, so both are blocked from the cycle
+ *  and from every authored scene (2026-11-19). They stay styles for a future
+ *  fallback. */
+const BLOCKED_MESSAGE_STYLES: readonly MessageStyle[] = ['solid', 'decode'];
+export const MESSAGE_CYCLE = MESSAGE_STYLES.filter(
+  (item) => !BLOCKED_MESSAGE_STYLES.includes(item),
+);
+
 export const MESSAGE_LINES = ['WORK IN', 'PROGRESS'] as const;
 
 const DEFAULT: MessageStyle = DEFAULT_HOLD_COMPOSITION.message;

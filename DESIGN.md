@@ -209,8 +209,7 @@ Before a reference-inspired study graduates, ask:
 
 The front page exists to awe, not to inform or convert. It is an installation:
 dense, layered and alive, and the owner wants it that way. The ghosted contact
-backdrop, erosion across the readout and contacts, the solid message's passive
-cycle, the Halo and the cursor echo are part of the spectacle and stay. Judge
+backdrop, erosion across the readout and contacts, the Halo and the cursor echo are part of the spectacle and stay. Judge
 front-page effects by whether the layers feel choreographed as one piece, not
 by clarity or minimalism; an audit that measures clarity will call them noise,
 and it is answering the wrong question (see the owner note in
@@ -339,9 +338,13 @@ so proximity changes brightness as well as size. The echo, cat and link cannot
 click, navigate, move the visitor's pointer, or block a control. These exceptions
 are specific to this installation.
 
-Solid message mode retains the existing typeface but no longer behaves like a
-static fallback. It holds a fixed weight and tracking with no passive cycle, so
-pointer disturbance is the only thing that moves the letters.
+Words are made of the scene's medium, 2026-11-19. The owner judged the DOM
+`solid` and `decode` treatments weaker than the canvas-drawn ones, so both are
+blocked from the WORDS cycle and from every authored scene; the code stays for
+a future static fallback. Drift became swarm with field words and no fog,
+because fog buried both the words and the swarm. Replacement treatments
+(liquid, ink, 3D type) are proposed in
+`docs/plans/INSTALLATION_CRITIQUE_2026-11-19.md`.
 
 Models are selected through `holdModels.ts`; renderer treatments share the same
 asset and framing. See `docs/HOLD_MODEL_ONBOARDING.md` before adding an asset.
