@@ -11,7 +11,7 @@ verdicts. This is a proposal, not an accepted decision.
 Two research agents searched on 2026-10-21. Neither could run JavaScript, and
 Codrops returned 403 to fetches, so most mechanics below are secondhand. The
 only site actually played so far is manraj.me
-([REFERENCE_MANRAJ_2026-10-21.md](REFERENCE_MANRAJ_2026-10-21.md)). Lesson:
+((private notes) (private notes)). Lesson:
 **a site counts as studied only after someone plays it in a real browser.**
 Search finds leads; the browser pane decides.
 
