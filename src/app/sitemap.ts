@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { isRequiredSiteRequest, SITE_LOCKED } from '../siteLock';
 
 // The canonical host is mythcorp.ORG. It has been live on Cloudflare the whole
 // time; the repo just said mythcorp.DEV in several places, which does not
@@ -35,7 +36,10 @@ const ROUTES: Entry[] = [
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
-  return ROUTES.map((r) => ({
+  // While the site is locked, every other route 307s to /. Listing them would
+  // advertise redirects, so the sitemap follows the same lock as the middleware.
+  const live = SITE_LOCKED ? ROUTES.filter((r) => isRequiredSiteRequest(r.path)) : ROUTES;
+  return live.map((r) => ({
     url: `${SITE_URL}${r.path}`,
     lastModified,
     changeFrequency: r.changeFrequency,

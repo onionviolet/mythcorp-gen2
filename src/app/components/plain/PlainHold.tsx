@@ -2,7 +2,6 @@
 
 // Walkthrough: /wc/learn/plain-mode
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
@@ -94,11 +93,9 @@ export function PlainHold() {
           scheme={scheme}
           schemeChoice={choice}
           onSchemeChoice={setChoice}
-          roomSwitch={<div className="flex flex-wrap items-center gap-x-6">
-            <HoldRoomSwitch room={room} onRoom={switchRoom} />
-            <Link href="/?banner=linkedin" onClick={event => { event.preventDefault(); openBanner(true); }}
-              className="pointer-events-auto hidden min-h-11 content-center font-mono text-[11px] uppercase tracking-[0.18em] text-[color:var(--fg-subtle)] hover:text-[color:var(--fg)] sm:block sm:min-h-0">Banner</Link>
-          </div>}
+          // The banner export stays at /?banner=linkedin; it is a tool for me, not a
+          // room for visitors, so it has no link in the header.
+          roomSwitch={<HoldRoomSwitch room={room} onRoom={switchRoom} />}
           onRoom={switchRoom}
         />
       )}
