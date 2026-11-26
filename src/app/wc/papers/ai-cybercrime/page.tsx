@@ -54,12 +54,12 @@ export default function AiCybercrimePaper() {
           The AI-driven democratization of cybercrime
         </h1>
         <p className="mt-3 text-base text-[color:var(--fg-muted)] sm:text-lg">
-          A forecast of emergent threats, in four stages. Revised October 2026.
+          A forecast of emergent threats, in four stages. Revised November 2026.
         </p>
 
         <div className="mt-6 flex flex-wrap items-center gap-2 text-xs text-[color:var(--fg-subtle)]">
           <span className="themed-pill px-3 py-1 font-mono uppercase tracking-widest">Weibao Chen</span>
-          <span className="themed-pill px-3 py-1 font-mono uppercase tracking-widest">2025, revised 2026-10</span>
+          <span className="themed-pill px-3 py-1 font-mono uppercase tracking-widest">2025, revised 2026-11</span>
           <span className="themed-pill px-3 py-1 font-mono uppercase tracking-widest">Pioneer Scholars</span>
         </div>
         <p className="mt-3 font-mono text-xs text-[color:var(--fg-muted)]">
@@ -73,6 +73,11 @@ export default function AiCybercrimePaper() {
           </span>
         </p>
 
+        <nav aria-label="Reading shortcuts" className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm underline underline-offset-4 print:hidden">
+          <a href="#sixty-title">Read the 60-second summary</a>
+          <a href="#august-forecast">What I called in August 2025</a>
+          <a href="#wrong">What would prove me wrong?</a>
+        </nav>
         <section id="abstract" aria-labelledby="abstract-title" className="mt-12 scroll-mt-24">
           <h2 id="abstract-title" className="font-mono text-[10px] uppercase tracking-[0.4em] text-[color:var(--fg)]">Abstract</h2>
           <p className="mt-3 text-base leading-relaxed text-[color:var(--fg)]">
@@ -85,8 +90,8 @@ export default function AiCybercrimePaper() {
             withheld from public release, and the best downloadable model trailed them by about four
             months. Over the same period the average time from patch release
             to first observed exploitation fell from 63 days in 2018 to 2019 to minus 7 days in
-            2025, and only 75 of 530 AI-found flaws reported to open-source maintainers
-            had patches in May 2026. Harm data show no measurable AI-driven increase so far.
+            2025, and in May 2026 Anthropic counted patches for 75 of 530 high- or critical-severity flaws it had reported to open-source maintainers.
+            It expected more fixes within the 90-day disclosure window and said its count likely missed some patches. Harm data show no measurable AI-driven increase so far.
             I forecast that whether repair can speed up as fast as discovery decides the outcome for 2027 to 2030, and I list
             the measurements that would falsify that forecast.
           </p>
@@ -215,9 +220,20 @@ export default function AiCybercrimePaper() {
         </Section>
         <Section id="barrier" number="1.2" eyebrow="rating" lead={<>On a five-question rubric, attacks built on writing, impersonation or routine code became much more accessible to non-experts, while intrusion and vulnerability work changed little because the most capable models remain gated.</>} title="How far the barrier fell">
           <p>
-            The original paper scored six attacks from 1 to 10 for how reachable they are to a non-expert, before and
-            after AI, and never said how. This version uses a rubric of five yes or no questions you can check. The
-            answers are mine. The reasons and sources are one click away on each row.
+            Tables 1 and 4 of my August draft scored five capabilities. I gave reasons for the numbers but no
+            scoring rule. The worst comparison was intelligence gathering: I compared a team collecting state secrets
+            with one person gathering public information. I had changed the job halfway through measuring it.
+          </p>
+          <p>
+            I dropped intelligence gathering, covert infrastructure and strategic information operations. I narrowed
+            custom malware to producing a ransomware variant and zero-day research to finding and exploiting an unknown
+            flaw. I added four tasks: targeted phishing, impersonation, remote-worker identity fraud and intrusion
+            with extortion. These six rows start a new comparison. None inherits an August score.
+          </p>
+          <p>
+            In each row I ask about the same non-specialist attempting the same task in both periods. Open a row to
+            see what counts as finishing it and which parts the evidence supports. Some sources describe experienced
+            operators. Their results can show that a tool exists while leaving novice success unknown.
           </p>
           <BarrierToEntry figureNumber={FIGURE.barrier} />
         </Section>
@@ -425,6 +441,44 @@ export default function AiCybercrimePaper() {
           </Supplement>
         </Section>
         <Section id="scenario" number="2.2" eyebrow="scenario" lead={<>The four-stage taxonomy of the 2025 paper is restated as a dated scenario in which the first three stages rest on evidence and the last two are forecasts.</>} title="Four stages, dated">
+          <h3 id="august-forecast" className="scroll-mt-24 font-serif text-2xl">What I called in August 2025</h3>
+          <p>
+            A reviewer left comments on this draft on August 18, 2025. A working file in my research folder, dated
+            July 30 by its local modification time, already discussed AI finding previously unknown flaws and credited
+            <i> AI 2027</i> for the timeline. That date precedes DARPA&rsquo;s August 8 final results announcement.
+            DARPA had already demonstrated automated discovery on planted flaws in its 2024 semifinal. The July date
+            belongs to a private working file. The reviewed draft gives me firmer evidence of the wording below.
+            <Cite ids={['ai2027-2025', 'aixcc-2025']} />
+          </p>
+          <dl className="space-y-4">
+            <div>
+              <dt className="font-semibold">1. Unreliable agent, 2024 to 2025. A baseline I got right.</dt>
+              <dd>I described deception as the most mature use. By then a controlled study had already found that
+                AI-written and expert-written phishing messages drew the same share of clicks in its sample. I was
+                summarizing a result already on record.<Cite ids={['heiding-2024']} /></dd>
+            </div>
+            <div>
+              <dt className="font-semibold">2. Reliable agent, possibly early 2026. I anticipated a change in the operator&rsquo;s role.</dt>
+              <dd>I wrote that the user could move from directing each step to managing the work. In September 2025
+                Anthropic observed a state-linked group doing much of that supervision. The model still made mistakes
+                and people made critical decisions. That case supports the shift I described. I overreached when I
+                extended it to a first-time operator.<Cite ids={['anthropic-2025-11']} /></dd>
+            </div>
+            <div>
+              <dt className="font-semibold">3. Superhuman coder, possibly early 2027. The evidence splits three ways.</dt>
+              <dd>DARPA had already reported 18 real flaws found during its competition by the time the August draft
+                circulated. Glasswing later reported expert-level results with a restricted model. That strengthens
+                the case for specialized capability. Reliability across tasks remains uncertain, and restricted access
+                leaves my claim about ordinary users open. The early-2027 coder milestone came from <i>AI 2027</i>.
+                <Cite ids={['aixcc-2025', 'glasswing-2026-04', 'ai2027-2025']} /></dd>
+            </div>
+            <div>
+              <dt className="font-semibold">4. Superhuman attacker, possibly late 2027 or later. Still open.</dt>
+              <dd>I described an agent that could manage an entire campaign across domains. The original horizon is
+                still ahead as I write in November 2026. My revised scenario places it in 2028 with low confidence.
+                The September case still had people making the consequential decisions.<Cite ids={['anthropic-2025-11']} /></dd>
+            </div>
+          </dl>
           <p>
             The taxonomy from the 2025 paper, rebuilt as a dated scenario. The first three chapters are evidence and
             the last two are forecasts. Each states what would trigger it, what changes on both sides and how sure I
@@ -562,15 +616,30 @@ export default function AiCybercrimePaper() {
             </li>
           </ul>
         </Section>
-        <Section id="wrong" number="3.3" eyebrow="falsification" lead={<>Six regularly published measurements would falsify parts of the forecast; each is listed with its latest value.</>} title="What would prove me wrong">
+        <Section id="wrong" number="3.3" eyebrow="falsification" lead={<>Six regularly published measurements would falsify parts of the forecast; each is listed with a dated value.</>} title="What would prove me wrong">
+          <h3 id="novice-test" className="scroll-mt-24 font-serif text-2xl">Can a novice finish the task?</h3>
           <p>
-            Each row is a reading someone else publishes on a schedule, the latest value, and what would count against
+            November 25, 2026. My expectation is that ordinary public AI access will improve whole-task completion
+            for novices on authorized security exercises. I will review this by December 31, 2027. The earlier
+            volunteer study counted steps as well as completions. No novice finished a challenge there.
+            <Cite ids={['cse3-2024']} />
+          </p>
+          <p>
+            I would count an independent controlled study that assigns novices to the same exercises, time budget
+            and ordinary tools, with public AI access as the only planned difference. I would record who qualified
+            as a novice, completions out of attempts in each group, and the percentage-point difference with a 95%
+            confidence interval. An interval wholly above zero supports my expectation for those tasks. An interval
+            wholly at or below zero counts against it. An interval spanning zero leaves it unresolved. If only
+            restricted models, expert operators or partial steps are reported by the review date, the question stays open.
+          </p>
+          <p>
+            Each row is a reading someone else publishes on a schedule, the dated value, and what would count against
             me.
           </p>
           <div className="text-sm">
             <div className="hidden grid-cols-[1.1fr_0.8fr_1.5fr] gap-3 border-b border-[color:var(--border-strong)] py-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)] sm:grid">
               <span>Reading</span>
-              <span>Latest</span>
+              <span>Recorded value</span>
               <span>Counts against</span>
             </div>
             <ul>
@@ -578,7 +647,7 @@ export default function AiCybercrimePaper() {
                 <li key={r.reading} className="grid gap-1 border-b border-[color:var(--border)] py-3 sm:grid-cols-[1.1fr_0.8fr_1.5fr] sm:gap-3">
                   <span className="text-[color:var(--fg)]">{r.reading}</span>
                   <span className="font-mono text-xs text-[color:var(--fg-muted)]">
-                    <span className="text-[color:var(--fg-subtle)] sm:hidden">latest: </span>
+                    <span className="text-[color:var(--fg-subtle)] sm:hidden">recorded: </span>
                     {r.latest}
                   </span>
                   <span className="text-[color:var(--fg-muted)]">
@@ -602,8 +671,8 @@ export default function AiCybercrimePaper() {
           <p>
             Where the argument itself changed, the change is logged here with its date, what I claimed before, what I
             claim now and the evidence that moved it. Each earlier claim names its source: the 2025 paper or an earlier
-            draft of this October 2026 revision. Each entry says whether it
-            strengthens, narrows or reverses the earlier claim. Presentation changes are in the revision notes further
+            draft of this October 2026 revision. A3 separates the evidence for capability, reliability and access. The other entries explain what
+            strengthened, narrowed or reversed each claim. Presentation changes are in the revision notes further
             down.
           </p>
           <AmendmentsLog />
@@ -633,8 +702,13 @@ export default function AiCybercrimePaper() {
             </li>
           </ul>
         </Section>
-        <Section id="revision-notes" number="Appendix C" eyebrow="revisions" lead={<>These notes record changes to presentation; changes to the argument are in Appendix A.</>} title="Revision notes, October 2026">
+        <Section id="revision-notes" number="Appendix C" eyebrow="revisions" lead={<>These notes record changes to presentation; changes to the argument are in Appendix A.</>} title="Revision notes, October and November 2026">
           <ul className="ml-5 list-disc space-y-2">
+            <li>
+              <strong className="text-[color:var(--fg)]">November 25 (v2.9).</strong>{' '}
+              Compared the four August stages with subsequent evidence, traced the change from five barrier categories
+              to six tasks, and dated a test of novice completion. A10 clarifies what the first patch count measured.
+            </li>
             <li>
               <strong className="text-[color:var(--fg)]">Amendments checked against the 2025 paper (v2.8).</strong>{' '}
               I reread the 2025 paper and found that several &ldquo;claim before&rdquo; lines described the first web
