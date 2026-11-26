@@ -273,7 +273,7 @@ export function EndingsBranch() {
         <div className="mt-4 border-t border-dashed border-[color:var(--accent)] pt-3 text-[11px] leading-relaxed text-[color:var(--fg-muted)]">
           <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--accent)]">assumptions, all mine</p>
           <ul className="mt-1 space-y-1">
-            <li>Start: {START_BACKLOG} waiting (530 reported minus 75 patched, measured {new Date(MEASURED_AT).toISOString().slice(0, 10)}). Starting rates of about {Math.round(START_FOUND_PER_MONTH)} found and {Math.round(START_FIXED_PER_MONTH)} fixed a month spread those counts over the {MEASURED_DAYS} days since the program launched.</li>
+            <li>Start: {START_BACKLOG} assumed waiting (530 reported minus 75 known patches, as of {new Date(MEASURED_AT).toISOString().slice(0, 10)}). Starting rates of about {Math.round(START_FOUND_PER_MONTH)} found and {Math.round(START_FIXED_PER_MONTH)} fixed a month spread those counts over the {MEASURED_DAYS} days since the program launched.</li>
             <li>Both rates grow by a fixed factor each year, set by the sliders. Ending A uses ×4 and ×1.5, Ending B ×2 and ×8. No source measures either growth rate.</li>
             <li>
               For scale only, two independent rates from other pipelines: CVE submissions grew about ×1.3 a year from 2020
@@ -329,7 +329,7 @@ function EndingDetail({ ending }: { ending: Ending }) {
     </div>
 
     <div>
-      <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)]">Signposts to watch, with the latest reading</p>
+      <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)]">Signposts to watch, with dated readings</p>
       <ul className="mt-2 divide-y divide-[color:var(--border)] border-y border-[color:var(--border)] text-sm">
         {ending.signposts.map((s) => (
           <li key={s.watch} className="grid gap-1 py-2 sm:grid-cols-[1fr_auto] sm:gap-4">

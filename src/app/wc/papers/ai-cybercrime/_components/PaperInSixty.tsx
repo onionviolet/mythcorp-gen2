@@ -3,12 +3,12 @@ import { Cite } from './PaperApparatus';
 export function PaperInSixty() {
   return (
     <section aria-labelledby="sixty-title" className="themed-surface mt-10 p-5 sm:p-6">
-      <p id="sixty-title" className="font-mono text-[10px] uppercase tracking-[0.4em] text-[color:var(--accent)]">
+      <p id="sixty-title" className="scroll-mt-28 font-mono text-[10px] uppercase tracking-[0.4em] text-[color:var(--accent)]">
         the paper in 60 seconds
       </p>
       <p className="mt-3 font-serif text-lg leading-snug text-[color:var(--fg)] sm:text-xl">
-        AI is moving the hard part of cybercrime from skill to access, for the second time, into a repair window that
-        was already closing, so whether fixing can speed up as fast as AI speeds up finding decides 2027 to 2030.
+        AI makes some kinds of cybercrime easier to attempt. My forecast for 2027 to 2030 turns on a different question:
+        can the people fixing software keep pace with the people finding flaws?
       </p>
       <dl className="mt-5 grid gap-4 sm:grid-cols-3">
         <div>
@@ -21,7 +21,8 @@ export function PaperInSixty() {
         <div>
           <dt className="font-serif text-3xl text-[color:var(--fg)]">75 of 530</dt>
           <dd className="mt-1 text-xs leading-relaxed text-[color:var(--fg-muted)]">
-            serious AI-found flaws sent to open-source maintainers that had a patch, May 2026<Cite ids={['glasswing-2026-05']} />
+            high- or critical-severity reports had a known patch in May 2026. Anthropic expected more patches and said it likely missed some.<Cite ids={['glasswing-2026-05']} />{' '}
+            <a href="#am-10" className="underline underline-offset-4">What the count leaves out</a>
           </dd>
         </div>
         <div>

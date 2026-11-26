@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 import { Cite } from './PaperApparatus';
 
-export const PAPER_VERSION = { label: 'v2.8', date: '2026-10-08' } as const;
+export const PAPER_VERSION = { label: 'v2.9', date: '2026-11-25' } as const;
 
-type Effect = 'strengthens' | 'narrows' | 'reverses';
+type Effect = 'mixed' | 'strengthens' | 'narrows' | 'reverses';
 
 type ClaimOrigin = '2025 paper' | 'October 2026 draft';
 
@@ -61,10 +61,10 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
     id: 'am-3',
     date: '2026-10-07',
     topic: 'When expert vulnerability work arrives',
-    effect: 'strengthens',
+    effect: 'mixed',
     from: '2025 paper',
     before: 'Stage 3 (then called Superhuman Coder) from 2027; Stage 4 (Superhuman Attacker) from late 2027.',
-    now: 'Stage 3 abilities at the gated frontier in April 2026; Stage 4 forecast for 2028, low confidence. Independent benchmarks show lower success than the developer reports, so the frontier claims carry less weight than the dates suggest.',
+    now: <>Capability: April 2026 reports strengthen the narrow claim about expert work. Reliability: performance across tasks is still uncertain. Access: the strongest results came from a restricted model, so the forecast about laypeople remains open. Stage 4 remains a low-confidence 2028 forecast. <a href="#august-forecast" className="underline">Compare the four August stages.</a></>,
     evidence: (
       <>
         Developer reports of expert-level vulnerability work in 2026.<Cite ids={['glasswing-2026-04', 'mythos-2026-04']} /> Academic
@@ -180,6 +180,16 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
         before a patch exists.<Cite ids={['mtrends-2026']} />
       </>
     ),
+  },
+  {
+    id: 'am-10',
+    date: '2026-11-25',
+    topic: 'What the first patch count captures',
+    effect: 'narrows',
+    from: 'October 2026 draft',
+    before: 'Only 75 of 530 flaws had patches.',
+    now: 'Anthropic knew of 75 patches when it counted in May. Some fixes may already have shipped without a public advisory.',
+    evidence: <>Anthropic describes the reporting lag and the time still left in its disclosure window.<Cite ids={['glasswing-2026-05']} /></>,
   },
 ];
 

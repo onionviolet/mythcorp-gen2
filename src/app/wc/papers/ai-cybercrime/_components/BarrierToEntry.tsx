@@ -17,6 +17,7 @@ type Answers = readonly [boolean, boolean, boolean, boolean, boolean];
 
 type BarrierRow = {
   label: string;
+  endpoint: string;
   pre: Answers;
   post: Answers;
   reasoning: string;
@@ -29,6 +30,7 @@ const N = false;
 const ROWS: ReadonlyArray<BarrierRow> = [
   {
     label: 'Targeted phishing',
+    endpoint: 'Produce a personalized message that draws a click. A click establishes no later loss.',
     pre: [N, Y, Y, N, Y],
     post: [Y, Y, Y, Y, Y],
     reasoning: 'Before 2023 the part that took skill was a fluent, personal lure in the target\'s language, written one at a time. Models write those in bulk, which the NCSC flagged in 2024 and the FBI describes in 2025 complaints. In a controlled study with university participants, fully AI-written lures drew as many clicks as an expert\'s.',
@@ -36,6 +38,7 @@ const ROWS: ReadonlyArray<BarrierRow> = [
   },
   {
     label: 'Voice or video impersonation',
+    endpoint: 'Convince a recipient that a caller or video participant has the claimed identity. A hired impersonator can meet this endpoint in either period.',
     pre: [N, N, Y, N, N],
     post: [Y, Y, Y, N, Y],
     reasoning: 'Before AI, generic voices were already for hire: forums sold calls to pass bank voice checks, and phishing networks used human callers posing as bank staff, so tools were on offer. What could not be bought was a convincing copy of a specific person. The Hong Kong fraud used public video of real executives, and the FBI now reports cloned voices in distress scams and deepfaked endorsements. Each call still targets one victim at a time, so I leave scale unchecked.',
@@ -43,6 +46,7 @@ const ROWS: ReadonlyArray<BarrierRow> = [
   },
   {
     label: 'Build a ransomware variant',
+    endpoint: 'Produce a working variant. Buying a finished product answers a different question.',
     pre: [N, N, N, Y, N],
     post: [Y, N, Y, Y, Y],
     reasoning: 'Anthropic describes a seller who appeared unable to build working malware without AI. Google documents an underground market for AI tools, and an academic study of 212 samples of such services found them cheaper for malicious code than traditional malware vendors. No report says how long it takes, so I leave time unchecked.',
@@ -50,6 +54,7 @@ const ROWS: ReadonlyArray<BarrierRow> = [
   },
   {
     label: 'Fake remote-worker identity',
+    endpoint: 'Pass a remote hiring interview under an assumed identity.',
     pre: [N, N, N, N, N],
     post: [Y, N, Y, N, Y],
     reasoning: 'Anthropic reports North Korean operatives without basic coding skills passing technical interviews with AI help. The FBI sees deepfaked job interviews. Each hire is still a separate, slow deception.',
@@ -57,6 +62,7 @@ const ROWS: ReadonlyArray<BarrierRow> = [
   },
   {
     label: 'Intrude on and extort many organizations',
+    endpoint: 'Complete intrusion and extortion across multiple organizations. A report of espionage alone establishes only part of that outcome.',
     pre: [N, N, N, N, N],
     post: [N, N, N, Y, N],
     reasoning: 'One actor used an AI agent against at least 17 organizations, and a state group let AI do most of an espionage campaign. Neither report describes the operator as a novice. Scale moved; on the public record the skill gate has not.',
@@ -64,6 +70,7 @@ const ROWS: ReadonlyArray<BarrierRow> = [
   },
   {
     label: 'Find and exploit an unknown flaw',
+    endpoint: 'Find a previously unknown flaw and demonstrate its impact. A benchmark on known flaws gives only indirect evidence.',
     pre: [N, N, N, N, N],
     post: [N, N, Y, N, N],
     reasoning: 'Expert-level vulnerability work exists at the frontier but is held back from public release. A downloadable model about four months behind appeared in September 2026, so tools are now on offer. Success rates reported for it are still low, and I know of no public case of a non-expert using it.',
@@ -203,6 +210,9 @@ export function BarrierToEntry({ figureNumber }: { figureNumber?: number } = {})
                           <p className="font-mono text-[11px] text-[color:var(--fg-muted)]">{pre} → {post}</p>
                           <AnswerStrip answers={r.pre} label="before AI" />
                           <AnswerStrip answers={r.post} label="Oct 2026" />
+                          <p className="text-xs leading-relaxed text-[color:var(--fg-muted)]">
+                            <strong>Same task in both periods:</strong> {r.endpoint}
+                          </p>
                           <p className="text-xs leading-relaxed text-[color:var(--fg-muted)]">
                             {r.reasoning}
                             <Cite ids={r.evidence} />
