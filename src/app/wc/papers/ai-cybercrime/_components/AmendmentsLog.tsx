@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Cite } from './PaperApparatus';
 
-export const PAPER_VERSION = { label: 'v2.8', date: '2026-10-08' } as const;
+export const PAPER_VERSION = { label: 'v2.9', date: '2026-11-25' } as const;
 
 type Effect = 'strengthens' | 'narrows' | 'reverses';
 
@@ -180,6 +180,16 @@ export const AMENDMENTS: ReadonlyArray<Amendment> = [
         before a patch exists.<Cite ids={['mtrends-2026']} />
       </>
     ),
+  },
+  {
+    id: 'am-10',
+    date: '2026-11-25',
+    topic: 'What the first patch count captures',
+    effect: 'narrows',
+    from: 'October 2026 draft',
+    before: 'Only 75 of 530 flaws had patches.',
+    now: 'Anthropic knew of 75 patches when it counted in May. Some fixes may already have shipped without a public advisory.',
+    evidence: <>Anthropic describes the reporting lag and the time still left in its disclosure window.<Cite ids={['glasswing-2026-05']} /></>,
   },
 ];
 

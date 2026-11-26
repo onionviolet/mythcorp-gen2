@@ -54,9 +54,15 @@ export function HoldContactLinks() {
         <DisturbedText text={CONTACT.phone} strength={GENTLE} />
       </a>
       <DisturbedText text={CONTACT.place} strength={GENTLE} />
-      <Link href="/wc/papers/ai-cybercrime" className="w-fit content-center transition-colors [@media(min-height:700px)]:pointer-coarse:min-h-11 hover:text-[color:var(--fg)]">
-        <DisturbedText text="Read the paper →" strength={GENTLE} />
-      </Link>
+      <PaperLink />
     </address>
+  );
+}
+
+export function PaperLink() {
+  return (
+    <Link href="/wc/papers/ai-cybercrime" className="inline-flex min-h-11 w-fit items-center gap-2 font-mono text-xs text-[color:var(--fg)] underline underline-offset-4">
+      Read my research on AI and cybercrime <span aria-hidden="true">↗</span>
+    </Link>
   );
 }

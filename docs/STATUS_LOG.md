@@ -1,6 +1,10 @@
-# STATUS log (to 2026-10-29)
+# STATUS log
 
 Archived unchanged from the root STATUS.md on 2026-10-29, when STATUS.md became a short current-state file. Relative links were adjusted for this location. Newest entries are first. Old `STATUS.md#section` links find their text under the same heading here.
+
+## Room navigation and paper entry, 2026-11-25
+
+Installation and Tour share a ribbon transition. The Tour link drops into Let Go and returns to its place on Back. The Console preserves a draft through command history and releases Tab when it has no completion. The homepage links to the paper in its initial HTML. Paper v2.9 qualifies the May patch count and adds a static share card. The banner workshop keeps the ribbon as its default and offers an adjustable specimen alternate. Popmelt runs locally with `npm run design`.
 
 ## Local commit consolidation and next gate, 2026-10-26
 

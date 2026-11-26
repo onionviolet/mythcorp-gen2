@@ -16,6 +16,7 @@ export function ConsoleRoom(props: HoldRoomProps) {
   const [value, setValue] = useState('');
   const history = useRef<string[]>([]);
   const cursor = useRef(0);
+  const draft = useRef('');
   const nextId = useRef(0);
   const input = useRef<HTMLInputElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
@@ -49,7 +50,7 @@ export function ConsoleRoom(props: HoldRoomProps) {
   }, [lines]);
 
   useEffect(() => {
-    if (booted && !window.matchMedia('(pointer: coarse)').matches) input.current?.focus();
+    if (booted && document.activeElement === document.body && !window.matchMedia('(pointer: coarse)').matches) input.current?.focus();
   }, [booted]);
 
   const submit = (raw: string) => {
@@ -57,6 +58,7 @@ export function ConsoleRoom(props: HoldRoomProps) {
     if (!text) return;
     history.current.push(text);
     cursor.current = history.current.length;
+    draft.current = '';
     const result = run(text, 'console');
     if (/^(cat|open)\s+\S/i.test(text)) logAnomaly('file');
     if (result.action === 'clear') {
@@ -72,16 +74,20 @@ export function ConsoleRoom(props: HoldRoomProps) {
   };
 
   const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Tab') {
+    if (e.key === 'Tab' && !e.shiftKey) {
+      const completion = complete(value);
+      if (completion === value) return;
       e.preventDefault();
-      setValue(complete(value));
+      setValue(completion);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
+      if (cursor.current === history.current.length) draft.current = value;
       if (cursor.current > 0) setValue(history.current[--cursor.current]);
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      cursor.current = Math.min(cursor.current + 1, history.current.length);
-      setValue(history.current[cursor.current] ?? '');
+      if (cursor.current === history.current.length) return;
+      cursor.current += 1;
+      setValue(history.current[cursor.current] ?? draft.current);
     }
   };
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { DoorRibbon } from '../DoorRibbon';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { HoldRoomFrame, type HoldRoomProps } from '../HoldRoomFrame';
@@ -76,6 +77,7 @@ export function TourRoom(props: HoldRoomProps) {
           <span aria-live="polite">
             The locked rooms · act {active} of {TOTAL}
           </span>
+          <DoorRibbon />
         </div>
         <p className="mx-auto max-w-3xl px-5 pt-6 text-sm text-[color:var(--fg-muted)] sm:px-8 sm:text-base">
           The rest of this site is closed while I finish it. Here is what is behind the door. Scroll.

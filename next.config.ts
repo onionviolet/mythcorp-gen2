@@ -6,7 +6,13 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default async function config() {
+  if (process.env.NODE_ENV === "development" && process.env.POPMELT_DEV_SESSION) {
+    const { withPopmelt } = await import("@popmelt.com/core/next");
+    return withPopmelt(nextConfig);
+  }
+  return nextConfig;
+}
 
 // added by create cloudflare to enable calling `getCloudflareContext()` in `next dev`.
 // Gated to dev because that is the only place it does anything: `next build`

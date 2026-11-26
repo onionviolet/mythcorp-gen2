@@ -28,6 +28,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
     "@playwright/test": "^1.63.0",
+    "@popmelt.com/core": "0.38.1",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "24.0.4",
     "@types/react": "19.2.18",
@@ -47,6 +48,7 @@
     "cf:build": "npm run clean && opennextjs-cloudflare build",
     "deploy": "npm run clean && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "dev": "next dev",
+    "design": "node scripts/design.mjs",
     "lint": "eslint src scripts tools tests playwright.config.ts eslint.config.mjs next.config.ts open-next.config.ts postcss.config.mjs",
     "preview": "npm run clean && opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "start": "next start",

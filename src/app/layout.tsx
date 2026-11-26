@@ -6,6 +6,7 @@ import { HelpDot } from "./components/HelpDot";
 import { KonamiEgg } from "./components/KonamiEgg";
 import { TerminalOverlay } from "./components/TerminalOverlay";
 import { PlainField } from "./components/plain/PlainField";
+import { LocalDesignProvider } from "./components/LocalDesignProvider";
 import { PlainHold } from "./components/plain/PlainHold";
 import { PLAIN_OPEN_PREFIXES, HOLD_ATTR } from "./components/plain/holdState";
 import { SCHEME_ATTR, SCHEME_KEY } from "./components/plain/holdScheme";
@@ -107,7 +108,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
       </head>
       <body className="antialiased" suppressHydrationWarning>
-        <ThemeProvider>
+        <LocalDesignProvider><ThemeProvider>
           <PlainField />
           <PlainHold />
           {/* Everything the holding screen hides lives inside #page-root.
@@ -118,7 +119,7 @@ export default function RootLayout({
             <KonamiEgg />
           </div>
           <TerminalOverlay />
-        </ThemeProvider>
+        </ThemeProvider></LocalDesignProvider>
       </body>
     </html>
   );

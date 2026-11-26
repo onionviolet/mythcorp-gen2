@@ -37,7 +37,8 @@ Cloudflare Workers via `@opennextjs/cloudflare`.
 npm install
 npx playwright install chromium # one-time browser install for smoke tests
 npm run dev          # local dev server
-npm run check        # lint + text policy + build + tsc, must stay green
+npm run design       # local dev with Popmelt. Double-tap Ctrl on Windows or Command on Mac.
+npm run check        # lint + text policy + unit tests + build + tsc, must stay green
 npm run test:smoke   # focused Chromium route and behavior checks
 npm run preview      # Cloudflare Workers simulated build
 npm run deploy       # cloudflare workers deploy
@@ -50,8 +51,10 @@ refreshed by running `npm run fetch:fmhy` and committing the diff.
 
 ## CI
 
-No CI workflow is currently tracked. Run `npm run check` locally before every
-commit. Restoring a PR build guard remains queued work.
+Run `npm run check` locally before committing. Pull requests and pushes to
+`main` run the same gate on Ubuntu. CI also runs the browser suite and saves
+traces for failures. Run the production-build suite locally before shipping.
+See [the workflow](.github/workflows/ci.yml).
 
 ## License
 

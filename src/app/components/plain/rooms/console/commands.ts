@@ -20,7 +20,7 @@ const ENTRIES: Entry[] = [
     const name = s.href.split('/').pop() ?? s.label.toLowerCase();
     return { name, line: OVERRIDES[name] ?? firstSentence(s.blurb) };
   }),
-  { name: 'ai-cybercrime', line: 'A paper on how AI lowers the barrier to cybercrime. Revised October 2026, and open.', href: '/wc/papers/ai-cybercrime' },
+  { name: 'ai-cybercrime', line: 'An open research paper by Weibao Chen on AI, cybercrime and the pace of software repair.', href: '/wc/papers/ai-cybercrime' },
 ];
 
 export const NAMES = ENTRIES.map(e => e.name);

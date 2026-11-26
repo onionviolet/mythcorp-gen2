@@ -95,3 +95,7 @@
   outline: 1px dotted currentColor;
   outline-offset: 3px;
 }
+
+.lander[data-door-arrival] .identity,
+.lander[data-door-arrival] .specimen,
+.lander[data-door-arrival] .readout { animation: none; }

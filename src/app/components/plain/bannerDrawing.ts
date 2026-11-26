@@ -1,9 +1,12 @@
+import specimen from './share/shareSpectre.json';
 import { MESSAGE_LINES } from './messageStore';
 
 export const LINKEDIN_BANNER_WIDTH = 1584;
 export const LINKEDIN_BANNER_HEIGHT = 396;
 
-export function drawLinkedInBanner(canvas: HTMLCanvasElement, fontFamily: string, paper: string, ink: string) {
+export type BannerPlate = 'Specimen' | 'Ribbon';
+
+export function drawLinkedInBanner(canvas: HTMLCanvasElement, fontFamily: string, paper: string, ink: string, plate: BannerPlate = 'Ribbon', lightAngle = 35) {
   canvas.width = LINKEDIN_BANNER_WIDTH;
   canvas.height = LINKEDIN_BANNER_HEIGHT;
   const ctx = canvas.getContext('2d');
@@ -18,6 +21,30 @@ export function drawLinkedInBanner(canvas: HTMLCanvasElement, fontFamily: string
   ctx.fillStyle = ink;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
+  if (plate === 'Specimen') {
+    const radians = lightAngle * Math.PI / 180;
+    ctx.strokeStyle = ink;
+    for (const [x, y, nx, ny, nz] of specimen) {
+      const exposure = Math.max(0, (nx * Math.sin(radians) + ny * 0.48 + nz * Math.cos(radians)) / 112);
+      ctx.globalAlpha = 0.18 + exposure * 0.7;
+      ctx.lineWidth = 0.8 + exposure * 1.75;
+      const left = 439 + x * 4.15;
+      const top = 34 + y * 4.15;
+      ctx.beginPath();
+      ctx.moveTo(left, top);
+      ctx.lineTo(left + 1.4 + 1.8 * exposure, top - 1.2);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'left';
+    ctx.font = `600 96px ${fontFamily}`;
+    ctx.fillText('MYTHCORP', 948, 182, 544);
+    ctx.globalAlpha = 0.8;
+    ctx.font = `34px ${fontFamily}`;
+    ctx.fillText('mythcorp.org', 952, 258);
+    ctx.globalAlpha = 1;
+    return;
+  }
   ctx.font = `9px ${fontFamily}`;
   const glyphs = '.:+*';
   for (let u = 0; u <= 1; u += 0.009) {
@@ -30,6 +57,23 @@ export function drawLinkedInBanner(canvas: HTMLCanvasElement, fontFamily: string
       ctx.globalAlpha = (0.22 + 0.5 * (v + 1) / 2) * Math.sin(Math.PI * u * 0.88);
       ctx.fillText(glyphs[Math.floor(random() * glyphs.length)], x, y);
     }
+  }
+  // Two continuous edges hold the twist together when the glyphs shrink on a phone.
+  ctx.strokeStyle = ink;
+  for (const side of [-1, 1]) {
+    ctx.beginPath();
+    for (let i = 0; i <= 160; i++) {
+      const u = i / 160;
+      const width = 10 + 56 * Math.sin(Math.PI * u);
+      const twist = u * Math.PI * 2.2;
+      const x = 400 + 450 * u + side * width * Math.sin(twist);
+      const y = 304 - 134 * u - 90 * Math.sin(Math.PI * u) + side * width * Math.cos(twist);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.globalAlpha = side === 1 ? 0.62 : 0.32;
+    ctx.lineWidth = side === 1 ? 2.5 : 1.5;
+    ctx.stroke();
   }
   ctx.font = `8px ${fontFamily}`;
   for (let i = 0; i < 1000; i++) {
@@ -58,7 +102,7 @@ export function drawLinkedInBanner(canvas: HTMLCanvasElement, fontFamily: string
       const erosion = 0.03 + 0.14 * Math.max(0, (1100 - x) / 204);
       if (random() < erosion) continue;
       ctx.globalAlpha = 0.76 + random() * 0.24;
-      ctx.fillRect(x + random() * 0.5, y, 1.65, 1.65);
+      ctx.fillRect(x + random() * 0.5, y, 1.9, 1.9);
       if (random() < erosion * 0.7) {
         ctx.globalAlpha = 0.16;
         ctx.fillText('.', x - 10 - random() * 30, y + random() * 12);
@@ -69,8 +113,8 @@ export function drawLinkedInBanner(canvas: HTMLCanvasElement, fontFamily: string
   ctx.font = `14px ${fontFamily}`;
   ctx.textAlign = 'left';
   ctx.fillText('M Y T H C O R P', 64, 50);
-  ctx.globalAlpha = 0.65;
-  ctx.font = `14px ${fontFamily}`;
+  ctx.globalAlpha = 0.85;
+  ctx.font = `28px ${fontFamily}`;
   ctx.textAlign = 'right';
   ctx.fillText('mythcorp.org', 1518, 351);
   ctx.globalAlpha = 1;

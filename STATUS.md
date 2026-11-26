@@ -6,11 +6,11 @@
 
 - The site lock is active: `/` serves the plain holding installation, and only `LOCKED_OPEN_PATHS`, the upload links `/a/<id>` and `/d/<token>`, `/api/*` and static files stay reachable (`src/siteLock.ts`). New uploads are closed (`/api/upload` answers 410); existing image, view and delete links work. Lifting the lock is a separate decision for Weibao.
 - Deploys go to Cloudflare Workers through `npm run deploy`. Deploying needs Weibao's yes. `npm run deploy` currently fails: OpenNext refuses Next 15 builds after 2026-10-21 (flag or Next 16 is Weibao's call, see red-team report (private notes)).
-- `npm run check` (lint, text policy, Next build, TypeScript) is the commit gate. The e2e suite on the production build is informational.
+- `npm run check` (lint, text policy, unit tests, Next build, TypeScript) is the commit gate. The e2e suite on the production build is informational.
 
 ## Branch
 
-Work since 2026-10-26 sits on `codex/checkpoint-research-2026-10-26`: the October 13 to 26 audits, scouting, the projects-story proposal and the ideaboard (private notes). Existing site code is unchanged by that research.
+The feature branch `codex/paper-entry` adds two reversible room transitions, the paper entry and share card, banner exports and a local Popmelt workshop. Production still serves the existing release. Earlier research is recorded in the [status log](docs/STATUS_LOG.md).
 
 ## Open decisions
 

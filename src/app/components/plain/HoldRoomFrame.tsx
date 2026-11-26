@@ -11,6 +11,7 @@ import { useScramble } from './useScramble';
 import entrance from './holdEntrance.module.css';
 
 export type HoldRoomProps = {
+  doorArrival?: boolean;
   scheme: Scheme;
   schemeChoice: SchemeChoice;
   onSchemeChoice: (choice: SchemeChoice) => void;
@@ -22,12 +23,12 @@ export type HoldRoomProps = {
  *  and schemes, and how to reach a person. A room owns only the middle.
  *  `scroll` lets that middle scroll while the top and bottom stay put. */
 export function HoldRoomFrame({
-  schemeChoice, onSchemeChoice, roomSwitch, children, scroll = false, chrome = 'solid',
+  doorArrival, schemeChoice, onSchemeChoice, roomSwitch, children, scroll = false, chrome = 'solid',
 }: HoldRoomProps & { children: ReactNode; scroll?: boolean; chrome?: 'solid' | 'over' }) {
-  const wordmark = useScramble('MYTHCORP');
+  const wordmark = useScramble('MYTHCORP', { active: !doorArrival });
   const over = chrome === 'over';
   return (
-    <div className={`${entrance.lander} fixed inset-0 z-10 flex flex-col`}>
+    <div data-door-arrival={doorArrival || undefined} className={`${entrance.lander} fixed inset-0 z-10 flex flex-col`}>
       <header
         className={`${entrance.identity} relative z-20 flex items-center justify-between gap-4 p-5 font-mono text-xs sm:p-8
                     ${over ? 'pointer-events-none' : ''}`}
@@ -38,7 +39,7 @@ export function HoldRoomFrame({
           <SchemePicker choice={schemeChoice} onPick={onSchemeChoice} />
         </div>
       </header>
-      <main className={`relative min-h-0 flex-1 ${scroll ? 'overflow-y-auto overscroll-contain' : ''}`}>
+      <main data-tour-scroll={scroll || undefined} className={`relative min-h-0 flex-1 ${scroll ? 'overflow-y-auto overscroll-contain' : ''}`}>
         {children}
       </main>
       <footer className="relative z-20 flex flex-wrap justify-between gap-5 p-5 font-mono text-xs sm:p-8">

@@ -1,6 +1,6 @@
 'use client';
 
-import { LANDER_ROOMS, nextRoom, roomName, type LanderRoomId } from './landerRooms';
+import { LANDER_ROOMS, nextRoom, roomHref, roomName, type LanderRoomId } from './landerRooms';
 
 /** Steps to the next front-page room without a reload. Reads as a line of
  *  the system, like the readout rows, not as a nav button. */
@@ -8,9 +8,13 @@ export function HoldRoomSwitch({ room, onRoom }: { room: LanderRoomId; onRoom: (
   const index = LANDER_ROOMS.findIndex(item => item.id === room) + 1;
   const upcoming = nextRoom(room);
   return (
-    <button
-      type="button"
-      onClick={() => onRoom(upcoming)}
+    <a
+      href={roomHref(upcoming, new URL(window.location.href))}
+      onClick={event => {
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+        event.preventDefault();
+        onRoom(upcoming);
+      }}
       aria-label={`Room ${index} of ${LANDER_ROOMS.length}, ${roomName(room)}. Go to ${roomName(upcoming)}`}
       data-lander-room={room}
       className="group pointer-events-auto flex min-h-11 items-center gap-2 whitespace-nowrap font-mono text-[11px]
@@ -18,10 +22,10 @@ export function HoldRoomSwitch({ room, onRoom }: { room: LanderRoomId; onRoom: (
                  hover:text-[color:var(--fg)] focus-visible:text-[color:var(--fg)] sm:min-h-0"
     >
       <span className="max-[379px]:hidden">{index}/{LANDER_ROOMS.length}</span>
-      <span className="text-[color:var(--fg)]">{roomName(room)}</span>
-      <span aria-hidden className="hidden transition-transform group-hover:translate-x-0.5 sm:inline">
+      <span className="hidden text-[color:var(--fg)] sm:inline">{roomName(room)}</span>
+      <span aria-hidden className="text-[color:var(--fg)] transition-transform group-hover:translate-x-0.5">
         → {roomName(upcoming)}
       </span>
-    </button>
+    </a>
   );
 }

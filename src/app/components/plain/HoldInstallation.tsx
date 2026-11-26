@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from '
 import { useScramble } from './useScramble';
 import { HoldClickResponse } from './HoldClickResponse';
 import { HoldStatus } from './HoldStatus';
+import { DoorRibbon } from './DoorRibbon';
 import { HoldContact, HoldContactLinks } from './HoldContact';
 import { HoldOperator } from './HoldOperator';
 import { HoldMessage } from './HoldMessage';
@@ -44,7 +45,7 @@ function nextSecondaryOverlay(current: OverlayStyle): OverlayStyle {
 /**
  * The first room: the specimen, the field-drawn words and the live readout.
  */
-export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwitch }: HoldRoomProps) {
+export function HoldInstallation({ doorArrival, scheme, schemeChoice, onSchemeChoice, roomSwitch }: HoldRoomProps) {
   const [style, setStyle] = useState<HoldStyle>(DEFAULT_HOLD_COMPOSITION.style);
   const [overlay, setOverlay] = useState<OverlayStyle>(DEFAULT_HOLD_COMPOSITION.overlay);
   const [modelId, setModelId] = useState<string>(DEFAULT_HOLD_MODEL_ID);
@@ -82,14 +83,14 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
     logAnomaly('scene');
   };
 
-  const wordmark = useScramble('MYTHCORP');
+  const wordmark = useScramble('MYTHCORP', { active: !doorArrival });
   useChicagoSunLight();
   const specimen = useRef<HTMLDivElement>(null);
   useSpecimenGaze(specimen);
   useHoldGather(useReducedMotion());
 
   return (
-    <div className={`${entrance.lander} fixed inset-0 z-10 flex select-none flex-col justify-between p-5 [-webkit-touch-callout:none] sm:p-8`}>
+    <div data-door-arrival={doorArrival || undefined} className={`${entrance.lander} fixed inset-0 z-10 flex select-none flex-col justify-between p-5 [-webkit-touch-callout:none] sm:p-8`}>
       <HoldClickResponse />
 
       <div className={entrance.identity}>
@@ -115,6 +116,7 @@ export function HoldInstallation({ scheme, schemeChoice, onSchemeChoice, roomSwi
       {/* The model owns the middle of the screen. The readout sits inside the
           same box so it stays put when the style changes underneath it. */}
       <div data-hold-message={message} className={`${entrance.stage} pointer-events-none relative -mx-5 flex-1 sm:-mx-8`}>
+        <DoorRibbon folded />
         <div ref={specimen} className={`${entrance.specimen} absolute inset-x-0`}>
           <HoldStage style={style} scheme={scheme} modelId={model.id} onModelError={handleModelError} />
         </div>

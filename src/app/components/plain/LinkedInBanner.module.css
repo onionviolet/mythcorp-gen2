@@ -60,3 +60,11 @@
 .guidance summary { cursor: pointer; }
 .guidance a { text-decoration: underline; text-underline-offset: 3px; }
 .content .guidance p { margin: 1rem 0; }
+
+.plates { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; margin: 1.5rem 0; }
+.plates legend { margin-bottom: .5rem; color: var(--fg-muted); }
+.plates label { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; }
+.plates input { accent-color: var(--fg); }
+
+.relight { cursor: ew-resize; touch-action: pan-y; }
+.safeArea { pointer-events: none; }

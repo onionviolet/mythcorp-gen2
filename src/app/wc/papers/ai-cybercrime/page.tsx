@@ -54,12 +54,12 @@ export default function AiCybercrimePaper() {
           The AI-driven democratization of cybercrime
         </h1>
         <p className="mt-3 text-base text-[color:var(--fg-muted)] sm:text-lg">
-          A forecast of emergent threats, in four stages. Revised October 2026.
+          A forecast of emergent threats, in four stages. Revised November 2026.
         </p>
 
         <div className="mt-6 flex flex-wrap items-center gap-2 text-xs text-[color:var(--fg-subtle)]">
           <span className="themed-pill px-3 py-1 font-mono uppercase tracking-widest">Weibao Chen</span>
-          <span className="themed-pill px-3 py-1 font-mono uppercase tracking-widest">2025, revised 2026-10</span>
+          <span className="themed-pill px-3 py-1 font-mono uppercase tracking-widest">2025, revised 2026-11</span>
           <span className="themed-pill px-3 py-1 font-mono uppercase tracking-widest">Pioneer Scholars</span>
         </div>
         <p className="mt-3 font-mono text-xs text-[color:var(--fg-muted)]">
@@ -73,6 +73,10 @@ export default function AiCybercrimePaper() {
           </span>
         </p>
 
+        <nav aria-label="Reading shortcuts" className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm underline underline-offset-4 print:hidden">
+          <a href="#sixty-title">Read the 60-second summary</a>
+          <a href="#wrong">What would prove me wrong?</a>
+        </nav>
         <section id="abstract" aria-labelledby="abstract-title" className="mt-12 scroll-mt-24">
           <h2 id="abstract-title" className="font-mono text-[10px] uppercase tracking-[0.4em] text-[color:var(--fg)]">Abstract</h2>
           <p className="mt-3 text-base leading-relaxed text-[color:var(--fg)]">
@@ -85,8 +89,8 @@ export default function AiCybercrimePaper() {
             withheld from public release, and the best downloadable model trailed them by about four
             months. Over the same period the average time from patch release
             to first observed exploitation fell from 63 days in 2018 to 2019 to minus 7 days in
-            2025, and only 75 of 530 AI-found flaws reported to open-source maintainers
-            had patches in May 2026. Harm data show no measurable AI-driven increase so far.
+            2025, and in May 2026 Anthropic counted patches for 75 of 530 high- or critical-severity flaws it had reported to open-source maintainers.
+            It expected more fixes within the 90-day disclosure window and said its count likely missed some patches. Harm data show no measurable AI-driven increase so far.
             I forecast that whether repair can speed up as fast as discovery decides the outcome for 2027 to 2030, and I list
             the measurements that would falsify that forecast.
           </p>
@@ -562,15 +566,15 @@ export default function AiCybercrimePaper() {
             </li>
           </ul>
         </Section>
-        <Section id="wrong" number="3.3" eyebrow="falsification" lead={<>Six regularly published measurements would falsify parts of the forecast; each is listed with its latest value.</>} title="What would prove me wrong">
+        <Section id="wrong" number="3.3" eyebrow="falsification" lead={<>Six regularly published measurements would falsify parts of the forecast; each is listed with a dated value.</>} title="What would prove me wrong">
           <p>
-            Each row is a reading someone else publishes on a schedule, the latest value, and what would count against
+            Each row is a reading someone else publishes on a schedule, the dated value, and what would count against
             me.
           </p>
           <div className="text-sm">
             <div className="hidden grid-cols-[1.1fr_0.8fr_1.5fr] gap-3 border-b border-[color:var(--border-strong)] py-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--fg-subtle)] sm:grid">
               <span>Reading</span>
-              <span>Latest</span>
+              <span>Recorded value</span>
               <span>Counts against</span>
             </div>
             <ul>
@@ -578,7 +582,7 @@ export default function AiCybercrimePaper() {
                 <li key={r.reading} className="grid gap-1 border-b border-[color:var(--border)] py-3 sm:grid-cols-[1.1fr_0.8fr_1.5fr] sm:gap-3">
                   <span className="text-[color:var(--fg)]">{r.reading}</span>
                   <span className="font-mono text-xs text-[color:var(--fg-muted)]">
-                    <span className="text-[color:var(--fg-subtle)] sm:hidden">latest: </span>
+                    <span className="text-[color:var(--fg-subtle)] sm:hidden">recorded: </span>
                     {r.latest}
                   </span>
                   <span className="text-[color:var(--fg-muted)]">

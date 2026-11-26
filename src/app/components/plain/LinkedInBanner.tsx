@@ -1,14 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import type { HoldRoomProps } from './HoldRoomFrame';
 import { SchemePicker } from './HoldPickers';
-import { drawLinkedInBanner } from './bannerDrawing';
+import { drawLinkedInBanner, type BannerPlate } from './bannerDrawing';
 import styles from './LinkedInBanner.module.css';
 
 export function LinkedInBanner({ scheme, schemeChoice, onSchemeChoice, onExit }: Pick<HoldRoomProps, 'scheme' | 'schemeChoice' | 'onSchemeChoice'> & { onExit: () => void }) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  const [plate, setPlate] = useState<BannerPlate>('Ribbon');
+  const [light, setLight] = useState(35);
   const [phone, setPhone] = useState(false);
   const [safeArea, setSafeArea] = useState(false);
   const [ready, setReady] = useState(false);
@@ -26,7 +28,7 @@ export function LinkedInBanner({ scheme, schemeChoice, onSchemeChoice, onExit }:
         drawLinkedInBanner(canvas.current,
           tokens.getPropertyValue('--font-mono').trim() || 'monospace',
           tokens.getPropertyValue('--bg').trim(),
-          tokens.getPropertyValue('--fg').trim());
+          tokens.getPropertyValue('--fg').trim(), plate, light);
         setError('');
         setReady(true);
       } catch (reason) {
@@ -34,7 +36,13 @@ export function LinkedInBanner({ scheme, schemeChoice, onSchemeChoice, onExit }:
       }
     });
     return () => { live = false; };
-  }, [scheme]);
+  }, [scheme, plate, light]);
+
+  const aimLight = (event: PointerEvent<HTMLCanvasElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const fraction = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
+    setLight(Math.round(fraction * 180 - 90));
+  };
 
   const download = () => {
     canvas.current?.toBlob(blob => {
@@ -42,7 +50,7 @@ export function LinkedInBanner({ scheme, schemeChoice, onSchemeChoice, onExit }:
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `mythcorp-linkedin-${scheme}-1584x396.png`;
+      link.download = `mythcorp-linkedin-${plate.toLowerCase()}-${scheme}-1584x396.png`;
       link.click();
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
       setNotice('PNG downloaded.');
@@ -60,13 +68,28 @@ export function LinkedInBanner({ scheme, schemeChoice, onSchemeChoice, onExit }:
       </header>
       <section className={styles.content}>
         <h1>LinkedIn banner</h1>
-        <p>A still from the installation. One frame, built to stay.</p>
+        <fieldset className={styles.plates}>
+          <legend>Artwork</legend>
+          {(['Ribbon', 'Specimen'] as const).map(name => (
+            <label key={name}><input type="radio" name="plate" checked={plate === name} onChange={() => setPlate(name)} /> {name}</label>
+          ))}
+          {plate === 'Specimen' && <label title="Drag across the specimen or use the arrow keys on the slider">Light angle <input type="range" min="-90" max="90" value={light} onChange={event => setLight(Number(event.target.value))} /> {light}°</label>}
+        </fieldset>
         <div className={styles.views} aria-label="Preview size">
           <button type="button" aria-pressed={!phone} onClick={() => setPhone(false)}>Full banner</button>
           <button type="button" aria-pressed={phone} onClick={() => setPhone(true)}>Phone size</button>
         </div>
         <div className={`${styles.preview} ${phone ? styles.phone : ''}`} data-banner-preview>
-          <canvas ref={canvas} role="img" aria-label="Mythcorp banner: an ascending ASCII ribbon flowing into Work in progress" />
+          <canvas ref={canvas} role="img"
+            className={plate === 'Specimen' ? styles.relight : undefined}
+            onPointerDown={event => {
+              if (plate !== 'Specimen' || !event.isPrimary || event.button !== 0) return;
+              event.currentTarget.setPointerCapture(event.pointerId);
+              aimLight(event);
+            }}
+            onPointerMove={event => {
+              if (plate === 'Specimen' && event.currentTarget.hasPointerCapture(event.pointerId)) aimLight(event);
+            }} aria-label={plate === 'Specimen' ? 'An engraved specimen beside the Mythcorp wordmark and web address' : 'An ascending ASCII ribbon flowing into Work in progress'} />
           {safeArea && <div className={styles.safeArea}>Profile photo<br />desktop overlap</div>}
         </div>
         <div className={styles.controls}>
@@ -77,7 +100,7 @@ export function LinkedInBanner({ scheme, schemeChoice, onSchemeChoice, onExit }:
         <p className={styles.note}>Phone size checks legibility at 390px wide, not the exact LinkedIn crop. The overlap guide follows the supplied desktop screenshot and stays out of the download. LinkedIn cropping varies by screen.</p>
         <details className={styles.guidance}>
           <summary>What works on LinkedIn</summary>
-          <p>Use one light PNG for this portrait. The still keeps the gaze connected to the ribbon; the website carries the live installation. An uploaded banner keeps its own colors in either LinkedIn theme.</p>
+          <p>Use one light PNG for this portrait. The portrait faces the artwork; the website carries the live installation. An uploaded banner keeps its own colors in either LinkedIn theme.</p>
           <p>JPG or PNG, below 8 MB; 1584 × 396 recommended. GIF backgrounds are unsupported. Some paid plans offer up to five stills rotating every three seconds. A LinkedIn Live broadcast can temporarily replace the cover with its stream.</p>
           <p>Keep the main message clear of the photo and edges. Fine particles and small text may soften after upload; check the final profile on a phone. The URL is a visual signature, not a clickable banner link.</p>
           <p><a href="https://www.linkedin.com/help/linkedin/answer/a568217" target="_blank" rel="noopener noreferrer">Cover image rules</a> · <a href="https://www.linkedin.com/help/linkedin/answer/a7145577" target="_blank" rel="noopener noreferrer">Slideshow support</a> · <a href="https://www.linkedin.com/help/linkedin/answer/a564109/" target="_blank" rel="noopener noreferrer">Media formats</a></p>

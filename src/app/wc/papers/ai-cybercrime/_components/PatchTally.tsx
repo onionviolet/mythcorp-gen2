@@ -21,7 +21,7 @@ export function PatchTally({ figureNumber }: { figureNumber: number }) {
         <div
           ref={ref}
           role="img"
-          aria-label={`${reported} flaws reported, ${patched} patched, ${waiting} without a patch`}
+          aria-label={`${reported} flaws reported, ${patched} patched, ${waiting} without a recorded patch`}
           className="mt-3 flex flex-wrap gap-[2px]"
         >
           {Array.from({ length: reported }, (_, i) => (
@@ -45,13 +45,13 @@ export function PatchTally({ figureNumber }: { figureNumber: number }) {
             <span className="block h-2 w-2 bg-[color:var(--accent)]" /> {patched} patched
           </span>
           <span className="flex items-center gap-1.5 text-[color:var(--fg-muted)]">
-            <span className="block h-2 w-2 border border-[color:var(--border-strong)]" /> {waiting} without a patch yet
+            <span className="block h-2 w-2 border border-[color:var(--border-strong)]" /> {waiting} without a recorded patch yet
           </span>
         </div>
       </div>
       <FigureCaption
         n={figureNumber}
-        claim="In the first public count, about one in seven serious flaws that AI found and sent to open-source maintainers had a patch. This is a single snapshot, about six weeks after the program began, so it shows the queue at one moment and says nothing about where it went next."
+        claim="In the first public count, about one in seven serious flaws that AI found and sent to open-source maintainers had a patch. Anthropic expected more patches within the disclosure window and said it likely missed fixes issued without an advisory."
         source={<>Anthropic, Project Glasswing initial update, {asOf}<Cite ids={['glasswing-2026-05']} />. Counts are the developer&rsquo;s own.</>}
       />
     </figure>

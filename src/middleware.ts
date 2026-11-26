@@ -21,6 +21,10 @@ export function middleware(request: NextRequest) {
 }
 
 function route(request: NextRequest) {
+  if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_POPMELT_DEV_SESSION &&
+      ['/popmelt/status', '/popmelt/phone', '/__popmelt/host'].includes(request.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
   const host = (request.headers.get('host') ?? '').toLowerCase().split(':')[0];
   if (host !== IMAGE_HOST) {
     if (SITE_LOCKED && !isRequiredSiteRequest(request.nextUrl.pathname)) {

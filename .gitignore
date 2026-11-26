@@ -47,3 +47,4 @@ next-env.d.ts
 # claude code local state (worktrees, launch.json, etc.)
 .claude/
 .wrangler-dryrun/
+.popmelt/
